@@ -56,6 +56,41 @@ struct FileUTIInfo {
 	}
 }
 
+// MARK: - FileSystem Utilities
+struct FileSystemUtilities {
+	static func findApplications(containing namePattern: String) throws -> [URL] {
+		let fileManager = FileManager.default
+		var allAppURLs: [URL] = []
+
+		// Define the two application directories to search
+		// User-space and Root-space
+		let applicationPaths = [
+			"/Applications/",
+			(NSString("~/Applications/").expandingTildeInPath as String),
+		]
+
+		// Search each directory for applications
+		for path in applicationPaths {
+			do {
+				let directoryURL = URL(fileURLWithPath: path)
+				let contents = try fileManager.contentsOfDirectory(
+					at: directoryURL,
+					includingPropertiesForKeys: nil,
+					options: [])
+				allAppURLs.append(contentsOf: contents)
+				logger.debug("Found \(contents.count) items in \(path)")
+			} catch {
+				logger.warning("Could not read directory at \(path): \(error.localizedDescription)")
+				// Expected, continue
+			}
+		}
+
+		if allAppURLs.isEmpty {
+			logger.error("No applications found in any search directory")
+		}
+
+		return allAppURLs
+	}
 @main
 struct WorkspaceTool: ParsableCommand {
 	static let configuration = CommandConfiguration(
