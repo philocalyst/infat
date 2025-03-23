@@ -15,6 +15,11 @@ enum InfatError: Error, LocalizedError {
 	case directoryReadError(path: String, underlyingError: Error)
 	case pathExpansionError(path: String)
 	case applicationNotFound(name: String)
+	case plistReadError(path: String, underlyingError: Error)
+	case defaultAppSettingError(underlyingError: Error)
+	case noActiveApplication
+	case configurationLoadError(path: String, underlyingError: Error)
+	case operationTimeout
 
 	var errorDescription: String? {
 		switch self {
@@ -28,6 +33,16 @@ enum InfatError: Error, LocalizedError {
 			return "Could not expand path: \(path)"
 		case .applicationNotFound(let name):
 			return "Application not found: \(name)"
+		case .plistReadError(let path, let error):
+			return "Error reading or parsing Info.plist at \(path): \(error.localizedDescription)"
+		case .defaultAppSettingError(let error):
+			return "Failed to set default application: \(error.localizedDescription)"
+		case .noActiveApplication:
+			return "No active application found"
+		case .configurationLoadError(let path, let error):
+			return "Failed to load configuration from \(path): \(error.localizedDescription)"
+		case .operationTimeout:
+			return "Operation timed out"
 		}
 	}
 }
@@ -83,7 +98,7 @@ struct FileSystemUtilities {
 				logger.debug("Found \(contents.count) items in \(path)")
 			} catch {
 				logger.warning("Could not read directory at \(path): \(error.localizedDescription)")
-				// Expected, continue
+				// Continue to next directory instead of failing completely
 			}
 		}
 
