@@ -6,7 +6,7 @@ import PListKit
 import Toml
 import UniformTypeIdentifiers
 
-let logger = Logger(label: "com.example.burt")
+var logger = Logger(label: "com.example.burt")
 
 // MARK: - Error Definitions
 enum InfatError: Error, LocalizedError {
