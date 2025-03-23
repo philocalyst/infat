@@ -8,6 +8,30 @@ import UniformTypeIdentifiers
 
 let logger = Logger(label: "com.example.burt")
 
+// MARK: - Error Definitions
+enum InfatError: Error, LocalizedError {
+	case cannotDetermineUTI
+	case unsupportedOSVersion
+	case directoryReadError(path: String, underlyingError: Error)
+	case pathExpansionError(path: String)
+	case applicationNotFound(name: String)
+
+	var errorDescription: String? {
+		switch self {
+		case .cannotDetermineUTI:
+			return "Cannot determine UTI for the specified file"
+		case .unsupportedOSVersion:
+			return "This functionality requires a later version of macOS"
+		case .directoryReadError(let path, let error):
+			return "Error reading directory at \(path): \(error.localizedDescription)"
+		case .pathExpansionError(let path):
+			return "Could not expand path: \(path)"
+		case .applicationNotFound(let name):
+			return "Application not found: \(name)"
+		}
+	}
+}
+
 @main
 struct WorkspaceTool: ParsableCommand {
 	static let configuration = CommandConfiguration(
