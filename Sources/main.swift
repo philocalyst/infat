@@ -224,7 +224,8 @@ extension Infat {
 	}
 }
 
-extension WorkspaceTool {
+// MARK: - Info Subcommand
+extension Infat {
 	struct Info: ParsableCommand {
 		static let configuration = CommandConfiguration(
 			abstract: "Displays system information (example).")
@@ -232,9 +233,14 @@ extension WorkspaceTool {
 		mutating func run() throws {
 			logger.info("Executing 'info' subcommand")
 			let workspace = NSWorkspace.shared
-			logger.info(
-				"Active application name: \(workspace.frontmostApplication?.localizedName ?? "None")"
-			)
+
+			if let frontApp = workspace.frontmostApplication {
+				print("Active application: \(frontApp.localizedName ?? "Unknown")")
+				print("Bundle identifier: \(frontApp.bundleIdentifier ?? "Unknown")")
+			} else {
+				print("No active application found")
+			}
 		}
 	}
 }
+
