@@ -91,6 +91,42 @@ struct FileSystemUtilities {
 
 		return allAppURLs
 	}
+
+	static func deriveUTIFromExtension(extention: String) throws -> FileUTIInfo {
+		guard #available(macOS 11.0, *) else {
+			logger.error("UTI functionality requires macOS 11.0 or later")
+			throw InfatError.unsupportedOSVersion
+		}
+
+		// The apple-defined UTTypes to check for conformance
+		let commonUTTypes: [UTType] = [
+			.content, .text, .plainText, .utf8PlainText, .utf16PlainText,
+			.delimitedText, .commaSeparatedText, .tabSeparatedText,
+			.rtf, .pdf, .sourceCode, .swiftSource, .objectiveCSource, .cSource, .cPlusPlusSource,
+			.script, .appleScript, .javaScript, .shellScript, .pythonScript, .rubyScript,
+			.image, .jpeg, .png, .tiff, .gif, .bmp, .svg, .heic,
+			.movie, .video, .audio, .quickTimeMovie, .mpeg, .mpeg2Video, .mpeg4Movie, .mp3,
+			.presentation, .spreadsheet, .database,
+			.archive, .gzip, .zip, .diskImage, .bz2,
+		]
+
+		guard let utType = UTType(filenameExtension: extention) else {
+			throw InfatError.cannotDetermineUTI
+		}
+
+		let conformsTo = commonUTTypes.filter { utType.conforms(to: $0) }.map { $0.identifier }
+		logger.debug("Determined UTI \(utType.identifier) for \(extention)")
+
+		return FileUTIInfo(
+			typeIdentifier: utType.identifier,
+			preferredMIMEType: utType.preferredMIMEType,
+			localizedDescription: utType.localizedDescription,
+			isDynamic: utType.isDynamic,
+			conformsTo: conformsTo
+		)
+	}
+}
+
 @main
 struct WorkspaceTool: ParsableCommand {
 	static let configuration = CommandConfiguration(
