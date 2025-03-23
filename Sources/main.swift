@@ -104,6 +104,11 @@ struct FileSystemUtilities {
 
 		if allAppURLs.isEmpty {
 			logger.error("No applications found in any search directory")
+			throw InfatError.directoryReadError(
+				path: "All application directories",
+				underlyingError: NSError(
+					domain: "com.example.burt", code: 1,
+					userInfo: [NSLocalizedDescriptionKey: "No applications found"]))
 		}
 
 		return allAppURLs
@@ -128,6 +133,7 @@ struct FileSystemUtilities {
 		]
 
 		guard let utType = UTType(filenameExtension: extention) else {
+			logger.error("Cannot determine UTI for extension: .\(extention)")
 			throw InfatError.cannotDetermineUTI
 		}
 
@@ -146,9 +152,14 @@ struct FileSystemUtilities {
 
 // MARK: - Config Loading
 struct ConfigManager {
-	static func loadConfig(from path: String) {
-		// TODO: Implement configuration loading
-		logger.notice("Configuration loading from \(path) not yet implemented")
+	static func loadConfig(from path: String) throws {
+		do {
+			// TODO: Implement configuration loading
+			logger.notice("Configuration loading from \(path) not yet implemented")
+		} catch {
+			logger.error("Failed to load configuration from \(path): \(error.localizedDescription)")
+			throw InfatError.configurationLoadError(path: path, underlyingError: error)
+		}
 	}
 }
 
@@ -164,10 +175,43 @@ struct Infat: ParsableCommand {
 	@Option(name: [.short, .long], help: "Path to the configuration file.")
 	var config: String?
 
+	@Flag(name: [.long], help: "Enable debug logging.")
+	var debug: Bool = false
+
+	@Flag(name: [.short, .long], help: "Enable verbose logging (info, notice, warning levels).")
+	var verbose: Bool = false
+
+	// Custom validation for logging flags
+	func validate() throws {
+		// Configure logger based on flags
+		var logLevel: Logger.Level = .critical
+
+		if debug {
+			logLevel = .debug
+		} else if verbose {
+			logLevel = .info
+		} else {
+			logLevel = .error
+		}
+
+		// Set the log level
+		LoggingSystem.bootstrap { label in
+			var handler = StreamLogHandler.standardOutput(label: label)
+			handler.logLevel = logLevel
+			return handler
+		}
+
+		logger = Logger(label: "com.example.burt")
+		logger.debug("Debug logging enabled")
+		logger.info("Verbose logging enabled")
+	}
+
 	mutating func run() throws {
+		logger.debug("Initializing Infat")
+
 		if let configPath = config {
 			logger.info("Using configuration file: \(configPath)")
-			ConfigManager.loadConfig(from: configPath)
+			try ConfigManager.loadConfig(from: configPath)
 		}
 	}
 }
@@ -219,26 +263,58 @@ extension Infat {
 			)
 
 			do {
-
 				let workspace = NSWorkspace.shared
 				let applications = try FileSystemUtilities.findApplications()
 				guard let app = findApplication(applications: applications, key: appName) else {
-					print("Application not found: \(appName)")
+					logger.error("Application not found: \(appName)")
 					throw InfatError.applicationNotFound(name: appName)
 				}
-				print("Found application at: \(app.path)")
+
+				logger.info("Found application at: \(app.path)")
 				let utiInfo = try FileSystemUtilities.deriveUTIFromExtension(extention: fileType)
-				print(utiInfo.description)
+				logger.debug("UTI for .\(fileType): \(utiInfo.typeIdentifier.identifier)")
 
-				print(try getCFBundleURLNames(appName: applications[1]))
+				// Check if we can actually get the current default app
+				if let currentDefaultApp = workspace.urlForApplication(
+					toOpen: utiInfo.typeIdentifier)
+				{
+					logger.debug("Current default app for .\(fileType): \(currentDefaultApp.path)")
+				} else {
+					logger.info("No current default app for .\(fileType)")
+				}
 
-				// TODO: Implement the actual association setting
-				logger.notice("File association setting not yet implemented")
+				logger.info("Attempting to set default application...")
+				let semaphore = DispatchSemaphore(value: 0)
+				var operationError: Error?
+
+				workspace.setDefaultApplication(
+					at: app,
+					toOpen: utiInfo.typeIdentifier
+				) { error in
+					operationError = error
+					semaphore.signal()
+				}
+
+				// Wait for the operation to complete with timeout handling
+				let result = semaphore.wait(timeout: .now() + 10)  // Ten second timeout
+
+				if result == .timedOut {
+					logger.critical("Operation timed out after 10 seconds")
+					throw InfatError.operationTimeout
+				}
+
+				if let error = operationError {
+					logger.critical(
+						"Failed to set default application: \(error.localizedDescription)")
+					throw InfatError.defaultAppSettingError(underlyingError: error)
+				}
+
+				logger.info("Successfully set default application")
 			} catch let error as InfatError {
-				logger.error("\(error.localizedDescription)")
+				logger.critical("Error: \(error.localizedDescription)")
 				throw error
 			} catch {
-				logger.error("Unexpected error: \(error.localizedDescription)")
+				logger.critical("Unexpected error: \(error.localizedDescription)")
 				throw error
 			}
 		}
@@ -256,34 +332,39 @@ extension Infat {
 			let workspace = NSWorkspace.shared
 
 			if let frontApp = workspace.frontmostApplication {
-				print("Active application: \(frontApp.localizedName ?? "Unknown")")
-				print("Bundle identifier: \(frontApp.bundleIdentifier ?? "Unknown")")
+				logger.notice("Active application: \(frontApp.localizedName ?? "Unknown")")
+				logger.notice("Bundle identifier: \(frontApp.bundleIdentifier ?? "Unknown")")
 			} else {
-				print("No active application found")
+				logger.error("No active application found")
+				throw InfatError.noActiveApplication
 			}
 		}
 	}
 }
 
-func getCFBundleURLNames(appName: URL) throws -> [String]? {
+func getBundleName(appName: URL) throws -> String? {
 	let plistURL = appName.appendingPathComponent("Contents").appendingPathComponent("Info.plist")
 	do {
 		let plist = try DictionaryPList(file: plistURL.path)
-		guard let urlTypesArray = plist.root.array(key: "CFBundleURLTypes").value else {
-			return nil  // CFBundle types is not found or does not exist in the plist
-		}
+		return plist.root.string(key: "CFBundleIdentifier").value
+	} catch {
+		logger.error(
+			"Error reading or parsing Info.plist at \(plistURL.path): \(error.localizedDescription)"
+		)
+		throw InfatError.plistReadError(path: plistURL.path, underlyingError: error)
+	}
+}
 
-		var urlNames: [String] = []
-		for item in urlTypesArray {
-			if let urlTypeDict = item as? PListDictionary,
-				let urlName = urlTypeDict["CFBundleURLName"] as? String
-			{
-				urlNames.append(urlName)
+func findApplication(applications: [URL], key: String) -> URL? {
+	for application in applications {
+		let appNameWithExtension = application.lastPathComponent
+		if let appName = appNameWithExtension.split(separator: ".").first {
+			if String(appName) == key {
+				logger.debug("Found matching application: \(application.path)")
+				return application
 			}
 		}
-		return urlNames.isEmpty ? nil : urlNames  // Return nil if no CFBundleURLName values are found
-	} catch {
-		print("Error reading or parsing Info.plist: \(error)")
-		throw error
 	}
+	logger.warning("No application found matching: \(key)")
+	return nil
 }
