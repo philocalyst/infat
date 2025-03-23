@@ -180,24 +180,46 @@ extension Infat {
 	}
 }
 
-extension WorkspaceTool {
-	struct SetCommand: ParsableCommand {
+// MARK: - Set Subcommand
+extension Infat {
+	struct Set: ParsableCommand {
 		static let configuration = CommandConfiguration(
 			abstract: "Sets an application association.")
 
 		@Argument(help: "The name of the application.")
 		var appName: String
 
-		@Argument(help: "The MIME type to associate.")
-		var mimeType: String
+		@Argument(help: "The file type to associate.")
+		var fileType: String
 
-		@Argument(help: "The role for the association.")
-		var role: String
+		@Argument(help: "OPTIONAL: The role for the association.")
+		var role: String? = nil
 
 		mutating func run() throws {
 			logger.info("Executing 'set' subcommand")
 			logger.info(
-				"Setting association: App='\(appName)', MIME Type='\(mimeType)', Role='\(role)'")
+				"Setting association: App='\(appName)', File='\(fileType)', Role='\(role ?? "default")'"
+			)
+
+			do {
+
+				let applications = try FileSystemUtilities.findApplications(containing: appName)
+				print("Found applications: \(applications)")
+
+				let utiInfo = try FileSystemUtilities.deriveUTIFromExtension(extention: fileType)
+				print(utiInfo.description)
+
+				print(try getCFBundleURLNames(appName: applications[1]))
+
+				// TODO: Implement the actual association setting
+				logger.notice("File association setting not yet implemented")
+			} catch let error as InfatError {
+				logger.error("\(error.localizedDescription)")
+				throw error
+			} catch {
+				logger.error("Unexpected error: \(error.localizedDescription)")
+				throw error
+			}
 		}
 	}
 }
