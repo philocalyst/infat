@@ -244,3 +244,25 @@ extension Infat {
 	}
 }
 
+func getCFBundleURLNames(appName: URL) throws -> [String]? {
+	let plistURL = appName.appendingPathComponent("Contents").appendingPathComponent("Info.plist")
+	do {
+		let plist = try DictionaryPList(file: plistURL.path)
+		guard let urlTypesArray = plist.root.array(key: "CFBundleURLTypes").value else {
+			return nil  // CFBundle types is not found or does not exist in the plist
+		}
+
+		var urlNames: [String] = []
+		for item in urlTypesArray {
+			if let urlTypeDict = item as? PListDictionary,
+				let urlName = urlTypeDict["CFBundleURLName"] as? String
+			{
+				urlNames.append(urlName)
+			}
+		}
+		return urlNames.isEmpty ? nil : urlNames  // Return nil if no CFBundleURLName values are found
+	} catch {
+		print("Error reading or parsing Info.plist: \(error)")
+		throw error
+	}
+}
