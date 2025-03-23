@@ -135,29 +135,22 @@ struct ConfigManager {
 	}
 }
 
+// MARK: - Main Command
 @main
-struct WorkspaceTool: ParsableCommand {
+struct Infat: ParsableCommand {
 	static let configuration = CommandConfiguration(
 		abstract: "A tool to interact with NSWorkspace.",
 		version: "0.1.0",
-		subcommands: [List.self, SetCommand.self, Info.self]
+		subcommands: [List.self, Set.self, Info.self]
 	)
 
 	@Option(name: [.short, .long], help: "Path to the configuration file.")
 	var config: String?
 
-	@Flag(name: [.short, .long], help: "Show the version of the tool.")
-	var version: Bool = false
-
 	mutating func run() throws {
-		if version {
-			print("WorkspaceTool version \(WorkspaceTool.configuration.version ?? "unknown")")
-			return
-		}
-
 		if let configPath = config {
 			logger.info("Using configuration file: \(configPath)")
-			// TODO: Config loading
+			ConfigManager.loadConfig(from: configPath)
 		}
 	}
 }
