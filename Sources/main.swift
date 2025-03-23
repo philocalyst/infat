@@ -205,9 +205,13 @@ extension Infat {
 
 			do {
 
-				let applications = try FileSystemUtilities.findApplications(containing: appName)
-				print("Found applications: \(applications)")
-
+				let workspace = NSWorkspace.shared
+				let applications = try FileSystemUtilities.findApplications()
+				guard let app = findApplication(applications: applications, key: appName) else {
+					print("Application not found: \(appName)")
+					throw InfatError.applicationNotFound(name: appName)
+				}
+				print("Found application at: \(app.path)")
 				let utiInfo = try FileSystemUtilities.deriveUTIFromExtension(extention: fileType)
 				print(utiInfo.description)
 
