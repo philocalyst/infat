@@ -6,7 +6,7 @@ import PListKit
 import Toml
 import UniformTypeIdentifiers
 
-var logger = Logger(label: "com.example.workspacetool")
+let logger = Logger(label: "com.example.burt")
 
 @main
 struct WorkspaceTool: ParsableCommand {
