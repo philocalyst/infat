@@ -127,6 +127,14 @@ struct FileSystemUtilities {
 	}
 }
 
+// MARK: - Config Loading
+struct ConfigManager {
+	static func loadConfig(from path: String) {
+		// TODO: Implement configuration loading
+		logger.notice("Configuration loading from \(path) not yet implemented")
+	}
+}
+
 @main
 struct WorkspaceTool: ParsableCommand {
 	static let configuration = CommandConfiguration(
