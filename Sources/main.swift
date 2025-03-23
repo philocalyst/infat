@@ -33,7 +33,7 @@ enum InfatError: Error, LocalizedError {
 }
 
 struct FileUTIInfo {
-	let typeIdentifier: String
+	let typeIdentifier: UTType
 	let preferredMIMEType: String?
 	let localizedDescription: String?
 	let isDynamic: Bool
@@ -118,7 +118,7 @@ struct FileSystemUtilities {
 		logger.debug("Determined UTI \(utType.identifier) for \(extention)")
 
 		return FileUTIInfo(
-			typeIdentifier: utType.identifier,
+			typeIdentifier: utType,
 			preferredMIMEType: utType.preferredMIMEType,
 			localizedDescription: utType.localizedDescription,
 			isDynamic: utType.isDynamic,
