@@ -58,15 +58,17 @@ struct FileUTIInfo {
 
 // MARK: - FileSystem Utilities
 struct FileSystemUtilities {
-	static func findApplications(containing namePattern: String) throws -> [URL] {
+	static func findApplications() throws -> [URL] {
 		let fileManager = FileManager.default
+		let homeDirectory = fileManager.homeDirectoryForCurrentUser.path()
 		var allAppURLs: [URL] = []
 
-		// Define the two application directories to search
-		// User-space and Root-space
+		// Define the applications directories to search
+		// User-space, Root-space, and System-space
 		let applicationPaths = [
 			"/Applications/",
-			(NSString("~/Applications/").expandingTildeInPath as String),
+			"/System/Applications/",
+			(homeDirectory + "/Applications/"),
 		]
 
 		// Search each directory for applications
