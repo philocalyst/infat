@@ -155,26 +155,26 @@ struct Infat: ParsableCommand {
 	}
 }
 
-extension WorkspaceTool {
+// MARK: - List Subcommand
+extension Infat {
 	struct List: ParsableCommand {
 		static let configuration = CommandConfiguration(abstract: "Lists something (example).")
 
 		@Flag(name: [.short, .long], help: "List all items.")
 		var all: Bool = false
 
-		@Argument(help: "Close search to a specific identifier")
+		@Argument(help: "Close search to a specific application, role, or type")
 		var identifier: String? = nil
 
 		mutating func run() throws {
-			logger.info("Executing 'list' subcommand")
-			let workspace = NSWorkspace.shared
+			logger.info("Executing 'list' subcommand with all=\(all)")
 
 			if all {
 				logger.info("Listing all items...")
-				// TODO: Config listing non-relevant entries
+				// TODO: Implement comprehensive listing
 			} else {
-				logger.info("Listing some items...")
-				// TODO: Config listing minute details
+				logger.info("Listing filtered items for: \(identifier ?? "all")")
+				// TODO: Implement filtered listing
 			}
 		}
 	}
