@@ -2,6 +2,9 @@ import AppKit
 import ArgumentParser
 import Foundation
 import Logging
+import PListKit
+import Toml
+import UniformTypeIdentifiers
 
 var logger = Logger(label: "com.example.workspacetool")
 
