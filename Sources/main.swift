@@ -219,16 +219,19 @@ struct Infat: ParsableCommand {
 // MARK: - List Subcommand
 extension Infat {
 	struct List: ParsableCommand {
-		static let configuration = CommandConfiguration(abstract: "Lists something (example).")
+		static let configuration = CommandConfiguration(
+			abstract: "Lists information for a given filetype.")
 
-		@Flag(name: [.short, .long], help: "List all items.")
-		var all: Bool = false
+		@Flag(name: [.short, .long], help: "List all assigned apps for type.")
+		var assigned: Bool = false
 
-		@Argument(help: "Close search to a specific application, role, or type")
-		var identifier: String? = nil
+		@Argument(help: "Close search to a specific type")
+		var identifier: String
 
 		mutating func run() throws {
-			logger.info("Executing 'list' subcommand with all=\(all)")
+			logger.info("Executing 'list' subcommand with all=\(assigned)")
+			let workspace = NSWorkspace.shared
+			let utiInfo = try FileSystemUtilities.deriveUTIFromExtension(extention: identifier)
 
 			if all {
 				logger.info("Listing all items...")
