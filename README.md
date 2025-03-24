@@ -108,7 +108,7 @@ infat --debug list pdf
 ## Libraries used by Infat
 
 - [ArgumentParser](https://github.com/apple/swift-argument-parser) - Command-line interface parsing
-- [PListKit](https://github.com/hhas/Swift-PListKit) - Property list handling
+- [PListKit](https://github.com/orchetect/PListKit) - Property list handling
 - [Toml](https://github.com/jdfergason/swift-toml) - TOML configuration file parsing
 - [Logging](https://github.com/apple/swift-log) - Structured logging
 
