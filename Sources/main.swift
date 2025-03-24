@@ -333,7 +333,7 @@ extension Infat {
 extension Infat {
 	struct Info: ParsableCommand {
 		static let configuration = CommandConfiguration(
-			abstract: "Displays system information (example).")
+			abstract: "Displays system information.")
 
 		mutating func run() throws {
 			logger.info("Executing 'info' subcommand")
