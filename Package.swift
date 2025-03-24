@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "bart",
+    name: "infat",
     platforms: [
         .macOS(.v13)
     ],
@@ -17,7 +17,7 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "bart",
+            name: "infat",
             dependencies: [
                 .product(name: "PListKit", package: "PListKit"),
                 .product(name: "Toml", package: "swift-toml"),
