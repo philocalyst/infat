@@ -233,12 +233,17 @@ extension Infat {
 			let workspace = NSWorkspace.shared
 			let utiInfo = try FileSystemUtilities.deriveUTIFromExtension(extention: identifier)
 
-			if all {
+			if assigned {
 				logger.info("Listing all items...")
-				// TODO: Implement comprehensive listing
+
+				let registeredApps = workspace.urlsForApplications(toOpen: utiInfo.typeIdentifier)
+
+				print(registeredApps)
 			} else {
+				if let registeredApp = workspace.urlForApplication(toOpen: utiInfo.typeIdentifier) {
+					print(registeredApp.path())
+				}
 				logger.info("Listing filtered items for: \(identifier ?? "all")")
-				// TODO: Implement filtered listing
 			}
 		}
 	}
