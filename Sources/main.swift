@@ -238,10 +238,15 @@ extension Infat {
 
 				let registeredApps = workspace.urlsForApplications(toOpen: utiInfo.typeIdentifier)
 
-				print(registeredApps)
+				print(
+					"For the type \(identifier) these apps are registered: \n \(registeredApps.map { $0.path() })"
+				)
+
 			} else {
 				if let registeredApp = workspace.urlForApplication(toOpen: utiInfo.typeIdentifier) {
-					print(registeredApp.path())
+					print(
+						"For the type \(identifier) \(registeredApp.path()) is registered"
+					)
 				}
 				logger.info("Listing filtered items for: \(identifier ?? "all")")
 			}
