@@ -49,6 +49,8 @@ infat list --all txt
 
 ### Set Command
 
+**NOTE:** This is currently depreacted due to using ObjC private framework API's that is beyond me to interface with. If anyone wants to mess with adding this feature, the classdump I found is [here](https://www.developer.limneos.net/index.php?ios=macos_15.3.1&framework=IOBluetooth.framework&header=IOBluetoothPreferences.h). And blueutil also implements them in a capacity.
+
 The `set` command changes which application opens a specific file type.
 
 ```bash
@@ -108,7 +110,7 @@ infat --debug list pdf
 ## Libraries used by Infat
 
 - [ArgumentParser](https://github.com/apple/swift-argument-parser) - Command-line interface parsing
-- [PListKit](https://github.com/orchetect/PListKit) - Property list handling
+- [PListKit](https://github.com/hhas/Swift-PListKit) - Property list handling
 - [Toml](https://github.com/jdfergason/swift-toml) - TOML configuration file parsing
 - [Logging](https://github.com/apple/swift-log) - Structured logging
 
