@@ -17,7 +17,7 @@ Infat is designed for power users and system administrators who need fine-graine
 ```bash
 # Installation instructions coming soon
 # For now, clone the repository and build from source
-git clone https://github.com/yourusername/infat.git
+git clone https://github.com/philocalyst/infat.git
 cd infat
 swift build -c release
 ```
