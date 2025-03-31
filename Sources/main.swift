@@ -63,7 +63,6 @@ struct FileUTIInfo {
 	let isDynamic: Bool
 	let conformsTo: [String]
 
-	// Debugging Describe UTI
 	var description: String {
 		var output = "UTI: \(typeIdentifier)\n"
 		if let mimeType = preferredMIMEType {
@@ -80,44 +79,42 @@ struct FileUTIInfo {
 	}
 }
 
-// MARK: - FileSystem Utilities
 struct FileSystemUtilities {
 	static func findApplications() throws -> [URL] {
 		let fileManager = FileManager.default
 		let homeDirectory = fileManager.homeDirectoryForCurrentUser.path()
 		var allAppURLs: [URL] = []
 
-		// Define the applications directories to search
-		// User-space, Root-space, and System-space
 		let applicationPaths = [
 			"/Applications/",
 			"/System/Applications/",
 			(homeDirectory + "/Applications/"),
 		]
 
-		// Search each directory for applications
 		for path in applicationPaths {
 			do {
 				let directoryURL = URL(fileURLWithPath: path)
 				let contents = try fileManager.contentsOfDirectory(
 					at: directoryURL,
 					includingPropertiesForKeys: nil,
-					options: [])
+					options: []
+				)
 				allAppURLs.append(contentsOf: contents)
 				logger.debug("Found \(contents.count) items in \(path)")
 			} catch {
 				logger.warning("Could not read directory at \(path): \(error.localizedDescription)")
-				// Continue to next directory instead of failing completely
 			}
 		}
 
-		if allAppURLs.isEmpty {
+		guard !allAppURLs.isEmpty else {
 			logger.error("No applications found in any search directory")
 			throw InfatError.directoryReadError(
 				path: "All application directories",
 				underlyingError: NSError(
 					domain: "com.example.burt", code: 1,
-					userInfo: [NSLocalizedDescriptionKey: "No applications found"]))
+					userInfo: [NSLocalizedDescriptionKey: "No applications found"]
+				)
+			)
 		}
 
 		return allAppURLs
@@ -129,7 +126,6 @@ struct FileSystemUtilities {
 			throw InfatError.unsupportedOSVersion
 		}
 
-		// The apple-defined UTTypes to check for conformance
 		let commonUTTypes: [UTType] = [
 			.content, .text, .plainText, .utf8PlainText, .utf16PlainText,
 			.delimitedText, .commaSeparatedText, .tabSeparatedText,
@@ -159,7 +155,6 @@ struct FileSystemUtilities {
 	}
 }
 
-// MARK: - Config Loading
 struct ConfigManager {
 	static func loadConfig(from configPath: String) throws {
 		logger.info("Loading associations from: \(configPath)")
@@ -214,26 +209,26 @@ struct Infat: ParsableCommand {
 	@Option(name: [.short, .long], help: "Path to the configuration file.")
 	var config: String?
 
-	@Flag(name: [.long], help: "Enable debug logging.")
-	var debug: Bool = false
-
-	@Flag(name: [.short, .long], help: "Enable verbose logging (info, notice, warning levels).")
+	@Flag(
+		name: [.short, .long], help: "Enable verbose logging (info, notice, warning, debug levels)."
+	)
 	var verbose: Bool = false
 
-	// Custom validation for logging flags
+	@Flag(
+		name: [.short, .long], help: "Quiet output. Only errors and critical messages are logged.")
+	var quiet: Bool = false
+
 	func validate() throws {
-		// Configure logger based on flags
 		var logLevel: Logger.Level = .critical
 
-		if debug {
+		if verbose {
 			logLevel = .debug
-		} else if verbose {
-			logLevel = .info
+		} else if quiet {
+			logLevel = .critical
 		} else {
 			logLevel = .error
 		}
 
-		// Set the log level
 		LoggingSystem.bootstrap { label in
 			var handler = StreamLogHandler.standardOutput(label: label)
 			handler.logLevel = logLevel
@@ -247,7 +242,6 @@ struct Infat: ParsableCommand {
 
 	mutating func run() throws {
 		logger.debug("Initializing Infat")
-
 		if let configPath = config {
 			logger.info("Using configuration file: \(configPath)")
 			try ConfigManager.loadConfig(from: configPath)
@@ -255,11 +249,11 @@ struct Infat: ParsableCommand {
 	}
 }
 
-// MARK: - List Subcommand
 extension Infat {
 	struct List: ParsableCommand {
 		static let configuration = CommandConfiguration(
-			abstract: "Lists information for a given filetype.")
+			abstract: "Lists information for a given filetype."
+		)
 
 		@Flag(name: [.short, .long], help: "List all assigned apps for type.")
 		var assigned: Bool = false
@@ -274,30 +268,25 @@ extension Infat {
 
 			if assigned {
 				logger.info("Listing all items...")
-
 				let registeredApps = workspace.urlsForApplications(toOpen: utiInfo.typeIdentifier)
-
 				print(
 					"For the type \(identifier) these apps are registered: \n \(registeredApps.map { $0.path() })"
 				)
-
 			} else {
 				if let registeredApp = workspace.urlForApplication(toOpen: utiInfo.typeIdentifier) {
-					print(
-						"For the type \(identifier) \(registeredApp.path()) is registered"
-					)
+					print("For the type \(identifier) \(registeredApp.path()) is registered")
 				}
-				logger.info("Listing filtered items for: \(identifier ?? "all")")
+				logger.info("Listing filtered items for: \(identifier)")
 			}
 		}
 	}
 }
 
-// MARK: - Set Subcommand
 extension Infat {
 	struct Set: ParsableCommand {
 		static let configuration = CommandConfiguration(
-			abstract: "Sets an application association.")
+			abstract: "Sets an application association."
+		)
 
 		@Argument(help: "The name of the application.")
 		var appName: String
@@ -319,23 +308,21 @@ extension Infat {
 	}
 }
 
-// MARK: - Info Subcommand
 extension Infat {
 	struct Info: ParsableCommand {
 		static let configuration = CommandConfiguration(
-			abstract: "Displays system information.")
+			abstract: "Displays system information."
+		)
 
 		mutating func run() throws {
 			logger.info("Executing 'info' subcommand")
 			let workspace = NSWorkspace.shared
 
-			if let frontApp = workspace.frontmostApplication {
-				logger.notice("Active application: \(frontApp.localizedName ?? "Unknown")")
-				logger.notice("Bundle identifier: \(frontApp.bundleIdentifier ?? "Unknown")")
-			} else {
-				logger.error("No active application found")
+			guard let frontApp = workspace.frontmostApplication else {
 				throw InfatError.noActiveApplication
 			}
+			logger.notice("Active application: \(frontApp.localizedName ?? "Unknown")")
+			logger.notice("Bundle identifier: \(frontApp.bundleIdentifier ?? "Unknown")")
 		}
 	}
 }
@@ -346,9 +333,6 @@ func getBundleName(appName: URL) throws -> String? {
 		let plist = try DictionaryPList(file: plistURL.path)
 		return plist.root.string(key: "CFBundleIdentifier").value
 	} catch {
-		logger.error(
-			"Error reading or parsing Info.plist at \(plistURL.path): \(error.localizedDescription)"
-		)
 		throw InfatError.plistReadError(path: plistURL.path, underlyingError: error)
 	}
 }
@@ -356,11 +340,9 @@ func getBundleName(appName: URL) throws -> String? {
 func findApplication(applications: [URL], key: String) -> URL? {
 	for application in applications {
 		let appNameWithExtension = application.lastPathComponent
-		if let appName = appNameWithExtension.split(separator: ".").first {
-			if String(appName) == key {
-				logger.debug("Found matching application: \(application.path)")
-				return application
-			}
+		if let appName = appNameWithExtension.split(separator: ".").first, String(appName) == key {
+			logger.debug("Found matching application: \(application.path)")
+			return application
 		}
 	}
 	logger.warning("No application found matching: \(key)")
