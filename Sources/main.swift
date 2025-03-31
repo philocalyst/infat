@@ -20,6 +20,9 @@ enum InfatError: Error, LocalizedError {
 	case noActiveApplication
 	case configurationLoadError(path: String, underlyingError: Error)
 	case operationTimeout
+	case tomlLoadError(path: String, underlyingError: Error)
+	case tomlTableNotFoundError(path: String, table: String)
+	case tomlValueNotString(path: String, key: String)
 
 	var errorDescription: String? {
 		switch self {
@@ -43,6 +46,12 @@ enum InfatError: Error, LocalizedError {
 			return "Failed to load configuration from \(path): \(error.localizedDescription)"
 		case .operationTimeout:
 			return "Operation timed out"
+		case .tomlLoadError(let path, let error):
+			return "Failed to load TOML from \(path): \(error.localizedDescription)"
+		case .tomlTableNotFoundError(let path, let table):
+			return "Table '\(table)' not found in TOML file \(path)"
+		case .tomlValueNotString(let path, let key):
+			return "Value for key '\(key)' in TOML file \(path) is not a string."
 		}
 	}
 }
@@ -152,18 +161,48 @@ struct FileSystemUtilities {
 
 // MARK: - Config Loading
 struct ConfigManager {
-	static func loadConfig(from path: String) throws {
+	static func loadConfig(from configPath: String) throws {
+		logger.info("Loading associations from: \(configPath)")
 		do {
-			// TODO: Implement configuration loading
-			logger.notice("Configuration loading from \(path) not yet implemented")
+			let toml = try Toml(contentsOfFile: configPath)
+			let tablePath = "assocations"  // Name of the required table
+
+			guard let associationsTable = toml.table(tablePath) else {
+				throw InfatError.tomlTableNotFoundError(
+					path: configPath, table: tablePath)
+			}
+
+			logger.info("Found \(associationsTable.keyNames.count) associations to process")
+			for key in associationsTable.keyNames {
+				guard let appName = associationsTable.string(key.components) else {
+					throw InfatError.tomlValueNotString(
+						path: configPath, key: key.components.joined())
+				}
+
+				let fileType = key.components.joined()
+				logger.info("Processing association: .\(fileType) -> \(appName)")
+
+				do {
+					try setDefaultApplication(appName: appName, fileType: fileType)
+					print("Set default application for .\(fileType) to \(appName)")
+				} catch {
+					logger.error(
+						"Failed to set association for .\(fileType): \(error.localizedDescription)")
+					print(
+						"Error setting association for .\(fileType): \(error.localizedDescription)")
+					// Continue with other associations even if one fails
+				}
+			}
+		} catch let error as InfatError {
+			logger.critical("Error processing TOML: \(error.localizedDescription)")
+			throw error
 		} catch {
-			logger.error("Failed to load configuration from \(path): \(error.localizedDescription)")
-			throw InfatError.configurationLoadError(path: path, underlyingError: error)
+			logger.critical("Error loading TOML file: \(error.localizedDescription)")
+			throw InfatError.tomlLoadError(path: configPath, underlyingError: error)
 		}
 	}
 }
 
-// MARK: - Main Command
 @main
 struct Infat: ParsableCommand {
 	static let configuration = CommandConfiguration(
