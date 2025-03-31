@@ -313,62 +313,8 @@ extension Infat {
 			logger.info(
 				"Setting association: App='\(appName)', File='\(fileType)', Role='\(role ?? "default")'"
 			)
+			try setDefaultApplication(appName: appName, fileType: fileType)
 
-			do {
-				let workspace = NSWorkspace.shared
-				let applications = try FileSystemUtilities.findApplications()
-				guard let app = findApplication(applications: applications, key: appName) else {
-					logger.error("Application not found: \(appName)")
-					throw InfatError.applicationNotFound(name: appName)
-				}
-
-				logger.info("Found application at: \(app.path)")
-				let utiInfo = try FileSystemUtilities.deriveUTIFromExtension(extention: fileType)
-				logger.debug("UTI for .\(fileType): \(utiInfo.typeIdentifier.identifier)")
-
-				// Check if we can actually get the current default app
-				if let currentDefaultApp = workspace.urlForApplication(
-					toOpen: utiInfo.typeIdentifier)
-				{
-					logger.debug("Current default app for .\(fileType): \(currentDefaultApp.path)")
-				} else {
-					logger.info("No current default app for .\(fileType)")
-				}
-
-				logger.info("Attempting to set default application...")
-				let semaphore = DispatchSemaphore(value: 0)
-				var operationError: Error?
-
-				workspace.setDefaultApplication(
-					at: app,
-					toOpen: utiInfo.typeIdentifier
-				) { error in
-					operationError = error
-					semaphore.signal()
-				}
-
-				// Wait for the operation to complete with timeout handling
-				let result = semaphore.wait(timeout: .now() + 10)  // Ten second timeout
-
-				if result == .timedOut {
-					logger.critical("Operation timed out after 10 seconds")
-					throw InfatError.operationTimeout
-				}
-
-				if let error = operationError {
-					logger.critical(
-						"Failed to set default application: \(error.localizedDescription)")
-					throw InfatError.defaultAppSettingError(underlyingError: error)
-				}
-
-				logger.info("Successfully set default application")
-			} catch let error as InfatError {
-				logger.critical("Error: \(error.localizedDescription)")
-				throw error
-			} catch {
-				logger.critical("Unexpected error: \(error.localizedDescription)")
-				throw error
-			}
 		}
 	}
 }
@@ -419,4 +365,64 @@ func findApplication(applications: [URL], key: String) -> URL? {
 	}
 	logger.warning("No application found matching: \(key)")
 	return nil
+}
+
+func setDefaultApplication(appName: String, fileType: String) throws {
+	logger.info("Setting association: App='\(appName)', File='\(fileType)'")
+
+	do {
+		let workspace = NSWorkspace.shared
+		let applications = try FileSystemUtilities.findApplications()
+		guard let app = findApplication(applications: applications, key: appName) else {
+			logger.error("Application not found: \(appName)")
+			throw InfatError.applicationNotFound(name: appName)
+		}
+
+		logger.info("Found application at: \(app.path)")
+		let utiInfo = try FileSystemUtilities.deriveUTIFromExtension(extention: fileType)
+		logger.debug("UTI for .\(fileType): \(utiInfo.typeIdentifier.identifier)")
+
+		// Check if we can actually get the current default app
+		if let currentDefaultApp = workspace.urlForApplication(
+			toOpen: utiInfo.typeIdentifier)
+		{
+			logger.debug("Current default app for .\(fileType): \(currentDefaultApp.path)")
+		} else {
+			logger.info("No current default app for .\(fileType)")
+		}
+
+		logger.info("Attempting to set default application...")
+		let semaphore = DispatchSemaphore(value: 0)
+		var operationError: Error?
+
+		workspace.setDefaultApplication(
+			at: app,
+			toOpen: utiInfo.typeIdentifier
+		) { error in
+			operationError = error
+			semaphore.signal()
+		}
+
+		// Wait for the operation to complete with timeout handling
+		let result = semaphore.wait(timeout: .now() + 10)  // Ten second timeout
+
+		if result == .timedOut {
+			logger.critical("Operation timed out after 10 seconds")
+			throw InfatError.operationTimeout
+		}
+
+		if let error = operationError {
+			logger.critical(
+				"Failed to set default application: \(error.localizedDescription)")
+			throw InfatError.defaultAppSettingError(underlyingError: error)
+		}
+
+		logger.info("Successfully set default application for .\(fileType) to \(appName)")
+	} catch let error as InfatError {
+		logger.critical("Error: \(error.localizedDescription)")
+		throw error
+	} catch {
+		logger.critical("Unexpected error: \(error.localizedDescription)")
+		throw error
+	}
 }
