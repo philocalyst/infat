@@ -10,7 +10,8 @@ Infat is designed for power users and system administrators who need fine-graine
 - **List file type associations** - See which applications are registered to open specific file types
 - **Set default applications** - Change which application opens a specific file type
 - **View system information** - Display useful information about the current system state
-- **Comprehensive logging** - Debug and verbose logging options for troubleshooting
+- **Standardized TOML Configuration** - Maintain a config file for versioning and the like (XDG support soon!)
+- **Comprehensive logging** -  Verbose logging options for troubleshooting
 
 ## Installation
 
@@ -24,12 +25,11 @@ swift build -c release
 
 ## Coming Soon
 
-- **Configuration files** - Support for TOML configuration files to save your preferred associations
 - **Support for early MacOS** - Should be able to get it dated to OSX initial release!
 - **Batch operations** - Set multiple file associations at once
 - **More detailed info commands** - Extended system information reporting
 
-> **Note:** Configuration loading and the info subcommand are not fully implemented yet but are coming in future releases! Any help is appreciated :)
+> **Note:** The info subcommand is not fully implemented yet but is coming in future releases! Any help is appreciated :)
 
 ## Tutorial
 
@@ -49,7 +49,6 @@ infat list --all txt
 
 ### Set Command
 
-**NOTE:** This is currently depreacted due to using ObjC private framework API's that is beyond me to interface with. If anyone wants to mess with adding this feature, the classdump I found is [here](https://www.developer.limneos.net/index.php?ios=macos_15.3.1&framework=IOBluetooth.framework&header=IOBluetoothPreferences.h). And blueutil also implements them in a capacity.
 
 The `set` command changes which application opens a specific file type.
 
@@ -65,9 +64,26 @@ infat set VSCode json
 
 The `info` command displays system information, such as the currently active application.
 
+Not implemented yet.
+
 ```bash
 # Show system information
 infat info
+```
+
+
+### Configuration
+
+Create a TOML file with a table "associations"
+
+And add assocations in this format:
+
+EXTENSION = "APP"
+
+Example:
+```Toml
+[associations]
+toml = "Preview"
 ```
 
 ## Examples

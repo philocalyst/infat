@@ -160,7 +160,7 @@ struct ConfigManager {
 		logger.info("Loading associations from: \(configPath)")
 		do {
 			let toml = try Toml(contentsOfFile: configPath)
-			let tablePath = "assocations"  // Name of the required table
+			let tablePath = "associations"  // Name of the required table
 
 			guard let associationsTable = toml.table(tablePath) else {
 				throw InfatError.tomlTableNotFoundError(
