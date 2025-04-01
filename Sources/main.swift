@@ -201,7 +201,7 @@ struct ConfigManager {
 @main
 struct Infat: ParsableCommand {
 	static let configuration = CommandConfiguration(
-		abstract: "A tool to interact with NSWorkspace.",
+		abstract: "A tool to assign default openers for filetypes",
 		version: "0.1.0",
 		subcommands: [List.self, Set.self, Info.self]
 	)
