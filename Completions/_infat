@@ -1,0 +1,76 @@
+#!/usr/bin/env zsh
+#compdef infat
+
+# ZSH completion script for infat
+
+_infat() {
+    local -a commands options
+
+    # Define global options
+    options=(
+        '(-c --config)'{-c,--config}'[Path to the configuration file]:config file:_files'
+        '(-v --verbose)'{-v,--verbose}'[Enable verbose logging]'
+        '(-q --quiet)'{-q,--quiet}'[Quiet output]'
+        '(-h --help)'{-h,--help}'[Show help]'
+        '--version[Show version]'
+    )
+
+    # Define subcommands
+    commands=(
+        'list:Lists information for a given filetype'
+        'set:Sets an application association'
+        'info:Displays system information'
+    )
+
+    # Function to get file extensions in current directory
+    _file_extensions() {
+        local -a extensions
+        extensions=(${(f)"$(find . -type f -name "*.*" 2>/dev/null | sed 's/.*\.//' | sort -u)"})
+        _describe 'file extension' extensions
+    }
+
+    # Function to get macOS applications
+    _macos_applications() {
+        local -a apps
+        apps=(${(f)"$(find /Applications /System/Applications ~/Applications -maxdepth 1 -name "*.app" 2>/dev/null | sed 's/.*\///;s/\.app$//' | sort -u)"})
+        _describe 'application' apps
+    }
+
+    # Handle subcommands
+    _arguments -C \
+        $options \
+        ': :->command' \
+        '*:: :->args' && return 0
+
+    case $state in
+        command)
+            # Complete subcommands
+            _describe -t commands 'infat commands' commands
+            ;;
+        args)
+            case $words[1] in
+                list)
+                    _arguments \
+                        '(-a --assigned)'{-a,--assigned}'[List all assigned apps for type]' \
+                        '(-h --help)'{-h,--help}'[Show help]' \
+                        ': :_file_extensions'
+                    ;;
+                set)
+                    if (( CURRENT == 2 )); then
+                        _macos_applications
+                    elif (( CURRENT == 3 )); then
+                        _file_extensions
+                    elif (( CURRENT == 4 )); then
+                        _message 'role (optional)'
+                    fi
+                    ;;
+                info)
+                    _arguments \
+                        '(-h --help)'{-h,--help}'[Show help]'
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+_infat "$@"
