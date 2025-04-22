@@ -1,4 +1,3 @@
-
 # Infat
 
 A powerful CLI tool for managing file type associations on macOS. Infat provides a simple and elegant way to view, set, and manage file type associations through NSWorkspace.
@@ -26,8 +25,6 @@ swift build -c release
 ## Coming Soon
 
 - **Support for early MacOS** - Should be able to get it dated to OSX initial release!
-- **Batch operations** - Set multiple file associations at once
-- **More detailed info commands** - Extended system information reporting
 
 > **Note:** The info subcommand is not fully implemented yet but is coming in future releases! Any help is appreciated :)
 
