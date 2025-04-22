@@ -31,9 +31,9 @@ extension Infat {
 				if let url = workspace.urlForApplication(
 					toOpen: utiInfo.typeIdentifier)
 				{
-					print("Default for .\(identifier): \(url.path)")
+					logger.info("Default for .\(identifier): \(url.path)")
 				} else {
-					print("No default application for .\(identifier)")
+					logger.info("No default application for .\(identifier)")
 				}
 			}
 		}
