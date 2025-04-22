@@ -16,8 +16,9 @@ extension Infat {
         var role: String?
 
         mutating func run() throws {
-            try setDefaultApplication(appName: appName,
-                                      fileType: fileType)
+            try setDefaultApplication(
+                appName: appName,
+                fileType: fileType)
         }
     }
 }

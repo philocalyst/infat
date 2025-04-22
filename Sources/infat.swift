@@ -1,6 +1,6 @@
 import ArgumentParser
-import Logging
 import Foundation
+import Logging
 
 var logger = Logger(label: "com.example.burt")
 
@@ -12,21 +12,23 @@ struct Infat: ParsableCommand {
         subcommands: [List.self, Set.self, Info.self]
     )
 
-    @Option(name: [.short, .long],
-            help: "Path to the configuration file.")
+    @Option(
+        name: [.short, .long],
+        help: "Path to the configuration file.")
     var config: String?
 
-    @Flag(name: [.short, .long],
-          help: "Enable verbose logging.")
+    @Flag(
+        name: [.short, .long],
+        help: "Enable verbose logging.")
     var verbose = false
 
-    @Flag(name: [.short, .long],
-          help: "Quiet output.")
+    @Flag(
+        name: [.short, .long],
+        help: "Quiet output.")
     var quiet = false
 
     func validate() throws {
-        let level: Logger.Level = verbose ? .debug :
-            (quiet ? .critical : .error)
+        let level: Logger.Level = verbose ? .debug : (quiet ? .critical : .error)
         LoggingSystem.bootstrap { label in
             var h = StreamLogHandler.standardOutput(label: label)
             h.logLevel = level
