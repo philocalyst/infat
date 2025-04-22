@@ -29,7 +29,7 @@ struct FileSystemUtilities {
 			throw InfatError.directoryReadError(
 				path: "All application directories",
 				underlyingError: NSError(
-					domain: "com.example.burt", code: 1,
+					domain: "com.philocalyst.infat", code: 1,
 					userInfo: [NSLocalizedDescriptionKey: "No applications found"]
 				)
 			)

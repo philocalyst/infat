@@ -2,7 +2,7 @@ import ArgumentParser
 import Foundation
 import Logging
 
-var logger = Logger(label: "com.example.burt")
+var logger = Logger(label: "com.philocalyst.infat")
 
 @main
 struct Infat: ParsableCommand {
@@ -34,7 +34,7 @@ struct Infat: ParsableCommand {
             h.logLevel = level
             return h
         }
-        logger = Logger(label: "com.example.burt")
+        logger = Logger(label: "com.philocalyst.infat")
     }
 
     mutating func run() throws {
