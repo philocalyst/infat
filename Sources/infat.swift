@@ -2,6 +2,8 @@ import ArgumentParser
 import Foundation
 import Logging
 
+import class Foundation.ProcessInfo
+
 var logger = Logger(label: "com.philocalyst.infat")
 
 @main
@@ -40,6 +42,12 @@ struct Infat: ParsableCommand {
     mutating func run() throws {
         if let cfg = config {
             try ConfigManager.loadConfig(from: cfg)
+        } else {
+            // No config path passed, try to load from XDG location:
+            if let configurationDirectory = ProcessInfo.processInfo.environment["XDG_CONFIG_HOME"] {
+                try ConfigManager.loadConfig(
+                    from: configurationDirectory.appending("/infat").appending("/config.toml"))
+            }
         }
     }
 }

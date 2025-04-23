@@ -9,7 +9,7 @@ Infat is designed for power users and system administrators who need fine-graine
 - **List file type associations** - See which applications are registered to open specific file types
 - **Set default applications** - Change which application opens a specific file type
 - **View system information** - Display useful information about the current system state
-- **Standardized TOML Configuration** - Maintain a config file for versioning and the like (XDG support soon!)
+- **Standardized TOML Configuration** - Maintain a config file for versioning and the like. Supports a standard location at XDG_CONFIG_HOME/infat/config.toml 
 - **Comprehensive logging** -  Verbose logging options for troubleshooting
 
 ## Installation
