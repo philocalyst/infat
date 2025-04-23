@@ -1,0 +1,184 @@
+# .github/workflows/release.yml
+name: Release
+
+on:
+  push:
+    tags:
+      - '*' # Trigger on any tag push
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  # Project name used in the justfile for artifact naming
+  BINARY_NAME: infat
+
+jobs:
+  prerelease:
+    # This job determines if the tag is a pre-release based on its format.
+    # It remains unchanged as it controls the GitHub Release 'prerelease' flag.
+    runs-on: macos-latest
+    outputs:
+      value: ${{ steps.prerelease.outputs.value }}
+    steps:
+      - name: Prerelease Check
+        id: prerelease
+        run: |
+          if [[ ${{ github.ref_name }} =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
+              echo "value=false" >> $GITHUB_OUTPUT
+          else
+              echo "value=true" >> $GITHUB_OUTPUT
+          fi
+
+  package:
+    # This job builds and packages the project for various targets using the justfile.
+    strategy:
+      fail-fast: false # Don't cancel other jobs if one fails
+      matrix:
+        target:
+          - arm64-apple-macos
+          - x86_64-apple-macos
+        include:
+          # Define OS and specific flags for cross-compilation targets
+          - target: arm64-apple-macos
+            os: macos-latest
+            target_flags: ''
+          - target: x86_64-apple-macos
+            os: macos-latest
+            target_flags: ''
+
+    runs-on: ${{ matrix.os }}
+    needs:
+      - prerelease # Wait for prerelease check
+
+    environment:
+      name: main
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Cache the Swift Package Manager cache
+      - name: Cache Swift Package Manager
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.swiftpm
+          key: ${{ runner.os }}-swiftpm-${{ hashFiles('**/Package.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-swiftpm-
+
+      - name: Set up Swift toolchain
+        uses: apple/swift-action@v1
+        with:
+          swift-version: 'latest'
+
+      - name: Install Just (Command Runner)
+        run: |
+          set -euxo pipefail
+
+          # Using || true to prevent failure if package isn't found to catch on fallback
+          # Try installing via native package manager first
+            if [[ "$RUNNER_OS" == "Linux" ]]; then
+              echo "Attempting to install just via apt..."
+              sudo apt-get update -y
+              sudo apt-get install -y just || echo "apt install failed or package not found."
+            elif [[ "$RUNNER_OS" == "macOS" ]]; then
+              echo "Attempting to install just via Homebrew..."
+              brew install just || echo "brew install failed."
+            elif [[ "$RUNNER_OS" == "Windows" ]]; then
+              echo "Attempting to install just via Chocolatey..."
+              choco install just --yes || echo "choco install failed."
+            else
+              echo "Unsupported OS for package manager installation: $RUNNER_OS."
+            fi
+
+            # Fallback to cargo install if 'just' command is not found after package manager attempt
+            if ! command -v just &>/dev/null; then
+              echo "Just not found after package manager attempt. Installing via cargo install..."
+              cargo install just
+            else
+              echo "Just installed successfully via package manager or was already present."
+            fi
+
+      # --- Build using Just ---
+      - name: Build the release version
+        # Set flags combining global and target-specific flags for swift build inside just
+        env:
+          SWIFT_FLAGS: ${{ matrix.target_flags }}
+        # Run the just recipe, passing the target from the matrix
+        run: just build-release ${{ matrix.target }}
+
+      - name: Compress the binaries
+        run: just compress-binaries "dist/"
+
+      # --- Publish Artifact ---
+      - name: Determine Artifact Name
+        id: artifact_name
+        run: |
+          ARTIFACT_PATH="dist/${{ env.BINARY_NAME }}-${{ matrix.target }}"
+          echo "path=${ARTIFACT_PATH}.tar.gz" >> $GITHUB_OUTPUT
+
+      - name: Extract changelog for the tag
+        id: extract_changelog
+        run: just create-notes ${{ github.ref_name }} release_notes.md CHANGELOG.md
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ${{ steps.artifact_name.outputs.path }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: ${{ needs.prerelease.outputs.value }}
+          token: ${{ secrets.PAT }}
+
+  checksum:
+    # This job downloads all published artifacts and creates a checksum file.
+    runs-on: ubuntu-latest
+    needs:
+      - package # Wait for all package jobs to potentially complete
+      - prerelease
+    # Only run for tag pushes
+    if: startsWith(github.ref, 'refs/tags/')
+
+    environment:
+      name: main
+
+    steps:
+      - name: Install GitHub CLI
+        run: sudo apt-get update && sudo apt-get install -y gh
+
+      - name: Download Release Archives
+        env:
+          # Use PAT for gh CLI authentication
+          GH_TOKEN: ${{ secrets.PAT }}
+          # Get the tag name from the ref
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          gh release download "$TAG_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern '*' \
+            --dir release
+
+      - name: Create Checksums
+        run: |
+          find release/ -type f \
+          ! -name "checksums.sha256" \
+          ! -name "README*" \
+          ! -name "*.sha256" \
+          -print0 \
+          | while IFS= read -r -d '' file; do
+            sha256sum "$file" > "$file.sha256"
+          done
+
+
+      - name: Publish Individual Checksums
+        uses: softprops/action-gh-release@v2
+        with:
+          # Use a wildcard to upload all generated .sha256 files from the release dir
+          files: release/*.sha256
+          draft: false
+          prerelease: ${{ needs.prerelease.outputs.value }}
+          token: ${{ secrets.PAT }}
