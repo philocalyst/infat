@@ -50,13 +50,13 @@ checksum directory=(output_directory):
 	@echo "✅ Checksums created!"
 
 # ===== Run =====
-run +args:
+run +args="":
 	@echo "▶️ Running (debug)…"
 	swift run {{default_bin}} {{args}}
 
 run-release +args:
 	@echo "▶️ Running (release)…"
-	{{release_bin}} {{args}}
+	swift run --release {{release_bin}} {{args}}
 
 # ===== Cleaning =====
 clean:
