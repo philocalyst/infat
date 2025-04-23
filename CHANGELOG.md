@@ -6,6 +6,18 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.3.0] – 2025-04-23
+
+### Added
+- Support loading configuration from the XDG config directory (`$XDG_CONFIG_HOME/infat/config.toml`) when no `--config` flag is supplied.  
+- Add a `Justfile` with curated recipes for:
+  - building (debug / release)  
+  - running (debug / release)  
+  - packaging and compressing binaries  
+  - generating checksums  
+  - installing (and force-installing)  
+  - cleaning and updating dependencies  
+
 ## [0.2.0] - 2025-04-22
 
 ### Added
@@ -48,4 +60,5 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Addressed minor code formatting inconsistencies across several files.
 
 [Unreleased]: https://github.com/philocalyst/infat/compare/d32aec000bf040c48887f104decf4a9736aea78b...HEAD
+[0.3.0]: https://github.com/philocalyst/infat/compare/v0.2.0...v0.3.0  
 [0.2.0]: https://github.com/philocalyst/infat/compare/63822faf94def58bf347f8be4983e62da90383bb...d32aec000bf040c48887f104decf4a9736aea78b (Comparing agaisnt the start of the project)
