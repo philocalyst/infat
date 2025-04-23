@@ -22,7 +22,7 @@ build:
 
 build-release:
 	@echo "🚀 Building Swift package (release)…"
-	swift build -c release
+	swift build -c release -Xswiftc "-whole-module-optimization"
 
 # ===== Packaging =====
 package: build-release
@@ -54,9 +54,9 @@ run +args="":
 	@echo "▶️ Running (debug)…"
 	swift run {{default_bin}} {{args}}
 
-run-release +args:
+run-release +args="":
 	@echo "▶️ Running (release)…"
-	swift run --release {{release_bin}} {{args}}
+	swift run -c release -Xswiftc "-whole-module-optimization" {{release_bin}} {{args}}
 
 # ===== Cleaning =====
 clean:
