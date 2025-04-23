@@ -49,6 +49,49 @@ checksum directory=(output_directory):
 	    -exec sh -c 'sha256sum "$1" > "$1.sha256"' _ {} \;
 	@echo "✅ Checksums created!"
 
+create-notes raw_tag outfile changelog:
+    #!/usr/bin/env bash
+    
+    tag_v="{{raw_tag}}"
+    tag="${tag_v#v}" # Remove prefix v
+
+    # Changes header for release notes
+    printf "## Changes\n" > "{{outfile}}"
+
+    if [[ ! -f "{{changelog}}" ]]; then
+      echo "Error: {{changelog}} not found." >&2
+      exit 1
+    fi
+
+    echo "Extracting notes for tag: {{raw_tag}} (searching for section [$tag])"
+    # Use awk to extract the relevant section from the changelog
+    awk -v tag="$tag" '
+      # start printing when we see "## [<tag>]" (escape brackets for regex)
+      $0 ~ ("^## \\[" tag "\\]") { printing = 1; next }
+      # stop as soon as we hit the next "## [" section header
+      printing && /^## \[/       { exit }
+      # otherwise, if printing is enabled, print the current line
+      printing                    { print }
+
+      # Error handling
+      END {
+        if (found_section != 0) {
+          # Print error to stderr
+          print "Error: awk could not find section header ## [" tag "] in " changelog_file > "/dev/stderr"
+          exit 1
+        }
+      }
+    ' "{{changelog}}" >> "{{outfile}}"
+
+    # Check if the output file has content
+    if [[ -s {{outfile}} ]]; then
+      echo "Successfully extracted release notes to '{{outfile}}'."
+    else
+      # Output a warning if no notes were found for the tag
+      echo "Warning: '{{outfile}}' is empty. Is '## [$tag]' present in '{{changelog}}'?" >&2
+    fi
+
+
 # ===== Run =====
 run +args="":
 	@echo "▶️ Running (debug)…"
