@@ -6,6 +6,26 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.4.0] – 2025-04-24
+
+### Added
+* Config support for schemes
+* Bind subcommand to set URL scheme associations
+* GitHub workflow for automated releases
+* `create-notes` just recipe to extract changelog entries for release notes
+
+### Changed
+* Moved app name resolution logic to a function for better reusability
+* Changed argument order in `setURLHandler` function
+* Optimized Swift release flags for better performance
+* Updated changelog to reflect the current state of the project
+
+### Deprecated
+* Associations table in config; it has been replaced by separate tables for files and schemes
+
+### Fixed
+* Logic in the Bind command to correctly handle application URL resolution and error handling
+
 ## [0.3.0] – 2025-04-23
 
 ### Added
@@ -60,5 +80,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Addressed minor code formatting inconsistencies across several files.
 
 [Unreleased]: https://github.com/philocalyst/infat/compare/d32aec000bf040c48887f104decf4a9736aea78b...HEAD
+[0.4.0] https://github.com/philocalyst/infat/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/philocalyst/infat/compare/v0.2.0...v0.3.0  
 [0.2.0]: https://github.com/philocalyst/infat/compare/63822faf94def58bf347f8be4983e62da90383bb...d32aec000bf040c48887f104decf4a9736aea78b (Comparing agaisnt the start of the project)
