@@ -16,13 +16,13 @@ release_bin      := build_dir + "/release/{{default_bin}}"
 default: build
 
 # ===== Build & Check =====
-build:
+build target="arm64-apple-macos":
 	@echo "🔨 Building Swift package (debug)…"
-	swift build
+	swift build --triple {{target}}
 
-build-release:
+build-release target="arm64-apple-macos":
 	@echo "🚀 Building Swift package (release)…"
-	swift build -c release -Xswiftc "-whole-module-optimization"
+	swift build -c release -Xswiftc "-whole-module-optimization" --triple {{target}}
 
 # ===== Packaging =====
 package: build-release
