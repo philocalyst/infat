@@ -25,7 +25,8 @@ build-release target="arm64-apple-macos":
 	swift build -c release -Xswiftc "-whole-module-optimization" --triple {{target}} -Xlinker "-dead_strip"
 
 # ===== Packaging =====
-package: build-release
+package target="arm64-apple-macos": 
+	just build-release {{target}}
 	@echo "📦 Packaging release binary…"
 	@mkdir -p {{output_directory}}
 	@cp {{release_bin}} "{{output_directory}}/{{default_bin}}"
