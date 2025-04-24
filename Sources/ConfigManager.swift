@@ -18,5 +18,20 @@ struct ConfigManager {
 			try setDefaultApplication(appName: appName, fileType: ext)
 			print("Set .\(ext) → \(appName)")
 		}
+		// Set openers for schemes
+		guard let associationsTable = tomlConfig.table("schemes") else {
+			throw InfatError.tomlTableNotFoundError(
+				path: configPath, table: "schemes")
+		}
+		for key in associationsTable.keyNames {
+			guard let appName = associationsTable.string(key.components) else {
+				throw InfatError.tomlValueNotString(
+					path: configPath, key: key.components.joined())
+			}
+			let scheme = key.components.joined()
+			try setURLHandler(appName: appName, scheme: scheme)
+			print("Set \(scheme) → \(appName)")
+		}
+
 	}
 }
