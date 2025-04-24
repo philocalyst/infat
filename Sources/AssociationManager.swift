@@ -18,6 +18,14 @@ func getBundleName(appURL: URL) throws -> String? {
     }
 }
 
+func setURLHandler(scheme: String, appURL: URL) throws {
+    // Register the URL in the launch services database, and yes, update information for the app if it already exists.
+    let resultCode = LSRegisterURL(appURL as CFURL, true)
+    if resultCode != 0 {
+        throw InfatError.cannotRegisterURL(error: resultCode)
+    }
+}
+
 func findApplication(applications: [URL], key: String) -> URL? {
     for app in applications {
         let name = app.deletingPathExtension().lastPathComponent
