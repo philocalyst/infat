@@ -32,14 +32,21 @@ package: build-release
 	@echo "✅ Packaged → {{output_directory}}/{{default_bin}}"
 
 compress-binaries target_directory=("."):
-	@echo "🗜 Compressing binaries in {{target_directory}}…"
-	@find "{{target_directory}}" -maxdepth 1 -type f -executable \
-		-print0 | \
-	  xargs -0 -I {} bash -c ' \
-	    if file "{}" | grep -qE "Mach-O.*executable"; then \
-	      tar -czvf "{}.tar.gz" "{}"; \
-	    fi \
-	  '
+    #!/usr/bin/env bash
+    
+    find "{{target_directory}}" -maxdepth 1 -type f -print0 | while IFS= read -r -d $'\0' file; do
+
+    # Check if the file command output indicates a binary/executable type
+    if file "$file" | grep -q -E 'executable|ELF|Mach-O|shared object'; then
+        # Get the base filename without the prepending components
+        filename=$(basename "$file")
+        echo "Archiving binary file: $filename"
+        # Create a compressed tar archive named after the original file
+        tar -czvf "${file}.tar.gz" "$file"
+    fi
+    done
+
+
 
 checksum directory=(output_directory):
 	@echo "🔒 Creating checksums in {{directory}}…"
