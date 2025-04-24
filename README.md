@@ -14,12 +14,18 @@ Infat is designed for power users and system administrators who need fine-graine
 
 ## Installation
 
+```shell
+# Using my tap until it is approved
+brew install philocalyst/tap/infat
+```
+
+### From source
 ```bash
-# Installation instructions coming soon
 # For now, clone the repository and build from source
+# Make sure you have the just runner installed
 git clone https://github.com/philocalyst/infat.git
 cd infat
-swift build -c release
+just build-release
 ```
 
 ## Coming Soon
