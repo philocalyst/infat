@@ -29,8 +29,8 @@ package target="arm64-apple-macos":
 	just build-release {{target}}
 	@echo "📦 Packaging release binary…"
 	@mkdir -p {{output_directory}}
-	@cp {{release_bin}} "{{output_directory}}/{{default_bin}}"
-	@echo "✅ Packaged → {{output_directory}}/{{default_bin}}"
+	@cp {{release_bin}} "{{output_directory}}/{{default_bin}}-{{target}}"
+	@echo "✅ Packaged → {{output_directory}}/{{default_bin}}-{{target}}"
 
 compress-binaries target_directory=("."):
     #!/usr/bin/env bash
