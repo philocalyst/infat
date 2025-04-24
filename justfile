@@ -7,6 +7,7 @@ set allow-duplicate-recipes := true
 # ===== Variables =====
 project_root     := justfile_directory()
 output_directory := project_root + "/dist"
+current_platform := `uname -m` + "-apple-macos"
 default_bin      := "infat"
 build_dir        := project_root + "/.build"
 debug_bin        := build_dir + "/debug/" + default_bin
@@ -16,21 +17,21 @@ release_bin      := build_dir + "/release/" + default_bin
 default: build
 
 # ===== Build & Check =====
-build target="arm64-apple-macos":
+build target=(current_platform):
 	@echo "🔨 Building Swift package (debug)…"
 	swift build --triple {{target}}
 
-build-release target="arm64-apple-macos":
+build-release target=(current_platform):
 	@echo "🚀 Building Swift package (release)…"
 	swift build -c release -Xswiftc "-whole-module-optimization" --triple {{target}} -Xlinker "-dead_strip"
 
 # ===== Packaging =====
-package target="arm64-apple-macos": 
+package target=(current_platform) result_directory=(output_directory): 
 	just build-release {{target}}
 	@echo "📦 Packaging release binary…"
 	@mkdir -p {{output_directory}}
-	@cp {{release_bin}} "{{output_directory}}/{{default_bin}}-{{target}}"
-	@echo "✅ Packaged → {{output_directory}}/{{default_bin}}-{{target}}"
+	@cp {{release_bin}} "{{result_directory}}/{{default_bin}}-{{target}}"
+	@echo "✅ Packaged → {{result_directory}}/{{default_bin}}-{{target}}"
 
 compress-binaries target_directory=("."):
     #!/usr/bin/env bash
