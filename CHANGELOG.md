@@ -6,6 +6,21 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.0] - 2025-04-24
+
+### Added
+- Support for URL‐scheme associations in the `set` command via a new `--scheme` option  
+- `InfatError.conflictingOptions` error case to enforce mutual exclusion of `--file-type` and `--scheme`  
+- Unified binding functionality—`set` now handles both file‐type and URL‐scheme associations, replacing the standalone `bind` command  
+
+### Changed
+- Merged the former `bind` subcommand into `set` and switched its parameters from positional arguments to named options  
+- Updated the `justfile` changelog target to use a top‐level `# What's new` header instead of `## Changes`  
+
+### Removed
+- Removed the standalone `Bind` subcommand and its `Bind.swift` implementation  
+- Removed the `Info` subcommand (and `Info.swift`), which previously displayed system information  
+
 ## [0.6.0] - 2025-04-24
 
 ### Added
@@ -106,11 +121,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Addressed minor code formatting inconsistencies across several files.
 
 [Unreleased]: https://github.com/philocalyst/infat/compare/d32aec000bf040c48887f104decf4a9736aea78b...HEAD
-[0.6.0] https://github.com/philocalyst/infat/compare/v0.5.3...v0.6.0
-[0.5.3] https://github.com/philocalyst/infat/compare/v0.5.2...v0.5.3
-[0.5.2] https://github.com/philocalyst/infat/compare/v0.5.1...v0.5.2
-[0.5.1] https://github.com/philocalyst/infat/compare/v0.5.0...v0.5.1
-[0.5.0] https://github.com/philocalyst/infat/compare/v0.4.0...v0.5.0
-[0.4.0] https://github.com/philocalyst/infat/compare/v0.3.0...v0.4.0
+[0.6.3]: https://github.com/philocalyst/infat/compare/v0.6.0...v1.0.0 
+[0.6.0]: https://github.com/philocalyst/infat/compare/v0.5.3...v0.6.0
+[0.5.3]: https://github.com/philocalyst/infat/compare/v0.5.2...v0.5.3
+[0.5.2]: https://github.com/philocalyst/infat/compare/v0.5.1...v0.5.2
+[0.5.1]: https://github.com/philocalyst/infat/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/philocalyst/infat/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/philocalyst/infat/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/philocalyst/infat/compare/v0.2.0...v0.3.0  
 [0.2.0]: https://github.com/philocalyst/infat/compare/63822faf94def58bf347f8be4983e62da90383bb...d32aec000bf040c48887f104decf4a9736aea78b (Comparing agaisnt the start of the project)
