@@ -22,7 +22,7 @@ build target="arm64-apple-macos":
 
 build-release target="arm64-apple-macos":
 	@echo "🚀 Building Swift package (release)…"
-	swift build -c release -Xswiftc "-whole-module-optimization" --triple {{target}}
+	swift build -c release -Xswiftc "-whole-module-optimization" --triple {{target}} -Xlinker "-dead_strip"
 
 # ===== Packaging =====
 package: build-release
