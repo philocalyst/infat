@@ -6,6 +6,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.5.1] - 2025-04-24
+
+### Fixed
+* Fixed logging to print diff in List command.
+* Fixed Swift version in release workflow to a specific version instead of 'latest'.
+
 ## [0.5.0] – 2025-04-24
 
 ### Fixed
@@ -85,6 +91,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Addressed minor code formatting inconsistencies across several files.
 
 [Unreleased]: https://github.com/philocalyst/infat/compare/d32aec000bf040c48887f104decf4a9736aea78b...HEAD
+[0.5.1] https://github.com/philocalyst/infat/compare/v0.5.0...v0.5.1
+[0.5.0] https://github.com/philocalyst/infat/compare/v0.4.0...v0.5.0
 [0.4.0] https://github.com/philocalyst/infat/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/philocalyst/infat/compare/v0.2.0...v0.3.0  
 [0.2.0]: https://github.com/philocalyst/infat/compare/63822faf94def58bf347f8be4983e62da90383bb...d32aec000bf040c48887f104decf4a9736aea78b (Comparing agaisnt the start of the project)
