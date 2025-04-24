@@ -4,13 +4,15 @@ import Toml
 
 struct ConfigManager {
 	static func loadConfig(from configPath: String) throws {
-		let toml = try Toml(contentsOfFile: configPath)
-		guard let table = toml.table("associations") else {
+		let tomlConfig = try Toml(contentsOfFile: configPath)
+
+		// Set openers for file types
+		guard let associationsTable = tomlConfig.table("files") else {
 			throw InfatError.tomlTableNotFoundError(
-				path: configPath, table: "associations")
+				path: configPath, table: "files")
 		}
-		for key in table.keyNames {
-			guard let appName = table.string(key.components) else {
+		for key in associationsTable.keyNames {
+			guard let appName = associationsTable.string(key.components) else {
 				throw InfatError.tomlValueNotString(
 					path: configPath, key: key.components.joined())
 			}
@@ -18,6 +20,7 @@ struct ConfigManager {
 			try setDefaultApplication(appName: appName, fileType: ext)
 			print("Set .\(ext) → \(appName)")
 		}
+
 		// Set openers for schemes
 		guard let associationsTable = tomlConfig.table("schemes") else {
 			throw InfatError.tomlTableNotFoundError(
