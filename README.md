@@ -111,6 +111,7 @@ brew install philocalyst/tap/infat
 
 ### From Source
 
+Please make sure just (Our command-runner) is installed before running. If you don't want to use just, the project is managed with SPM, and you can build with "Swift build -c release" and move the result in the .build folder to wherever. 
 ```bash
 git clone https://github.com/philocalyst/infat.git && cd infat
 just package && mv dist/infat* /usr/local/bin/infat # Wildcard because output name includes platform
