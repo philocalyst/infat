@@ -64,7 +64,7 @@ create-notes raw_tag outfile changelog:
     tag="${tag_v#v}" # Remove prefix v
 
     # Changes header for release notes
-    printf "## Changes\n" > "{{outfile}}"
+    printf "# What's new\n" > "{{outfile}}"
 
     if [[ ! -f "{{changelog}}" ]]; then
       echo "Error: {{changelog}} not found." >&2
