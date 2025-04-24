@@ -13,7 +13,7 @@ extension Infat {
 		var scheme: String
 
 		mutating func run() throws {
-				try setURLHandler(scheme: scheme, appURL: appURL)
+			try setURLHandler(appName: appName, scheme: scheme)
 			print("Successfully bound \(appName) to \(scheme)")
 
 		}

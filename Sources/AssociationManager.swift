@@ -18,7 +18,7 @@ func getBundleIdentifier(appURL: URL) throws -> String? {
     }
 }
 
-func setURLHandler(scheme: String, appURL: URL) throws {
+func setURLHandler(appName: String, scheme: String) throws {
     let apps = try FileSystemUtilities.findApplications()
     let applicationURL = findApplication(applications: apps, key: appName)
     if let appURL = applicationURL {
