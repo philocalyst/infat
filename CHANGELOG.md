@@ -6,6 +6,27 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.1.0] – 2025-04-24
+
+### Added
+- Add MIT License (`LICENSE`) under the MIT terms.
+- Justfile enhancements:
+  - Require `just` (command-runner) in documentation.
+  - Introduce a `package` recipe (`just package`) to build and bundle release binaries.
+  - Detect `current_platform` dynamically via `uname -m`.
+- GitHub Actions release workflow: enable `overwrite: true` in `release.yml`.
+
+### Changed
+- Migrate `setDefaultApplication` and `ConfigManager.loadConfig` to async/await; remove semaphore-based callbacks.
+- Simplify UTI resolution by passing `typeIdentifier` directly.
+- Documentation updates:
+  - Clarify README summary and usage examples for file-type and URL-scheme associations.
+  - Revamp badges and stylistic copy (“ultra-powerful” intro, more user-friendly tone).
+  - Streamline source installation instructions (use `just package` and wildcard install).
+
+### Fixed
+- Remove redundant separators in README.
+
 ## [1.0.0] - 2025-04-24
 
 ### Added
@@ -120,8 +141,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Corrected the bundle ID used internally and for logging from `com.example.burt` to `com.philocalyst.infat`.
 - Addressed minor code formatting inconsistencies across several files.
 
-[Unreleased]: https://github.com/philocalyst/infat/compare/d32aec000bf040c48887f104decf4a9736aea78b...HEAD
-[0.6.3]: https://github.com/philocalyst/infat/compare/v0.6.0...v1.0.0 
+[Unreleased]: https://github.com/philocalyst/infat/compare/v1.1.1...HEAD
+[1.1.0]: https://github.com/philocalyst/infat/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/philocalyst/infat/compare/v0.6.0...v1.0.0 
 [0.6.0]: https://github.com/philocalyst/infat/compare/v0.5.3...v0.6.0
 [0.5.3]: https://github.com/philocalyst/infat/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/philocalyst/infat/compare/v0.5.1...v0.5.2
