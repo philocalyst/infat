@@ -9,7 +9,7 @@ Infat is an ultra-powerful, macOS-native CLI tool for declaritively managing bot
 
 ## Summary
 
-- List which apps open a given file extension or URL scheme  
+- List which apps open for a given file extension or URL scheme (Like when you double click a file in Finder)
 - Set a default application for a file extension or URL scheme  
 - Load associations from a TOML config (`[files]` and `[schemes]` tables)  
 - Verbose, scriptable, and ideal for power users and admins  
