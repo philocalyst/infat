@@ -6,6 +6,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.5.0] – 2025-04-24
+
+### Fixed
+* Wrong swift toolchain action
+
 ## [0.4.0] – 2025-04-24
 
 ### Added
