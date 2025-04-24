@@ -3,7 +3,7 @@
 [![Swift Version](https://badgen.net/static/Swift/6.0/orange)](https://swift.org)
 [![Apple Platform](https://badgen.net/badge/icon/macOS%2013+?icon=apple&label)](https://developer.apple.com/macOS)
 
-Infat is a powerful, macOS-native CLI tool for managing both file-type and URL-scheme associations declaritively. Bind your openers in weird and undefined ways! MacOS doesn't care, honestly.
+Infat is an ultra-powerful, macOS-native CLI tool for declaritively managing both file-type and URL-scheme associations. Avoid the hassle of navigating sub-menus to setup your default browser or image viewer, and the pain of doing that *every time* you get a new machine. Setup the rules once, and bask in your own ingenuity forevermore. Take back control, and bind your openers to whatever. You. Want. Override everything! Who's going to stop you?
 
 ---
 
