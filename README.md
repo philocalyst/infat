@@ -1,154 +1,152 @@
-# Infat
+# Welcome to Infat
 
-A powerful CLI tool for managing file type associations on macOS. Infat provides a simple and elegant way to view, set, and manage file type associations through NSWorkspace.
-
-Infat is designed for power users and system administrators who need fine-grained control over file associations. It offers a streamlined interface for managing which applications open which file types.
-
-## Features
-
-- **List file type associations** - See which applications are registered to open specific file types
-- **Set default applications** - Change which application opens a specific file type
-- **View system information** - Display useful information about the current system state
-- **Standardized TOML Configuration** - Maintain a config file for versioning and the like. Supports a standard location at XDG_CONFIG_HOME/infat/config.toml 
-- **Comprehensive logging** -  Verbose logging options for troubleshooting
-
-## Installation
-
-```shell
-# Using my tap until it is approved
-brew install philocalyst/tap/infat
-```
-
-### From source
-```bash
-# For now, clone the repository and build from source
-# Make sure you have the just runner installed
-git clone https://github.com/philocalyst/infat.git
-cd infat
-just build-release
-```
-
-## Coming Soon
-
-- **Support for early MacOS** - Should be able to get it dated to OSX initial release!
-
-> **Note:** The info subcommand is not fully implemented yet but is coming in future releases! Any help is appreciated :)
-
-## Tutorial
-
-Infat follows a simple command structure with three main subcommands: `list`, `set`, and `info`.
-
-### List Command
-
-The `list` command shows which applications are registered to open specific file types.
-
-```bash
-# Show the default application for opening .txt files
-infat list txt
-
-# Show all applications registered to open .txt files
-infat list --all txt
-```
-
-### Set Command
-
-
-The `set` command changes which application opens a specific file type.
-
-```bash
-# Set TextEdit as the default application for .md files
-infat set TextEdit md
-
-# Set VSCode as the default application for .json files
-infat set VSCode json
-```
-
-### Info Command
-
-The `info` command displays system information, such as the currently active application.
-
-Not implemented yet.
-
-```bash
-# Show system information
-infat info
-```
-
-
-### Configuration
-
-Create a TOML file with a table "associations"
-
-And add assocations in this format:
-
-EXTENSION = "APP"
-
-Example:
-```Toml
-[associations]
-toml = "Preview"
-```
-
-## Examples
-
-Here are some common use cases for Infat:
-
-### Change PDF viewer
-
-```bash
-# Set PDF files to open with Preview instead of Adobe Acrobat
-infat set Preview pdf
-```
-
-### Fix broken file associations
-
-```bash
-# Reset .html files to open with Safari
-infat set Safari html
-```
-
-### Check current associations
-
-```bash
-# Check which application is set to open .mp4 files
-infat list mp4
-```
-
-## Debugging
-
-Since Infat manipulates system settings, debugging can sometimes be necessary. Use the verbose and debug flags for more information:
-
-```bash
-# Enable verbose logging
-infat --verbose set TextEdit txt
-
-# Enable debug logging (even more verbose)
-infat --debug list pdf
-```
-
-## Libraries used by Infat
-
-- [ArgumentParser](https://github.com/apple/swift-argument-parser) - Command-line interface parsing
-- [PListKit](https://github.com/hhas/Swift-PListKit) - Property list handling
-- [Toml](https://github.com/jdfergason/swift-toml) - TOML configuration file parsing
-- [Logging](https://github.com/apple/swift-log) - Structured logging
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-[MIT](LICENSE)
-
-Made with massive inspiration of Duti https://github.com/moretension/duti, which is effective on earlier versions of macOS even now!
+Infat is a powerful, macOS-native CLI tool for managing both file-type and URL-scheme associations declaritively. Bind your openers in weird and undefined ways! MacOS doesn't care, honestly.
 
 ---
 
-Made under duress by Miles :)
+## Summary
+
+- List which apps open a given file extension or URL scheme  
+- Set a default application for a file extension or URL scheme  
+- Load associations from a TOML config (`[files]` and `[schemes]` tables)  
+- Verbose, scriptable, and ideal for power users and admins  
+
+---
+
+## Get Started
+
+Get started by installing Infat — jump to the [Install](#install) section below.
+
+---
+
+## Tutorial
+
+### 1. Listing Associations
+
+```bash
+# Show the default app for .txt files
+infat list txt
+
+# Show all registered apps for .txt files
+infat list --assigned txt
+```
+
+### 2. Setting a Default Application
+
+```bash
+# Use TextEdit for .md files
+infat set TextEdit --file-type md
+
+# Use VSCode for .json files
+infat set VSCode --file-type json
+```
+
+### 3. Binding a URL Scheme
+
+```bash
+# Use Mail.app for mailto: links
+infat set Mail --scheme mailto
+```
+
+### 4. Configuration
+
+Place a TOML file at `$XDG_CONFIG_HOME/infat/config.toml` (or pass `--config path/to/config.toml`) with two tables:
+
+```toml
+[files]
+md    = "TextEdit"
+html  = "Safari"
+pdf   = "Preview"
+
+[schemes]
+mailto = "Mail"
+web    = "Safari"
+```
+
+Run without arguments to apply all entries.
+
+```bash
+infat --config ~/.config/infat/config.toml
+```
+
+---
+
+## Design Philosophy
+
+- **Minimal & Scriptable**  
+  Infat is a single-binary tool that plays well in shells and automation pipelines.
+
+- **macOS-First**  
+  Leverages native `NSWorkspace`, Launch Services, and UTType for robust integration.
+
+- **Declarative Configuration**  
+  TOML support allows you to version-control your associations alongside other dotfiles.
+
+---
+
+## Building and Debugging
+
+You’ll need [just](https://github.com/casey/just) and Swift 5.9+:
+
+```bash
+# Debug build
+just build
+
+# Release build
+just build-release
+
+# Run in debug mode
+just run "list txt"
+
+# Enable verbose logging for troubleshooting
+infat --verbose list pdf
+```
+
+---
+
+## Install
+
+### Homebrew
+
+```bash
+brew install philocalyst/tap/infat
+```
+
+### From Source
+
+```bash
+git clone https://github.com/philocalyst/infat.git
+cd infat
+just build-release
+cp .build/release/infat /usr/local/bin/infat
+```
+
+---
+
+## Changelog
+
+For the full history of changes, see [CHANGELOG.md](CHANGELOG.md).
+
+---
+
+## Libraries Used
+
+- [ArgumentParser](https://github.com/apple/swift-argument-parser)  
+- [swift-log](https://github.com/apple/swift-log)  
+- [PListKit](https://github.com/orchetect/PListKit)  
+- [swift-toml](https://github.com/jdfergason/swift-toml)  
+
+---
+
+## Acknowledgements
+
+- Inspired by [duti](https://github.com/moretension/duti)  
+- Built with Swift, thanks to corporate overlord Apple’s frameworks  
+- Thanks to all contributors and issue submitters (One day!!)
+
+---
+
+## License
+
+Infat is licensed under the [MIT License](LICENSE).  
+Feel free to use, modify, and distribute!
