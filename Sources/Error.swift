@@ -5,6 +5,7 @@ enum InfatError: Error, LocalizedError {
 	case cannotSetURL(appName: String)
 	case cannotRegisterURL(error: Int32)
 	case unsupportedOSVersion
+	case conflictingOptions(error: String)
 	case directoryReadError(path: String, underlyingError: Error)
 	case pathExpansionError(path: String)
 	case applicationNotFound(name: String)
@@ -21,6 +22,8 @@ enum InfatError: Error, LocalizedError {
 		switch self {
 		case .cannotDetermineUTI:
 			return "Cannot determine UTI for the specified file"
+		case .conflictingOptions(let str):
+			return str
 		case .cannotRegisterURL(let error):
 			return "Cannot register provided URL, got error \(error)"
 		case .cannotSetURL(let app):
