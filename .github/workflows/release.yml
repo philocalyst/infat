@@ -107,7 +107,7 @@ jobs:
         # Set flags combining global and target-specific flags for swift build inside just
         env:
           SWIFT_FLAGS: ${{ matrix.target_flags }}
-        # Run the just recipe, passing the target from the matrix
+        # Run the just recipe, passing the target from the matrix, outputs to "dist/"
         run: just package ${{ matrix.target }}
 
       - name: Compress the binaries
@@ -118,6 +118,7 @@ jobs:
         id: artifact_name
         run: |
           ARTIFACT_PATH="dist/${{ env.BINARY_NAME }}-${{ matrix.target }}"
+          # Get the archived version
           echo "path=${ARTIFACT_PATH}.tar.gz" >> $GITHUB_OUTPUT
 
       - name: Extract changelog for the tag
