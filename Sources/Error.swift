@@ -2,6 +2,7 @@ import Foundation
 
 enum InfatError: Error, LocalizedError {
 	case cannotDetermineUTI
+	case cannotSetURL(appName: String)
 	case cannotRegisterURL(error: Int32)
 	case unsupportedOSVersion
 	case directoryReadError(path: String, underlyingError: Error)
@@ -22,6 +23,8 @@ enum InfatError: Error, LocalizedError {
 			return "Cannot determine UTI for the specified file"
 		case .cannotRegisterURL(let error):
 			return "Cannot register provided URL, got error \(error)"
+		case .cannotSetURL(let app):
+			return "Cannot set scheme for app \(app)"
 		case .unsupportedOSVersion:
 			return "This functionality requires a later version of macOS"
 		case .directoryReadError(let path, let error):
