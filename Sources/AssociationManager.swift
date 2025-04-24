@@ -19,22 +19,27 @@ func getBundleIdentifier(appURL: URL) throws -> String? {
 }
 
 func setURLHandler(scheme: String, appURL: URL) throws {
-    let appBundleIdentifier = try getBundleIdentifier(appURL: appURL)
-    if let appBundleID = appBundleIdentifier {
-        // Register the URL in the launch services database, and yes, update information for the app if it already exists.
-        let registerResultCode = LSRegisterURL(appURL as CFURL, true)
-        if registerResultCode != 0 {
-            throw InfatError.cannotRegisterURL(error: registerResultCode)
-        }
+    let apps = try FileSystemUtilities.findApplications()
+    let applicationURL = findApplication(applications: apps, key: appName)
+    if let appURL = applicationURL {
 
-        // Takes URL scheme and bundle ID, as CF strings and sets the handler using a deprecated method. Risky code, until big papa Apple releases an alternative.
-        let setResultCode = LSSetDefaultHandlerForURLScheme(
-            scheme as CFString, appBundleID as CFString)
-        if setResultCode != 0 {
-            throw InfatError.cannotRegisterURL(error: setResultCode)
+        let appBundleIdentifier = try getBundleIdentifier(appURL: appURL)
+        if let appBundleID = appBundleIdentifier {
+            // Register the URL in the launch services database, and yes, update information for the app if it already exists.
+            let registerResultCode = LSRegisterURL(appURL as CFURL, true)
+            if registerResultCode != 0 {
+                throw InfatError.cannotRegisterURL(error: registerResultCode)
+            }
+
+            // Takes URL scheme and bundle ID, as CF strings and sets the handler using a deprecated method. Risky code, until big papa Apple releases an alternative.
+            let setResultCode = LSSetDefaultHandlerForURLScheme(
+                scheme as CFString, appBundleID as CFString)
+            if setResultCode != 0 {
+                throw InfatError.cannotRegisterURL(error: setResultCode)
+            }
+        } else {
+            throw InfatError.cannotSetURL(appName: appURL.path())
         }
-    } else {
-        throw InfatError.cannotSetURL(appName: appURL.path())
     }
 }
 

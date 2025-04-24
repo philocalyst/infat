@@ -13,13 +13,9 @@ extension Infat {
 		var scheme: String
 
 		mutating func run() throws {
-			let apps = try FileSystemUtilities.findApplications()
-			let applicationURL = findApplication(applications: apps, key: appName)
-			if let appURL = applicationURL {
 				try setURLHandler(scheme: scheme, appURL: appURL)
-			} else {
-				throw InfatError.applicationNotFound(name: appName)
-			}
+			print("Successfully bound \(appName) to \(scheme)")
+
 		}
 	}
 }
