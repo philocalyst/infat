@@ -2,7 +2,7 @@ import ArgumentParser
 import Logging
 
 extension Infat {
-    struct Set: ParsableCommand {
+    struct Set: AsyncParsableCommand {
         static let configuration = CommandConfiguration(
             abstract: "Sets an application association."
         )
@@ -15,7 +15,7 @@ extension Infat {
         @Option(name: .long, help: "A URL scheme ex - mailto.")
         var scheme: String?
 
-        mutating func run() throws {
+        mutating func run() async throws {
             if fileType != nil && scheme != nil {
                 throw InfatError.conflictingOptions(
                     error:
@@ -23,7 +23,7 @@ extension Infat {
                 )
             }
             if let fType = fileType {
-                try setDefaultApplication(
+                try await setDefaultApplication(
                     appName: appName,
                     fileType: fType)
             } else if let schm = scheme {

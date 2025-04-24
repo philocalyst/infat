@@ -3,7 +3,7 @@ import Logging
 import Toml
 
 struct ConfigManager {
-	static func loadConfig(from configPath: String) throws {
+	static func loadConfig(from configPath: String) async throws {
 		let tomlConfig = try Toml(contentsOfFile: configPath)
 
 		// Set openers for file types
@@ -17,7 +17,7 @@ struct ConfigManager {
 					path: configPath, key: key.components.joined())
 			}
 			let ext = key.components.joined()
-			try setDefaultApplication(appName: appName, fileType: ext)
+			try await setDefaultApplication(appName: appName, fileType: ext)
 			print("Set .\(ext) → \(appName)")
 		}
 

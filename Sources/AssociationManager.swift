@@ -55,28 +55,17 @@ func findApplication(applications: [URL], key: String) -> URL? {
     return nil
 }
 
-func setDefaultApplication(appName: String, fileType: String) throws {
+func setDefaultApplication(appName: String, fileType: String) async throws {
     let workspace = NSWorkspace.shared
     let apps = try FileSystemUtilities.findApplications()
     guard let appURL = findApplication(applications: apps, key: appName) else {
         throw InfatError.applicationNotFound(name: appName)
     }
     let utiInfo = try FileSystemUtilities.deriveUTIFromExtension(extention: fileType)
-    let sem = DispatchSemaphore(value: 0)
-    var opError: Error? = nil
 
-    workspace.setDefaultApplication(
+    try await workspace.setDefaultApplication(
         at: appURL,
         toOpen: utiInfo.typeIdentifier
-    ) {
-        opError = $0
-        sem.signal()
-    }
-    if sem.wait(timeout: .now() + 10) == .timedOut {
-        throw InfatError.operationTimeout
-    }
-    if let err = opError {
-        throw InfatError.defaultAppSettingError(underlyingError: err)
-    }
+    )
     logger.info("Set default app for .\(fileType) to \(appName)")
 }
