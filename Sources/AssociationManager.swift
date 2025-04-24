@@ -61,11 +61,12 @@ func setDefaultApplication(appName: String, fileType: String) async throws {
     guard let appURL = findApplication(applications: apps, key: appName) else {
         throw InfatError.applicationNotFound(name: appName)
     }
-    let utiInfo = try FileSystemUtilities.deriveUTIFromExtension(extention: fileType)
+    // Pass in the uniform type identifier for the extention
+    let UTI = try FileSystemUtilities.deriveUTIFromExtension(extention: fileType).typeIdentifier
 
     try await workspace.setDefaultApplication(
         at: appURL,
-        toOpen: utiInfo.typeIdentifier
+        toOpen: UTI
     )
     logger.info("Set default app for .\(fileType) to \(appName)")
 }
