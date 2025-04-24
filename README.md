@@ -14,13 +14,9 @@ Infat is a powerful, macOS-native CLI tool for managing both file-type and URL-s
 - Load associations from a TOML config (`[files]` and `[schemes]` tables)  
 - Verbose, scriptable, and ideal for power users and admins  
 
----
-
 ## Get Started
 
 Get started by installing Infat — jump to the [Install](#install) section below.
-
----
 
 ## Tutorial
 
@@ -85,8 +81,6 @@ infat --config ~/.config/infat/config.toml
 - **Declarative Configuration**  
   TOML support allows you to version-control your associations alongside other dotfiles.
 
----
-
 ## Building and Debugging
 
 You’ll need [just](https://github.com/casey/just) and Swift 5.9+:
@@ -124,13 +118,9 @@ just build-release
 cp .build/release/infat /usr/local/bin/infat
 ```
 
----
-
 ## Changelog
 
 For the full history of changes, see [CHANGELOG.md](CHANGELOG.md).
-
----
 
 ## Libraries Used
 
@@ -139,15 +129,11 @@ For the full history of changes, see [CHANGELOG.md](CHANGELOG.md).
 - [PListKit](https://github.com/orchetect/PListKit)  
 - [swift-toml](https://github.com/jdfergason/swift-toml)  
 
----
-
 ## Acknowledgements
 
 - Inspired by [duti](https://github.com/moretension/duti)  
 - Built with Swift, thanks to corporate overlord Apple’s frameworks  
 - Thanks to all contributors and issue submitters (One day!!)
-
----
 
 ## License
 
