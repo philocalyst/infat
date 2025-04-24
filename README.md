@@ -112,10 +112,8 @@ brew install philocalyst/tap/infat
 ### From Source
 
 ```bash
-git clone https://github.com/philocalyst/infat.git
-cd infat
-just build-release
-cp .build/release/infat /usr/local/bin/infat
+git clone https://github.com/philocalyst/infat.git && cd infat
+just package && mv dist/infat* /usr/local/bin/infat # Wildcard because output name includes platform
 ```
 
 ## Changelog
