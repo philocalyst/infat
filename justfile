@@ -9,8 +9,8 @@ project_root     := justfile_directory()
 output_directory := project_root + "/dist"
 default_bin      := "infat"
 build_dir        := project_root + "/.build"
-debug_bin        := build_dir + "/debug/{{default_bin}}"
-release_bin      := build_dir + "/release/{{default_bin}}"
+debug_bin        := build_dir + "/debug/" + default_bin
+release_bin      := build_dir + "/release/" + default_bin
 
 # ===== Default =====
 default: build
@@ -28,7 +28,7 @@ build-release target="arm64-apple-macos":
 package: build-release
 	@echo "📦 Packaging release binary…"
 	@mkdir -p {{output_directory}}
-	@cp {{release_bin}} {{output_directory}}/{{default_bin}}
+	@cp {{release_bin}} "{{output_directory}}/{{default_bin}}"
 	@echo "✅ Packaged → {{output_directory}}/{{default_bin}}"
 
 compress-binaries target_directory=("."):
