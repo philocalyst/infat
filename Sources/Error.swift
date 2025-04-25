@@ -1,7 +1,8 @@
 import Foundation
 
 enum InfatError: Error, LocalizedError {
-	case cannotDetermineUTI
+	case couldNotDeriveUTI(extension: String)
+	case infoPlistNotFound(appPath: String)
 	case unsupportedOrInvalidSupertype(name: String)
 	case cannotSetURL(appName: String)
 	case cannotRegisterURL(error: Int32)
@@ -21,8 +22,10 @@ enum InfatError: Error, LocalizedError {
 
 	var errorDescription: String? {
 		switch self {
-		case .cannotDetermineUTI:
-			return "Cannot determine UTI for the specified file"
+		case .couldNotDeriveUTI(let ext):
+			return "Cannot determine UTI for extension '.\(ext)'"
+		case .infoPlistNotFound(let appPath):
+			return "Info.plist not found within application bundle: \(appPath)"
 		case .conflictingOptions(let str):
 			return str
 		case .cannotRegisterURL(let error):
