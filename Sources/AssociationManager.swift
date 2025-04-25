@@ -10,7 +10,7 @@ func getBundleIdentifier(appURL: URL) throws -> String? {
         .appendingPathComponent("Contents")
         .appendingPathComponent("Info.plist")
     do {
-        let plist = try DictionaryPList(file: plistURL.path)
+        let plist = try DictionaryPList(url: plistURL)
         return plist.root.string(key: "CFBundleIdentifier").value
     } catch {
         throw InfatError.plistReadError(
@@ -81,7 +81,7 @@ func setDefaultApplication(appName: String, ext: String) async throws {
 
     // Derive UTType from the extension string
     guard let uti = UTType(filenameExtension: ext.lowercased()) else {
-        throw InfatError.cannotDetermineUTI
+        throw InfatError.couldNotDeriveUTI(msg: ext)
     }
 
     try await _setDefaultApplication(
