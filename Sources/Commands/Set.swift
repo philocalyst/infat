@@ -10,7 +10,7 @@ extension Infat {
         var appName: String
 
         @Option(name: .long, help: "A file extension without leading dot.")
-        var fileType: String?
+        var ext: String?
 
         @Option(name: .long, help: "A URL scheme. ex: mailto.")
         var scheme: String?
