@@ -9,6 +9,7 @@ import UniformTypeIdentifiers
 // in for situations where you couldn't derive the type from the extension alone (makefile for example)
 enum Supertypes: String, CaseIterable, ExpressibleByArgument {
 	// Text & Documents
+	case plainText = "plain-text"
 	case text = "text"
 	case csv = "csv"
 	case image = "image"
@@ -46,6 +47,7 @@ enum Supertypes: String, CaseIterable, ExpressibleByArgument {
 	var utType: UTType? {
 		switch self {
 		// Text & Documents
+		case .plainText: return .plainText
 		case .text: return .text
 		case .csv: return .commaSeparatedText  // Map to most common CSV UTI
 
