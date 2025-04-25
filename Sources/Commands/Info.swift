@@ -25,6 +25,10 @@ struct Info: ParsableCommand {
 			.filter { $0 }
 			.count
 
+		guard providedCount > 0 else {
+			throw InfatError.missingOption
+		}
+
 		guard providedCount == 1 else {
 			throw InfatError.conflictingOptions(
 				error:

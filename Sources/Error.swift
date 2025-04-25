@@ -2,6 +2,7 @@ import Foundation
 
 enum InfatError: Error, LocalizedError {
 	case couldNotDeriveUTI(msg: String)
+	case missingOption
 	case noConfigTables(path: String)
 	case infoPlistNotFound(appPath: String)
 	case unsupportedOrInvalidSupertype(name: String)
@@ -25,6 +26,8 @@ enum InfatError: Error, LocalizedError {
 		switch self {
 		case .couldNotDeriveUTI(let ext):
 			return "Cannot determine UTI for extension '.\(ext)'"
+		case .missingOption:
+			return "No option provided"
 		case .noConfigTables(let path):
 			return "No valid tables found in provided configuration at \(path)"
 		case .infoPlistNotFound(let appPath):
