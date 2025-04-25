@@ -4,12 +4,10 @@ import Foundation
 import PListKit
 import UniformTypeIdentifiers
 
-struct List: ParsableCommand {
+struct Info: ParsableCommand {
 	static let configuration = CommandConfiguration(
 		abstract: """
 			Lists file association information.
-			Provide --ext to see apps for an extension.
-			Provide --app to see types handled by an application.
 			"""
 	)
 

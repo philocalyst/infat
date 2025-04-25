@@ -11,7 +11,7 @@ struct Infat: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         abstract: "A tool to assign default openers for filetypes",
         version: "0.1.0",
-        subcommands: [List.self, Set.self]
+        subcommands: [Info.self, Set.self]
     )
 
     @Option(
