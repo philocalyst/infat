@@ -2,6 +2,7 @@ import Foundation
 
 enum InfatError: Error, LocalizedError {
 	case couldNotDeriveUTI(msg: String)
+	case noConfigTables(path: String)
 	case infoPlistNotFound(appPath: String)
 	case unsupportedOrInvalidSupertype(name: String)
 	case cannotSetURL(appName: String)
@@ -24,6 +25,8 @@ enum InfatError: Error, LocalizedError {
 		switch self {
 		case .couldNotDeriveUTI(let ext):
 			return "Cannot determine UTI for extension '.\(ext)'"
+		case .noConfigTables(let path):
+			return "No valid tables found in provided configuration at \(path)"
 		case .infoPlistNotFound(let appPath):
 			return "Info.plist not found within application bundle: \(appPath)"
 		case .conflictingOptions(let str):
