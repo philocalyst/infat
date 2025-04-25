@@ -2,6 +2,7 @@ import Foundation
 
 enum InfatError: Error, LocalizedError {
 	case cannotDetermineUTI
+	case unsupportedOrInvalidSupertype(name: String)
 	case cannotSetURL(appName: String)
 	case cannotRegisterURL(error: Int32)
 	case unsupportedOSVersion
@@ -52,6 +53,8 @@ enum InfatError: Error, LocalizedError {
 			return "Table '\(table)' not found in TOML file \(path)"
 		case .tomlValueNotString(let path, let key):
 			return "Value for key '\(key)' in TOML file \(path) is not a string."
+		case .unsupportedOrInvalidSupertype(let supertype):
+			return "Supertype \(supertype) is invalid or unsupported"
 		}
 	}
 }
