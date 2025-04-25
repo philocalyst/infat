@@ -2,6 +2,10 @@ import Foundation
 import Logging
 import Toml
 
+let BOLD = "\u{001B}[1m"
+let UNDERLINE = "\u{001B}[4m"
+let RESET = "\u{001B}[0m"
+
 struct ConfigManager {
 	static func loadConfig(from configPath: String) async throws {
 		let tomlConfig = try Toml(contentsOfFile: configPath)
@@ -16,6 +20,7 @@ struct ConfigManager {
 			guard let appName = assocationTable.string(key.components) else {
 				throw InfatError.tomlValueNotString(
 					path: configPath, key: key.components.joined())
+			print("\(BOLD)\(UNDERLINE)\(extensionTableName.uppercased())\(RESET)")
 			}
 			let ext = key.components.joined()
 			try await setDefaultApplication(appName: appName, ext: ext)
@@ -29,6 +34,7 @@ struct ConfigManager {
 			for key in assocationTable.keyNames {
 				let typeKey = key.components.joined()  // e.g., "plain-text"
 				guard let appName = assocationTable.string(key.components) else {
+			print("\(BOLD)\(UNDERLINE)\(typeTableName.uppercased())\(RESET)")
 					logger.warning(
 						"Value for key '\(typeKey)' in [class] is not a string. Skipping.")
 					continue
@@ -68,6 +74,7 @@ struct ConfigManager {
 			guard let appName = associationTable.string(key.components) else {
 				throw InfatError.tomlValueNotString(
 					path: configPath, key: key.components.joined())
+			print("\(BOLD)\(UNDERLINE)\(schemeTableName.uppercased())\(RESET)")
 			}
 			let scheme = key.components.joined()
 			try setURLHandler(appName: appName, scheme: scheme)
