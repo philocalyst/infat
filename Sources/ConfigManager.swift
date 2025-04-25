@@ -7,12 +7,13 @@ struct ConfigManager {
 		let tomlConfig = try Toml(contentsOfFile: configPath)
 
 		// Set openers for file extensions
-		guard let associationsTable = tomlConfig.table("files") else {
+		let extensionsTableName = "extensions"
+		guard let assocationTable = tomlConfig.table(extensionsTableName) else {
 			throw InfatError.tomlTableNotFoundError(
-				path: configPath, table: "files")
+				path: configPath, table: extensionsTableName)
 		}
-		for key in associationsTable.keyNames {
-			guard let appName = associationsTable.string(key.components) else {
+		for key in assocationTable.keyNames {
+			guard let appName = assocationTable.string(key.components) else {
 				throw InfatError.tomlValueNotString(
 					path: configPath, key: key.components.joined())
 			}
@@ -21,12 +22,13 @@ struct ConfigManager {
 			print("Set .\(ext) → \(appName)")
 		}
 
-		// Set file openers for classes
-		if let classTable = tomlConfig.table("class") {
+		// Set file openers for file types (text, image, etc.)
+		let typeTableName = "types"
+		if let assocationTable = tomlConfig.table(typeTableName) {
 			logger.info("Processing [class] associations...")
-			for key in classTable.keyNames {
+			for key in assocationTable.keyNames {
 				let typeKey = key.components.joined()  // e.g., "plain-text"
-				guard let appName = classTable.string(key.components) else {
+				guard let appName = assocationTable.string(key.components) else {
 					logger.warning(
 						"Value for key '\(typeKey)' in [class] is not a string. Skipping.")
 					continue
@@ -56,13 +58,14 @@ struct ConfigManager {
 			logger.debug("No [class] table found in \(configPath)")
 		}
 
-		// Set openers for schemes
-		guard let associationsTable = tomlConfig.table("schemes") else {
+		// Set openers for schemes (http, mailto, etc.)
+		let schemeTableName = "schemes"
+		guard let associationTable = tomlConfig.table(schemeTableName) else {
 			throw InfatError.tomlTableNotFoundError(
-				path: configPath, table: "schemes")
+				path: configPath, table: schemeTableName)
 		}
-		for key in associationsTable.keyNames {
-			guard let appName = associationsTable.string(key.components) else {
+		for key in associationTable.keyNames {
+			guard let appName = associationTable.string(key.components) else {
 				throw InfatError.tomlValueNotString(
 					path: configPath, key: key.components.joined())
 			}
