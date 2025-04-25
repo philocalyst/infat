@@ -1,6 +1,6 @@
 # Welcome to Infat
 
-[![Swift Version](https://badgen.net/static/Swift/6.0/orange)](https://swift.org)
+[![Swift Version](https://badgen.net/static/Swift/5.8/orange)](https://swift.org)
 [![Apple Platform](https://badgen.net/badge/icon/macOS%2013+?icon=apple&label)](https://developer.apple.com/macOS)
 
 Infat is an ultra-powerful, macOS-native CLI tool for declaritively managing both file-type and URL-scheme associations. Avoid the hassle of navigating sub-menus to setup your default browser or image viewer, and the pain of doing that *every time* you get a new machine. Setup the rules once, and bask in your own ingenuity forevermore. Take back control, and bind your openers to whatever. You. Want. Override everything! Who's going to stop you?
@@ -31,6 +31,8 @@ infat list --assigned txt
 ```
 
 ### 2. Setting a Default Application
+> [!TIP]
+> These aren't strict extensions, for example, yml and yaml extensions share a common resolver.
 
 ```bash
 # Use TextEdit for .md files
