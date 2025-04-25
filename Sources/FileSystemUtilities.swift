@@ -37,7 +37,7 @@ struct FileSystemUtilities {
 		return allAppURLs
 	}
 
-	static func deriveUTIFromExtension(extention: String) throws -> FileUTIInfo {
+	static func deriveUTIFromExtension(ext: String) throws -> FileUTIInfo {
 		guard #available(macOS 11.0, *) else {
 			throw InfatError.unsupportedOSVersion
 		}
@@ -47,14 +47,14 @@ struct FileSystemUtilities {
 			.audio, .mp3, .movie, .mpeg4Movie,
 			.zip, .gzip, .archive,
 		]
-		guard let utType = UTType(filenameExtension: extention) else {
-			throw InfatError.cannotDetermineUTI
+		guard let utType = UTType(filenameExtension: ext) else {
+			throw InfatError.couldNotDeriveUTI(msg: ext)
 		}
 		let conforms =
 			commonUTTypes
 			.filter { utType.conforms(to: $0) }
 			.map { $0.identifier }
-		logger.debug("Determined UTI \(utType.identifier) for .\(extention)")
+		logger.debug("Determined UTI \(utType.identifier) for .\(ext)")
 		return FileUTIInfo(
 			typeIdentifier: utType,
 			preferredMIMEType: utType.preferredMIMEType,
