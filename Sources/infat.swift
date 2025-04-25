@@ -30,7 +30,7 @@ struct Infat: AsyncParsableCommand {
     var quiet = false
 
     func validate() throws {
-        let level: Logger.Level = verbose ? .debug : (quiet ? .critical : .error)
+        let level: Logger.Level = verbose ? .trace : (quiet ? .critical : .error)
         LoggingSystem.bootstrap { label in
             var h = StreamLogHandler.standardOutput(label: label)
             h.logLevel = level
