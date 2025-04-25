@@ -1,38 +1,132 @@
 import AppKit
 import ArgumentParser
-import Logging
+import Foundation
+import PListKit
+import UniformTypeIdentifiers
 
-extension Infat {
-	struct List: ParsableCommand {
-		static let configuration = CommandConfiguration(
-			abstract: "Lists information for a given filetype."
-		)
-		@Flag(
-			name: [.short, .long],
-			help: "List all assigned apps for type.")
-		var assigned: Bool = false
+struct List: ParsableCommand {
+	static let configuration = CommandConfiguration(
+		abstract: """
+			Lists file association information.
+			Provide --ext to see apps for an extension.
+			Provide --app to see types handled by an application.
+			"""
+	)
 
-		@Argument(help: "File extension (no dot).")
-		var identifier: String
+	@Option(name: [.short, .long], help: "Application name (e.g., 'Google Chrome').")
+	var app: String?
 
-		mutating func run() throws {
-			let workspace = NSWorkspace.shared
-			let utiInfo =
-				try FileSystemUtilities
-				.deriveUTIFromExtension(extention: identifier)
+	@Option(name: [.short, .long], help: "File extension (without the dot, e.g., 'html').")
+	var ext: String?
 
-			if let url = workspace.urlForApplication(
-				toOpen: utiInfo.typeIdentifier)
-			{
-				print("Default for .\(identifier): \(url.path)")
-				let urls =
-					workspace
-					.urlsForApplications(toOpen: utiInfo.typeIdentifier)
-				print("Registered apps for .\(identifier):")
-				urls.forEach { print(" • \($0.path)") }
-			} else {
-				print("No default application for .\(identifier)")
+	mutating func run() throws {
+		guard (app != nil) != (ext != nil) else {  // XOR check
+			throw InfatError.conflictingOptions(
+				error: "Either --app or --ext must be provided, but not both."
+			)
+		}
+
+		if let appName = app {
+			try listTypesForApp(appName: appName)
+		} else if let fileExtension = ext {
+			try listAppsForExtension(fileExtension: fileExtension)
+		}
+	}
+
+	// ▰▰▰ Helper Methods ▰▰▰
+
+	private func listTypesForApp(appName: String) throws {
+		print("Looking for types handled by '\(appName)'...")
+
+		let apps = try FileSystemUtilities.findApplications()
+
+		guard let appPath = findApplication(applications: apps, key: appName) else {
+			throw InfatError.applicationNotFound(name: appName)
+		}
+		print("Found application at: \(appPath)")
+
+		let infoPlistPath =
+			appPath
+			.appendingPathComponent("Contents")
+			.appendingPathComponent("Info.plist")
+			.path
+
+		guard FileManager.default.fileExists(atPath: infoPlistPath) else {
+			throw InfatError.infoPlistNotFound(appPath: appPath.path)
+		}
+
+		let plist = try PList(file: infoPlistPath).root
+
+		guard let documentTypes = plist.array(key: "CFBundleDocumentTypes").value
+		else {
+			print(
+				"No 'CFBundleDocumentTypes' found in \(infoPlistPath). This app might not declare specific document types."
+			)
+			return
+		}
+
+		print("\nDeclared Document Types:")
+		if documentTypes.isEmpty {
+			print("  (None declared)")
+			return
+		}
+
+		for item in documentTypes {
+			if let docType = item as? PListDictionary {
+				let typeName = docType
+				print("  • \(typeName):")
+
+				if let utis = docType["LSItemContentTypes"] as? [String], !utis.isEmpty {
+					print("    - UTIs: \(utis.joined(separator: ", "))")
+				} else {
+					print("    - UTIs: (None specified)")
+				}
+
+				if let extensions = docType["CFBundleTypeExtensions"] as? [String],
+					!extensions.isEmpty
+				{
+					print(
+						"    - Extensions: \(extensions.map { ".\($0)" }.joined(separator: ", "))")
+				} else {
+					print("    - Extensions: (None specified)")
+				}
+				print("")
 			}
 		}
+	}
+
+	private func listAppsForExtension(fileExtension: String) throws {
+		print("Looking for apps associated with '.\(fileExtension)'...")
+
+		guard let uti = deriveUTIFromExtension(extension: fileExtension) else {
+			throw InfatError.couldNotDeriveUTI(extension: fileExtension)
+		}
+		print("Derived UTI: \(uti.identifier)")
+
+		let workspace = NSWorkspace.shared
+
+		if let defaultAppURL = workspace.urlForApplication(toOpen: uti) {
+			print("Default app: \(defaultAppURL.lastPathComponent) (\(defaultAppURL.path))")
+		} else {
+			print(
+				"No default application registered for '.\(fileExtension)' (UTI: \(uti.identifier))."
+			)
+		}
+
+		let allAppURLs = workspace.urlsForApplications(toOpen: uti)
+		if !allAppURLs.isEmpty {
+			print("\nAll registered apps:")
+			allAppURLs.forEach { url in
+				print("  • \(url.lastPathComponent) (\(url.path))")
+			}
+		} else {
+			print(
+				"No applications specifically registered for '.\(fileExtension)' (UTI: \(uti.identifier))."
+			)
+		}
+	}
+
+	private func deriveUTIFromExtension(extension ext: String) -> UTType? {
+		return UTType(filenameExtension: ext)
 	}
 }
