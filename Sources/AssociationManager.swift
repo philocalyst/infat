@@ -57,19 +57,20 @@ func findApplication(applications: [URL], key: String) -> URL? {
 }
 
 // Private helper function containing the core logic
-private func _setDefaultApplication(
+func _setDefaultApplication(
     appName: String, appURL: URL, typeIdentifier: UTType, inputDescription: String
 ) async throws {
     let workspace = NSWorkspace.shared
     try await workspace.setDefaultApplication(
         at: appURL,
-        toOpen: typeIdentifier  // Use the modern API if possible
-            // Note: The original API `toOpen:` taking a String UTI is deprecated.
-            // Using `toOpenContentTypes:` which takes an array of UTIs is preferred.
-            // If you MUST use the old API:
-            // try await workspace.setDefaultApplication(at: appURL, toOpen: typeIdentifier)
+        toOpen: typeIdentifier
     )
-    logger.info("Set default app for \(inputDescription) to \(appName)")
+    let newDefault = workspace.urlForApplication(toOpen: typeIdentifier)
+    if newDefault == appURL {
+        logger.info("Successfully set default app for \(inputDescription) to \(appName)")
+    } else {
+        logger.warning("Failed to set default app for \(inputDescription) to \(appName)")
+    }
 }
 
 /// Sets the default application for a given file type specified by its extension.
@@ -80,7 +81,7 @@ func setDefaultApplication(appName: String, ext: String) async throws {
     }
 
     // Derive UTType from the extension string
-    guard let uti = UTType(filenameExtension: ext.lowercased()) else {
+    guard let uti = UTType(filenameExtension: ext) else {
         throw InfatError.couldNotDeriveUTI(msg: ext)
     }
 
