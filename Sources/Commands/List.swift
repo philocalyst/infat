@@ -17,23 +17,52 @@ struct Info: ParsableCommand {
 	@Option(name: [.short, .long], help: "File extension (without the dot, e.g., 'html').")
 	var ext: String?
 
+	@Option(name: [.short, .long], help: "File type (e.g., text).")
+	var type: Supertypes?
+
 	mutating func run() throws {
-		guard (app != nil) != (ext != nil) else {  // XOR check
+		guard ((app != nil) != (ext != nil)) != (type != nil) else {  // XOR check
 			throw InfatError.conflictingOptions(
-				error: "Either --app or --ext must be provided, but not both."
+				error: "Either --app, --type, or --ext must be provided, but not all three."
 			)
 		}
 
 		if let appName = app {
-			try listTypesForApp(appName: appName)
+			try listForApp(appName: appName)
 		} else if let fileExtension = ext {
-			try listAppsForExtension(fileExtension: fileExtension)
+			try listForExtension(fileExtension: fileExtension)
+		} else if let sType = type?.utType {
+			try listForType(type: sType)
 		}
 	}
 
 	// ▰▰▰ Helper Methods ▰▰▰
 
-	private func listTypesForApp(appName: String) throws {
+	private func listForType(type: UTType) throws {
+		let workspace = NSWorkspace.shared
+
+		if let defaultAppURL = workspace.urlForApplication(toOpen: type) {
+			print("Default app: \(defaultAppURL.lastPathComponent) (\(defaultAppURL.path))")
+		} else {
+			print(
+				"No default application registered for '.\(type.debugDescription)' (UTI: \(type.identifier))."
+			)
+		}
+
+		let allAppURLs = workspace.urlsForApplications(toOpen: type)
+		if !allAppURLs.isEmpty {
+			print("\nAll registered apps:")
+			allAppURLs.forEach { url in
+				print("  • \(url.lastPathComponent) (\(url.path))")
+			}
+		} else {
+			print(
+				"No applications specifically registered for '.\(type.debugDescription)' (UTI: \(type.identifier))."
+			)
+		}
+	}
+
+	private func listForApp(appName: String) throws {
 		logger.info("Looking for types handled by '\(appName)'...")
 
 		let apps = try FileSystemUtilities.findApplications()
@@ -92,7 +121,7 @@ struct Info: ParsableCommand {
 		}
 	}
 
-	private func listAppsForExtension(fileExtension: String) throws {
+	private func listForExtension(fileExtension: String) throws {
 		print("Looking for apps associated with '.\(fileExtension)'...")
 
 		guard let uti = deriveUTIFromExtension(extension: fileExtension) else {
