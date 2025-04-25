@@ -6,6 +6,40 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.3.0] – 2025-04-25
+
+### Added
+- `--app` option to `infat list` for listing document types handled by a given application.  
+- New `InfatError.conflictingOptions` to enforce that exactly one of `--app` or `--ext` is provided.  
+- Enhanced UTI-derivation errors via `InfatError.couldNotDeriveUTI`, including the offending extension in the message.
+
+### Changed
+- Refactored the `list` command to use two exclusive `@Option` parameters (`--app`, `--ext`) with XOR validation.  
+- Switched PList parsing to `DictionaryPList(url:)` and UTI lookup to `UTType(filenameExtension:)`.  
+- Replaced ad-hoc `print` calls with `logger.info` for consistent, leveled logging.  
+- Renamed `deriveUTIFromExtension(extention:)` to `deriveUTIFromExtension(ext:)` for clarity and consistency.
+
+### Fixed
+- Corrected typos in `FileSystemUtilities.deriveUTIFromExtension` signature and related debug messages.  
+- Fixed `FileManager` existence checks for `Info.plist` by using the correct `path` property.  
+- Resolved parsing discrepancies in `listTypesForApp` to ensure accurate reading of `CFBundleDocumentTypes`.
+
+## [1.2.0] – 2025-04-25
+
+### Fixed
+- Swift badge reflects true version
+
+### Changed
+- Using function overloading to set default application based on Uttype or extension
+
+### Deprecated
+- Removed --assocations option in list into the basic list command
+- Filetype option, now ext.
+
+### Added
+- A supertype conformance enum
+- Class option in CLI and Config
+
 ## [1.1.0] – 2025-04-24
 
 ### Added
@@ -141,7 +175,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Corrected the bundle ID used internally and for logging from `com.example.burt` to `com.philocalyst.infat`.
 - Addressed minor code formatting inconsistencies across several files.
 
-[Unreleased]: https://github.com/philocalyst/infat/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/philocalyst/infat/compare/v1.1.3...HEAD
+[1.3.0]: https://github.com/your-org/infat/compare/v1.2.0...v1.3.0  
+[1.2.0]: https://github.com/philocalyst/infat/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/philocalyst/infat/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/philocalyst/infat/compare/v0.6.0...v1.0.0 
 [0.6.0]: https://github.com/philocalyst/infat/compare/v0.5.3...v0.6.0
