@@ -21,20 +21,17 @@ extension Infat {
 				try FileSystemUtilities
 				.deriveUTIFromExtension(extention: identifier)
 
-			if assigned {
+			if let url = workspace.urlForApplication(
+				toOpen: utiInfo.typeIdentifier)
+			{
+				print("Default for .\(identifier): \(url.path)")
 				let urls =
 					workspace
 					.urlsForApplications(toOpen: utiInfo.typeIdentifier)
 				print("Registered apps for .\(identifier):")
 				urls.forEach { print(" • \($0.path)") }
 			} else {
-				if let url = workspace.urlForApplication(
-					toOpen: utiInfo.typeIdentifier)
-				{
-					print("Default for .\(identifier): \(url.path)")
-				} else {
-					print("No default application for .\(identifier)")
-				}
+				print("No default application for .\(identifier)")
 			}
 		}
 	}
