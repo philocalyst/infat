@@ -19,15 +19,14 @@ extension Infat {
         var type: Supertypes?
 
         mutating func run() async throws {
-            if ext != nil && scheme != nil && type != nil {
+            let providedCount = [scheme != nil, ext != nil, type != nil]
+                .filter { $0 }
+                .count
+
+            guard providedCount == 1 else {
                 throw InfatError.conflictingOptions(
                     error:
-                        "Cannot use --ext, --type, and --scheme together. They are mutually exclusive."
-                )
-            } else if ext != nil && scheme != nil {
-                throw InfatError.conflictingOptions(
-                    error:
-                        "Cannot use --ext and --scheme together. They are mutually exclusive."
+                        "Either --scheme, --type, or --ext must be provided, but not more than one."
                 )
             }
             if let fType = ext {

@@ -21,9 +21,14 @@ struct Info: ParsableCommand {
 	var type: Supertypes?
 
 	mutating func run() throws {
-		guard ((app != nil) != (ext != nil)) != (type != nil) else {  // XOR check
+		let providedCount = [app != nil, ext != nil, type != nil]
+			.filter { $0 }
+			.count
+
+		guard providedCount == 1 else {
 			throw InfatError.conflictingOptions(
-				error: "Either --app, --type, or --ext must be provided, but not all three."
+				error:
+					"Either --scheme, --type, or --ext must be provided, but not more than one."
 			)
 		}
 
