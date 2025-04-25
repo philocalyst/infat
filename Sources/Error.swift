@@ -1,7 +1,7 @@
 import Foundation
 
 enum InfatError: Error, LocalizedError {
-	case couldNotDeriveUTI(extension: String)
+	case couldNotDeriveUTI(msg: String)
 	case infoPlistNotFound(appPath: String)
 	case unsupportedOrInvalidSupertype(name: String)
 	case cannotSetURL(appName: String)

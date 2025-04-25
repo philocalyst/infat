@@ -36,28 +36,27 @@ struct List: ParsableCommand {
 	// ▰▰▰ Helper Methods ▰▰▰
 
 	private func listTypesForApp(appName: String) throws {
-		print("Looking for types handled by '\(appName)'...")
+		logger.info("Looking for types handled by '\(appName)'...")
 
 		let apps = try FileSystemUtilities.findApplications()
 
 		guard let appPath = findApplication(applications: apps, key: appName) else {
 			throw InfatError.applicationNotFound(name: appName)
 		}
-		print("Found application at: \(appPath)")
+		logger.info("Found application at: \(appPath)")
 
 		let infoPlistPath =
 			appPath
 			.appendingPathComponent("Contents")
 			.appendingPathComponent("Info.plist")
-			.path
 
-		guard FileManager.default.fileExists(atPath: infoPlistPath) else {
+		guard FileManager.default.fileExists(atPath: infoPlistPath.path) else {
 			throw InfatError.infoPlistNotFound(appPath: appPath.path)
 		}
 
-		let plist = try PList(file: infoPlistPath).root
+		let plist = try DictionaryPList(url: infoPlistPath)
 
-		guard let documentTypes = plist.array(key: "CFBundleDocumentTypes").value
+		guard let documentTypes = plist.root.array(key: "CFBundleDocumentTypes").value
 		else {
 			print(
 				"No 'CFBundleDocumentTypes' found in \(infoPlistPath). This app might not declare specific document types."
@@ -99,7 +98,7 @@ struct List: ParsableCommand {
 		print("Looking for apps associated with '.\(fileExtension)'...")
 
 		guard let uti = deriveUTIFromExtension(extension: fileExtension) else {
-			throw InfatError.couldNotDeriveUTI(extension: fileExtension)
+			throw InfatError.couldNotDeriveUTI(msg: fileExtension)
 		}
 		print("Derived UTI: \(uti.identifier)")
 
