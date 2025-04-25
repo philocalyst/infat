@@ -11,7 +11,7 @@ Infat is an ultra-powerful, macOS-native CLI tool for declaritively managing bot
 
 - List which apps open for a given file extension or URL scheme (Like when you double click a file in Finder)
 - Set a default application for a file extension or URL scheme  
-- Load associations from a TOML config (`[files]` and `[schemes]` tables)  
+- Load associations from a TOML config (`[extensions]` `[types]` and `[schemes]` tables)  
 - Verbose, scriptable, and ideal for power users and admins  
 
 ## Get Started
@@ -20,14 +20,11 @@ Get started by installing Infat — jump to the [Install](#install) section belo
 
 ## Tutorial
 
-### 1. Listing Associations
+### 1. Getting assocation information
 
 ```bash
-# Show the default app for .txt files
-infat list txt
-
-# Show all registered apps for .txt files
-infat list --assigned txt
+# Show the default app for .txt files and all registered apps
+infat info txt
 ```
 
 ### 2. Setting a Default Application
@@ -36,10 +33,10 @@ infat list --assigned txt
 
 ```bash
 # Use TextEdit for .md files
-infat set TextEdit --file-type md
+infat set TextEdit --ext md
 
 # Use VSCode for .json files
-infat set VSCode --file-type json
+infat set VSCode --ext json
 ```
 
 ### 3. Binding a URL Scheme
@@ -49,12 +46,25 @@ infat set VSCode --file-type json
 infat set Mail --scheme mailto
 ```
 
+### 4. Blanket types
+
+> [!TIP]
+> Openers are cascading in macOS. Most common file formats will have their own identifier,
+> Which will be read from before the plain-text type it inherits from
+> Try setting from extension if you face unexpected issues
+
+```shell
+# Set VSCode as the opener for files containing text
+infat set VSCode --type plain-text
+```
+
+
 ### 4. Configuration
 
 Place a TOML file at `$XDG_CONFIG_HOME/infat/config.toml` (or pass `--config path/to/config.toml`) with two tables:
 
 ```toml
-[files]
+[extensions]
 md    = "TextEdit"
 html  = "Safari"
 pdf   = "Preview"
@@ -62,6 +72,9 @@ pdf   = "Preview"
 [schemes]
 mailto = "Mail"
 web    = "Safari"
+
+[types]
+plain-text = "VSCode"
 ```
 
 Run without arguments to apply all entries.
@@ -98,7 +111,7 @@ just build-release
 just run "list txt"
 
 # Enable verbose logging for troubleshooting
-infat --verbose list pdf
+infat --verbose info pdf
 ```
 
 ---
