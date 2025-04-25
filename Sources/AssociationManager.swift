@@ -2,6 +2,7 @@ import AppKit
 import Foundation
 import Logging
 import PListKit
+import UniformTypeIdentifiers
 
 func getBundleIdentifier(appURL: URL) throws -> String? {
     let plistURL =
@@ -55,18 +56,53 @@ func findApplication(applications: [URL], key: String) -> URL? {
     return nil
 }
 
-func setDefaultApplication(appName: String, fileType: String) async throws {
+// Private helper function containing the core logic
+private func _setDefaultApplication(
+    appName: String, appURL: URL, typeIdentifier: UTType, inputDescription: String
+) async throws {
     let workspace = NSWorkspace.shared
+    try await workspace.setDefaultApplication(
+        at: appURL,
+        toOpen: typeIdentifier  // Use the modern API if possible
+            // Note: The original API `toOpen:` taking a String UTI is deprecated.
+            // Using `toOpenContentTypes:` which takes an array of UTIs is preferred.
+            // If you MUST use the old API:
+            // try await workspace.setDefaultApplication(at: appURL, toOpen: typeIdentifier)
+    )
+    logger.info("Set default app for \(inputDescription) to \(appName)")
+}
+
+/// Sets the default application for a given file type specified by its extension.
+func setDefaultApplication(appName: String, ext: String) async throws {
     let apps = try FileSystemUtilities.findApplications()
     guard let appURL = findApplication(applications: apps, key: appName) else {
         throw InfatError.applicationNotFound(name: appName)
     }
-    // Pass in the uniform type identifier for the extention
-    let UTI = try FileSystemUtilities.deriveUTIFromExtension(extention: fileType).typeIdentifier
 
-    try await workspace.setDefaultApplication(
-        at: appURL,
-        toOpen: UTI
+    // Derive UTType from the extension string
+    guard let uti = UTType(filenameExtension: ext.lowercased()) else {
+        throw InfatError.cannotDetermineUTI
+    }
+
+    try await _setDefaultApplication(
+        appName: appName,
+        appURL: appURL,
+        typeIdentifier: uti,  // Pass the UTI string identifier
+        inputDescription: ".\(ext)"  // For logging clarity
     )
-    logger.info("Set default app for .\(fileType) to \(appName)")
+}
+
+/// Sets the default application for a given file type specified by its UTType.
+func setDefaultApplication(appName: String, supertype: UTType) async throws {
+    let apps = try FileSystemUtilities.findApplications()
+    guard let appURL = findApplication(applications: apps, key: appName) else {
+        throw InfatError.applicationNotFound(name: appName)
+    }
+
+    try await _setDefaultApplication(
+        appName: appName,
+        appURL: appURL,
+        typeIdentifier: supertype,
+        inputDescription: supertype.description
+    )
 }
