@@ -6,6 +6,23 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [2.0.0] – 2025-04-25
+
+### Added
+- Enforce that exactly one of `--scheme`, `--type`, or `--ext` is provided in both the Info and Set commands; throw clear errors when options are missing or conflicting.  
+- Introduce a new `--type` option to the Info command, allowing users to list both the default and all registered applications for a given supertype (e.g. `text`).  
+- Add the `plain-text` supertype (mapped to `UTType.plainText`) to the set of supported conformances.  
+- Render configuration section headings (`[extensions]`, `[types]`, `[schemes]`) in bold & underlined text when processing TOML files.
+
+### Changed
+- Require at least one of the `[extensions]`, `[types]`, or `[schemes]` tables in the TOML configuration (instead of mandating all); process each table if present, emit a debug-level log when a table is missing, and standardize table naming.  
+- Change the default logging level for verbose mode from `debug` to `trace`.  
+- Strengthen error handling in `_setDefaultApplication`: after attempting to set a default opener, verify success and log an info on success or a warning on failure.
+
+### Deprecated
+- Rename the `List` command to `Info`. 
+- Renamed files table to extensions to match with cli options
+
 ## [1.3.0] – 2025-04-25
 
 ### Added
@@ -175,7 +192,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Corrected the bundle ID used internally and for logging from `com.example.burt` to `com.philocalyst.infat`.
 - Addressed minor code formatting inconsistencies across several files.
 
-[Unreleased]: https://github.com/philocalyst/infat/compare/v1.1.3...HEAD
+[Unreleased]: https://github.com/philocalyst/infat/compare/v2.0.0...HEAD
+[2.0.0]:      https://github.com/yourorg/yourrepo/compare/v1.3.0...v2.0.0  
 [1.3.0]: https://github.com/your-org/infat/compare/v1.2.0...v1.3.0  
 [1.2.0]: https://github.com/philocalyst/infat/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/philocalyst/infat/compare/v1.0.0...v1.1.0
