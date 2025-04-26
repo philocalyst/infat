@@ -24,7 +24,7 @@ Get started by installing Infat — jump to the [Install](#install) section belo
 
 ```bash
 # Show the default app for .txt files and all registered apps
-infat info txt
+infat info --ext txt
 ```
 
 ### 2. Setting a Default Application
@@ -46,7 +46,7 @@ infat set VSCode --ext json
 infat set Mail --scheme mailto
 ```
 
-### 4. Blanket types
+### 4. Fallback types
 
 > [!TIP]
 > Openers are cascading in macOS. Most common file formats will have their own identifier,
@@ -58,10 +58,15 @@ infat set Mail --scheme mailto
 infat set VSCode --type plain-text
 ```
 
+Run `infat info --help` for a list of all available types.
 
-### 4. Configuration
 
-Place a TOML file at `$XDG_CONFIG_HOME/infat/config.toml` (or pass `--config path/to/config.toml`) with three tables:
+### 5. Configuration
+
+Place a TOML file at `$XDG_CONFIG_HOME/infat/config.toml` (or pass `--config path/to/config.toml`). 
+
+> [!NOTE] 
+> `$XDG_CONFIG_HOME` is not set by default, you need to set in your shell config ex: `.zshenv`.
 
 On the right is the app you want to bind. You can pass:
 1. The name (As seen when you hover on the icon) **IF** It's in a default location.
@@ -133,7 +138,7 @@ brew install philocalyst/tap/infat
 
 ### From Source
 
-Please make sure just (Our command-runner) is installed before running. If you don't want to use just, the project is managed with SPM, and you can build with "Swift build -c release" and move the result in the .build folder to wherever. 
+Please make sure `just` (our command-runner) is installed before running. If you don't want to use `just`, the project is managed with SPM, and you can build with "Swift build -c release" and move the result in the .build folder to wherever. 
 ```bash
 git clone https://github.com/philocalyst/infat.git && cd infat
 just package && mv dist/infat* /usr/local/bin/infat # Wildcard because output name includes platform
