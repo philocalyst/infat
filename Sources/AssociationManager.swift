@@ -56,20 +56,45 @@ func findApplication(applications: [URL], key: String) -> URL? {
     return nil
 }
 
-// Private helper function containing the core logic
-func _setDefaultApplication(
+private func setDefaultApplication(
     appName: String, appURL: URL, typeIdentifier: UTType, inputDescription: String
 ) async throws {
     let workspace = NSWorkspace.shared
-    try await workspace.setDefaultApplication(
-        at: appURL,
-        toOpen: typeIdentifier
-    )
-    let newDefault = workspace.urlForApplication(toOpen: typeIdentifier)
-    if newDefault == appURL {
-        logger.info("Successfully set default app for \(inputDescription) to \(appName)")
-    } else {
-        logger.warning("Failed to set default app for \(inputDescription) to \(appName)")
+
+    do {
+        try await workspace.setDefaultApplication(
+            at: appURL,
+            toOpen: typeIdentifier
+        )
+        // success!
+    } catch {
+        let nsErr = error as NSError
+        // Detect the restriction
+        let isFileOpenError =
+            nsErr.domain == NSCocoaErrorDomain
+            && nsErr.code == CocoaError.fileReadUnknown.rawValue
+
+        guard isFileOpenError else {
+            // Some other error—rethrow it
+            throw error
+        }
+
+        // Fallback: call LSSetDefaultRoleHandlerForContentType directly
+        guard let bundleID = try getBundleIdentifier(appURL: appURL)
+        else {
+            throw InfatError.applicationNotFound(name: appURL.path)
+        }
+
+        let utiCF = typeIdentifier.identifier as CFString
+        let lsErr = LSSetDefaultRoleHandlerForContentType(
+            utiCF,
+            LSRolesMask.viewer,
+            bundleID as CFString
+        )
+        guard lsErr == noErr else {
+            // propagate the LaunchServices error
+            throw InfatError.cannotRegisterURL(error: lsErr)
+        }
     }
 }
 
@@ -85,7 +110,7 @@ func setDefaultApplication(appName: String, ext: String) async throws {
         throw InfatError.couldNotDeriveUTI(msg: ext)
     }
 
-    try await _setDefaultApplication(
+    try await setDefaultApplication(
         appName: appName,
         appURL: appURL,
         typeIdentifier: uti,  // Pass the UTI string identifier
@@ -100,7 +125,7 @@ func setDefaultApplication(appName: String, supertype: UTType) async throws {
         throw InfatError.applicationNotFound(name: appName)
     }
 
-    try await _setDefaultApplication(
+    try await setDefaultApplication(
         appName: appName,
         appURL: appURL,
         typeIdentifier: supertype,
