@@ -38,6 +38,7 @@ extension Infat {
                 try await setDefaultApplication(
                     appName: appName,
                     ext: fType)
+                print("Successfully bound \(appName) to \(fType)")
             } else if let schm = scheme {
                 try setURLHandler(appName: appName, scheme: schm)
                 print("Successfully bound \(appName) to \(schm)")
