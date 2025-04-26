@@ -6,6 +6,20 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [2.2.0] – 2025-04-26
+
+### Added
+- Introduce ColorizeSwift (v1.5.0) as a new dependency for rich terminal styling  
+- Reroute `.html` file‐extension and `https` URL‐scheme inputs to the HTTP handler  
+- Support colorized output styling via `.bold()` and `.underline()` in `ConfigManager`
+
+### Changed
+- Replace custom ANSI escape‐sequence constants with ColorizeSwift’s `.bold()` and `.underline()` methods  
+- Docs updates:
+  - Clarify application name casing and optional `.app` suffix in README  
+  - Expand configuration section to cover three TOML tables and XDG_CONFIG_HOME usage  
+  - Correct CLI usage examples, header numbering, typos, and outdated information  
+
 ## [2.1.0] – 2025-04-26
 
 ### Added
@@ -234,7 +248,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Corrected the bundle ID used internally and for logging from `com.example.burt` to `com.philocalyst.infat`.
 - Addressed minor code formatting inconsistencies across several files.
 
-[Unreleased]: https://github.com/your-org/your-repo/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/philocalyst/infat/compare/v2.2.0...HEAD  
+[2.2.0]:     https://github.com/philocalyst/infat/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/your-org/your-repo/compare/v2.0.1...v2.1.0  
 [2.0.1]: https://github.com/philocalyst/infat/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/yourorg/yourrepo/compare/v1.3.0...v2.0.0  
