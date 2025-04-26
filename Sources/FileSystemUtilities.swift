@@ -9,6 +9,7 @@ struct FileSystemUtilities {
 		var allAppURLs: [URL] = []
 		let paths = [
 			"/Applications/",
+			"/System/Library/CoreServices/Applications/",
 			"/System/Applications/",
 			"\(home)/Applications/",
 		]
