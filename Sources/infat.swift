@@ -30,7 +30,7 @@ struct Infat: AsyncParsableCommand {
     var quiet = false
 
     func validate() throws {
-        let level: Logger.Level = verbose ? .trace : (quiet ? .critical : .error)
+        let level: Logger.Level = verbose ? .trace : (quiet ? .critical : .warning)
         LoggingSystem.bootstrap { label in
             var h = StreamLogHandler.standardOutput(label: label)
             h.logLevel = level
@@ -40,6 +40,7 @@ struct Infat: AsyncParsableCommand {
     }
 
     mutating func run() async throws {
+        // First check if a config was passed through the CLI. Then check if one was found at the XDG config home. If neither, error.
         if let cfg = config {
             try await ConfigManager.loadConfig(from: cfg)
         } else {
@@ -47,6 +48,11 @@ struct Infat: AsyncParsableCommand {
             if let configurationDirectory = ProcessInfo.processInfo.environment["XDG_CONFIG_HOME"] {
                 try await ConfigManager.loadConfig(
                     from: configurationDirectory.appending("/infat").appending("/config.toml"))
+            } else {
+                print(
+                    "Did you mean to pass in a config? Use -c or put one at XDG_CONFIG_HOME/infat/config.toml"
+                )
+                throw InfatError.missingOption
             }
         }
     }
