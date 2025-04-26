@@ -6,6 +6,28 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [2.0.1] – 2025-04-25
+
+### Added
+- Support for cascading “blanket” types: use `infat set <App> --type <type>` to
+  assign openers for base types (e.g. `plain-text`); introduced a new
+  `[types]` table in the TOML schema.
+- Explicit handling when no config is provided or found: Infat now prints
+  an informative prompt and throws `InfatError.missingOption` if neither
+  `--config` nor `$XDG_CONFIG_HOME/infat/config.toml` exist.
+
+### Changed
+- Bumped CLI version to **2.0.1** and updated the abstract to
+  “Declaritively set associations for URLs and files.”
+- Revised README examples and docs:
+  - Renamed `infat list` → `infat info`
+  - Changed flag `--file-type` → `--ext`
+  - Renumbered tutorial steps and cleaned up formatting
+  - Updated TOML example: `[files]` → `[extensions]`
+
+### Fixed
+- Quiet mode now logs at `warning` (was `error`), preventing silent failures.
+
 ## [2.0.0] – 2025-04-25
 
 ### Added
@@ -192,8 +214,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Corrected the bundle ID used internally and for logging from `com.example.burt` to `com.philocalyst.infat`.
 - Addressed minor code formatting inconsistencies across several files.
 
-[Unreleased]: https://github.com/philocalyst/infat/compare/v2.0.0...HEAD
-[2.0.0]:      https://github.com/yourorg/yourrepo/compare/v1.3.0...v2.0.0  
+[Unreleased]: https://github.com/philocalyst/infat/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/philocalyst/infat/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/yourorg/yourrepo/compare/v1.3.0...v2.0.0  
 [1.3.0]: https://github.com/your-org/infat/compare/v1.2.0...v1.3.0  
 [1.2.0]: https://github.com/philocalyst/infat/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/philocalyst/infat/compare/v1.0.0...v1.1.0
