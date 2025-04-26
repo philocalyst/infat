@@ -64,7 +64,7 @@ infat set VSCode --type plain-text
 Place a TOML file at `$XDG_CONFIG_HOME/infat/config.toml` (or pass `--config path/to/config.toml`) with three tables:
 
 On the right is the app you want to bind. You can pass:
-1. The name  (As seen when you hover on the icon)
+1. The name (As seen when you hover on the icon) **IF** It's in a default location.
 2. The relative path (To your user directory)
 3. The absolute path
 
