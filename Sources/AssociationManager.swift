@@ -20,8 +20,7 @@ func getBundleIdentifier(appURL: URL) throws -> String? {
 }
 
 func setURLHandler(appName: String, scheme: String) throws {
-    let apps = try FileSystemUtilities.findApplications()
-    let applicationURL = findApplication(applications: apps, key: appName)
+    let applicationURL = try findApplication(named: appName)
     if let appURL = applicationURL {
 
         let appBundleIdentifier = try getBundleIdentifier(appURL: appURL)
@@ -44,39 +43,95 @@ func setURLHandler(appName: String, scheme: String) throws {
     }
 }
 
-func findApplication(applications: [URL], key: String) -> URL? {
-    for app in applications {
-        let name = app.deletingPathExtension().lastPathComponent
-        if name == key {
-            logger.debug("Matched application: \(app.path)")
-            return app
+func findApplication(named key: String) throws -> URL? {
+    let fm = FileManager.default
+
+    // |1| Normalize the key in case user provided a ".app" extension.
+    let rawExt = (key as NSString).pathExtension.lowercased()
+    let baseName =
+        rawExt == "app"
+        ? (key as NSString).deletingPathExtension
+        : key
+
+    // |2| If this is a valid file‐system path or a file:// URL,
+    // perform basic checks and return instantly if a .app bundle.
+
+    let isFileURL = (URL(string: key)?.isFileURL) ?? false
+    if isFileURL || fm.fileExists(atPath: key) {
+        // Initalize properly depending on type of URL
+        let url =
+            isFileURL
+            ? URL(string: key)!
+            : URL(fileURLWithPath: key)
+
+        let r = try url.resourceValues(
+            forKeys: [.isDirectoryKey, .typeIdentifierKey]
+        )
+        // Final check, these attributes are required for app bundles.
+        if r.isDirectory == true,
+            let tid = r.typeIdentifier,
+            let ut = UTType(tid),
+            ut.conforms(to: .applicationBundle)
+        {
+            return url
         }
+        return nil
     }
-    logger.warning("No application found matching: \(key)")
-    return nil
+
+    // |3| Otherwise treat `key` as a provided app name: scan all installed .app bundles
+    let installed = try FileSystemUtilities.findApplications()
+    return installed.first {
+        $0.deletingPathExtension()
+            .lastPathComponent
+            .caseInsensitiveCompare(baseName)
+            == .orderedSame
+    }
 }
 
-// Private helper function containing the core logic
-func _setDefaultApplication(
+private func setDefaultApplication(
     appName: String, appURL: URL, typeIdentifier: UTType, inputDescription: String
 ) async throws {
     let workspace = NSWorkspace.shared
-    try await workspace.setDefaultApplication(
-        at: appURL,
-        toOpen: typeIdentifier
-    )
-    let newDefault = workspace.urlForApplication(toOpen: typeIdentifier)
-    if newDefault == appURL {
-        logger.info("Successfully set default app for \(inputDescription) to \(appName)")
-    } else {
-        logger.warning("Failed to set default app for \(inputDescription) to \(appName)")
+    do {
+        try await workspace.setDefaultApplication(
+            at: appURL,
+            toOpen: typeIdentifier
+        )
+        // success!
+    } catch {
+        let nsErr = error as NSError
+        // Detect the restriction
+        let isFileOpenError =
+            nsErr.domain == NSCocoaErrorDomain
+            && nsErr.code == CocoaError.fileReadUnknown.rawValue
+
+        guard isFileOpenError else {
+            // Some other error—rethrow it
+            throw error
+        }
+
+        // Fallback: call LSSetDefaultRoleHandlerForContentType directly
+        guard let bundleID = try getBundleIdentifier(appURL: appURL)
+        else {
+            throw InfatError.applicationNotFound(name: appURL.path)
+        }
+
+        let utiCF = typeIdentifier.identifier as CFString
+        let lsErr = LSSetDefaultRoleHandlerForContentType(
+            utiCF,
+            LSRolesMask.viewer,
+            bundleID as CFString
+        )
+        guard lsErr == noErr else {
+            // propagate the LaunchServices error
+            throw InfatError.cannotRegisterURL(error: lsErr)
+        }
     }
 }
 
 /// Sets the default application for a given file type specified by its extension.
 func setDefaultApplication(appName: String, ext: String) async throws {
-    let apps = try FileSystemUtilities.findApplications()
-    guard let appURL = findApplication(applications: apps, key: appName) else {
+    guard let appURL = try findApplication(named: appName) else {
         throw InfatError.applicationNotFound(name: appName)
     }
 
@@ -85,7 +140,7 @@ func setDefaultApplication(appName: String, ext: String) async throws {
         throw InfatError.couldNotDeriveUTI(msg: ext)
     }
 
-    try await _setDefaultApplication(
+    try await setDefaultApplication(
         appName: appName,
         appURL: appURL,
         typeIdentifier: uti,  // Pass the UTI string identifier
@@ -95,12 +150,11 @@ func setDefaultApplication(appName: String, ext: String) async throws {
 
 /// Sets the default application for a given file type specified by its UTType.
 func setDefaultApplication(appName: String, supertype: UTType) async throws {
-    let apps = try FileSystemUtilities.findApplications()
-    guard let appURL = findApplication(applications: apps, key: appName) else {
+    guard let appURL = try findApplication(named: appName) else {
         throw InfatError.applicationNotFound(name: appName)
     }
 
-    try await _setDefaultApplication(
+    try await setDefaultApplication(
         appName: appName,
         appURL: appURL,
         typeIdentifier: supertype,

@@ -16,6 +16,13 @@ release_bin      := build_dir + "/release/" + default_bin
 # ===== Default =====
 default: build
 
+[confirm("You've updated the versionings?")]
+check:
+	@echo "At the README?"
+	@echo "At the swift bundle?"
+	@echo "At the CHANGELOG?"
+	grep "2.?.?"
+
 # ===== Build & Check =====
 build target=(current_platform):
 	@echo "🔨 Building Swift package (debug)…"

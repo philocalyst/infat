@@ -6,6 +6,26 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [2.1.0] – 2025-04-26
+
+### Added
+- Justfile  
+  Introduce a `check` task that prompts you to confirm version bumps in the README, Swift bundle and CHANGELOG.
+- Commands  
+  Print a success message when an application is bound to a file extension or URL scheme.
+- FileSystemUtilities  
+  Include `/System/Library/CoreServices/Applications/` in the list of search paths for installed apps.
+- AssociationManager  
+  Add a fallback for `setDefaultApplication` failures: if `NSWorkspace.setDefaultApplication` is restricted, catch the error and invoke `LSSetDefaultRoleHandlerForContentType` directly.
+
+### Changed
+- Package.swift  
+  Pin all external Swift package dependencies to exact versions (ArgumentParser 1.2.0, Swift-Log 1.5.3, PListKit 2.0.3, swift-toml 1.0.0).
+- AssociationManager  
+  Refactor application lookup into a throwing `findApplication(named:)`, supporting both file paths (or file:// URLs) and plain `.app` names (case-insensitive).
+- FileSystemUtilities  
+  Downgrade log level for unreadable paths from **warning** to **debug** to reduce noise.
+
 ## [2.0.1] – 2025-04-25
 
 ### Added
@@ -214,7 +234,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Corrected the bundle ID used internally and for logging from `com.example.burt` to `com.philocalyst.infat`.
 - Addressed minor code formatting inconsistencies across several files.
 
-[Unreleased]: https://github.com/philocalyst/infat/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/your-org/your-repo/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/your-org/your-repo/compare/v2.0.1...v2.1.0  
 [2.0.1]: https://github.com/philocalyst/infat/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/yourorg/yourrepo/compare/v1.3.0...v2.0.0  
 [1.3.0]: https://github.com/your-org/infat/compare/v1.2.0...v1.3.0  

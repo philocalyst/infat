@@ -64,7 +64,16 @@ Run `infat info --help` for a list of all available types.
 ### 5. Configuration
 
 Place a TOML file at `$XDG_CONFIG_HOME/infat/config.toml` (or pass `--config path/to/config.toml`). 
-(Note that `$XDG_CONFIG_HOME` is not set by default, you need to set in for example in your `.zshenv`.)
+
+> [!NOTE] 
+> `$XDG_CONFIG_HOME` is not set by default, you need to set in your shell config ex: `.zshenv`.
+
+On the right is the app you want to bind. You can pass:
+1. The name (As seen when you hover on the icon) **IF** It's in a default location.
+2. The relative path (To your user directory)
+3. The absolute path
+
+All case sensitive, all can be with or without a .app suffix
 
 ```toml
 [extensions]

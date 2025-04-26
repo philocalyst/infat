@@ -9,6 +9,7 @@ struct FileSystemUtilities {
 		var allAppURLs: [URL] = []
 		let paths = [
 			"/Applications/",
+			"/System/Library/CoreServices/Applications/",
 			"/System/Applications/",
 			"\(home)/Applications/",
 		]
@@ -22,7 +23,7 @@ struct FileSystemUtilities {
 				allAppURLs.append(contentsOf: urls)
 				logger.debug("Found \(urls.count) items in \(path)")
 			} catch {
-				logger.warning("Could not read \(path): \(error.localizedDescription)")
+				logger.debug("Could not read \(path): \(error.localizedDescription)")
 			}
 		}
 		guard !allAppURLs.isEmpty else {
