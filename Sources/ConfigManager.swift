@@ -1,3 +1,4 @@
+import ColorizeSwift
 import Foundation
 import Logging
 import Toml
