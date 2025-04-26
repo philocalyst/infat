@@ -17,10 +17,10 @@ struct ConfigManager {
 
 		// Check upfront that at least one table is present
 		let hasExtensions = tomlConfig.table(extensionTableName) != nil
-		let hasTypes = tomlConfig.table(schemeTableName) != nil
-		let hasSchemes = tomlConfig.table(typeTableName) != nil
+		let hasSchemes = tomlConfig.table(schemeTableName) != nil
+		let hasTypes = tomlConfig.table(typeTableName) != nil
 
-		guard hasExtensions || hasTypes || hasSchemes else {
+		guard hasExtensions || hasSchemes || hasTypes else {
 			throw InfatError.noConfigTables(path: configPath)
 		}
 
@@ -36,8 +36,15 @@ struct ConfigManager {
 					)
 				}
 				let ext = key.components.joined()
-				try await setDefaultApplication(appName: appName, ext: ext)
-				print("Set .\(ext) → \(appName)")
+				switch ext.lowercased() {
+				case "html":
+					// Route .html to the http URL handler
+					try setURLHandler(appName: appName, scheme: "http")
+					print("Set .\(ext) → \(appName) (routed to http)")
+				default:
+					try await setDefaultApplication(appName: appName, ext: ext)
+					print("Set .\(ext) → \(appName)")
+				}
 			}
 		} else {
 			logger.debug("No [extensions] table found in \(configPath)")
@@ -93,8 +100,15 @@ struct ConfigManager {
 					)
 				}
 				let scheme = key.components.joined()
-				try setURLHandler(appName: appName, scheme: scheme)
-				print("Set \(scheme) → \(appName)")
+				switch scheme.lowercased() {
+				case "https":
+					// Route https to the http URL handler
+					try setURLHandler(appName: appName, scheme: "http")
+					print("Set https → \(appName) (routed to http)")
+				default:
+					try setURLHandler(appName: appName, scheme: scheme)
+					print("Set \(scheme) → \(appName)")
+				}
 			}
 		} else {
 			logger.debug("No [schemes] table found in \(configPath)")
