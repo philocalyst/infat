@@ -9,8 +9,8 @@ var logger = Logger(label: "com.philocalyst.infat")
 @main
 struct Infat: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
-        abstract: "A tool to assign default openers for filetypes",
-        version: "0.1.0",
+        abstract: "Declaritively set assocations for URLs and files",
+        version: "2.0.1",
         subcommands: [Info.self, Set.self]
     )
 
