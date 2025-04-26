@@ -74,9 +74,7 @@ struct Info: ParsableCommand {
 	private func listForApp(appName: String) throws {
 		logger.info("Looking for types handled by '\(appName)'...")
 
-		let apps = try FileSystemUtilities.findApplications()
-
-		guard let appPath = findApplication(applications: apps, key: appName) else {
+		guard let appPath = try findApplication(named: appName) else {
 			throw InfatError.applicationNotFound(name: appName)
 		}
 		logger.info("Found application at: \(appPath)")
