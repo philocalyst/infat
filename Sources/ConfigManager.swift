@@ -3,10 +3,6 @@ import Foundation
 import Logging
 import Toml
 
-let BOLD = "\u{001B}[1m"
-let UNDERLINE = "\u{001B}[4m"
-let RESET = "\u{001B}[0m"
-
 struct ConfigManager {
 	static func loadConfig(from configPath: String) async throws {
 		let tomlConfig = try Toml(contentsOfFile: configPath)
@@ -28,7 +24,7 @@ struct ConfigManager {
 		// MARK: – Process [extensions]
 		if let extensionTable = tomlConfig.table(extensionTableName) {
 			logger.info("Processing [extensions] associations...")
-			print("\(BOLD)\(UNDERLINE)\(extensionTableName.uppercased())\(RESET)")
+			print("\(extensionTableName.uppercased().bold().underline())")
 			for key in extensionTable.keyNames {
 				guard let appName = extensionTable.string(key.components) else {
 					throw InfatError.tomlValueNotString(
@@ -54,7 +50,7 @@ struct ConfigManager {
 		// MARK: – Process [types]
 		if let typeTable = tomlConfig.table(typeTableName) {
 			logger.info("Processing [types] associations...")
-			print("\(BOLD)\(UNDERLINE)\(typeTableName.uppercased())\(RESET)")
+			print("\(typeTableName.uppercased().bold().underline())")
 			for key in typeTable.keyNames {
 				let typeKey = key.components.joined()
 				guard let appName = typeTable.string(key.components) else {
@@ -92,7 +88,7 @@ struct ConfigManager {
 		// MARK: – Process [schemes]
 		if let schemeTable = tomlConfig.table(schemeTableName) {
 			logger.info("Processing [schemes] associations...")
-			print("\(BOLD)\(UNDERLINE)\(schemeTableName.uppercased())\(RESET)")
+			print("\(schemeTableName.uppercased().bold().underline())")
 			for key in schemeTable.keyNames {
 				guard let appName = schemeTable.string(key.components) else {
 					throw InfatError.tomlValueNotString(
