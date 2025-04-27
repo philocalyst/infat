@@ -136,6 +136,7 @@ jobs:
           files: ${{ steps.artifact_name.outputs.path }}
           body_path: release_notes.md
           draft: false
+          overwrite: true
           prerelease: ${{ needs.prerelease.outputs.value }}
           make_latest: true
           token: ${{ secrets.PAT }}

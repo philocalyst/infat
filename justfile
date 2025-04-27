@@ -21,7 +21,13 @@ check:
 	@echo "At the README?"
 	@echo "At the swift bundle?"
 	@echo "At the CHANGELOG?"
-	grep "2.?.?"
+	grep -R \
+	--exclude='CHANGELOG*' \
+	--exclude='README*' \
+	--exclude='Package*' \
+	--exclude-dir='.build' \
+	-nE '\b([0-9]+\.){2}[0-9]+\b' \
+	.
 
 # ▰▰▰ Build & Check ▰▰▰ #
 build target=(current_platform):
@@ -44,24 +50,21 @@ compress-binaries target_directory=("."):
     #!/usr/bin/env bash
     
     find "{{target_directory}}" -maxdepth 1 -type f -print0 | while IFS= read -r -d $'\0' file; do
-
     # Check if the file command output indicates a binary/executable type
     if file "$file" | grep -q -E 'executable|ELF|Mach-O|shared object'; then
-        # Get the base filename without the prepending components
+        # Get the base filename without the path
         filename=$(basename "$file")
         
+        # Get the base name without version number
+        basename="${filename%%-*}"
+        
         echo "Archiving binary file: $filename"
-        # Create a compressed tar archive named after the original file
-
-        # Get the original, un-versioned name
-        inner="${file%%-*}"
-
-        # Build to archive with the un-versioned inner
+        
+        # Create archive with just the basename, no directory structure
         tar -czf "${file}.tar.gz" \
-        -s "|^${file}$|${inner}|" \
-        -s "|^${file}/|${inner}/|" \
-        "${file}"
-
+            -C "$(dirname "$file")" \
+            -s "|^${filename}$|${basename}|" \
+            "$(basename "$file")"
     fi
     done
 
