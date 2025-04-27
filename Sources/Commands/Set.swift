@@ -45,7 +45,7 @@ extension Infat {
 						appName: appName,
 						ext: fType
 					)
-					print("Successfully bound \(appName) to \(fType)")
+					print("Successfully bound \(appName) to \(fType)".italic())
 				}
 
 			} else if let schm = scheme {
@@ -59,7 +59,7 @@ extension Infat {
 						appName: appName,
 						scheme: schm
 					)
-					print("Successfully bound \(appName) to \(schm)")
+					print("Successfully bound \(appName) to \(schm)".italic())
 				}
 
 			} else if let superType = type {
@@ -69,7 +69,7 @@ extension Infat {
 						supertype: sUTI
 					)
 				}
-				print("Set default app for type \(superType) to \(appName)")
+				print("Set default app for type \(superType) to \(appName)".italic())
 			}
 		}
 	}
