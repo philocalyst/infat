@@ -138,7 +138,7 @@ jobs:
           body_path: release_notes.md
           draft: false
           prerelease: ${{ needs.prerelease.outputs.value }}
-          overwrite: true
+          make_latest: true
           token: ${{ secrets.PAT }}
 
   checksum:
