@@ -6,6 +6,19 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [2.3.0] – 2025-04-27
+
+### Added
+- compress-binaries: use the project’s `infat` name to create `.tar.gz` archives with un-versioned internal filenames  
+- AssociationManager: support relative paths (tilde expansion) and file:// URLs in `findApplication(named:)`
+
+### Changed
+- restyled `justfile` with decorative section markers and switched to `/`-based path concatenation for clarity
+
+### Fixed
+- release workflow: replaced `overwrite: true` with `make_latest: true` to correctly mark the latest GitHub release  
+- prerelease check in Actions: now properly detects `-alpha` and `-beta` tags
+
 ## [2.2.0] – 2025-04-26
 
 ### Added
@@ -248,7 +261,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Corrected the bundle ID used internally and for logging from `com.example.burt` to `com.philocalyst.infat`.
 - Addressed minor code formatting inconsistencies across several files.
 
-[Unreleased]: https://github.com/philocalyst/infat/compare/v2.2.0...HEAD  
+[Unreleased]: https://github.com/your-org/your-repo/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/your-org/your-repo/compare/v2.2.0...v2.3.0
 [2.2.0]:     https://github.com/philocalyst/infat/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/your-org/your-repo/compare/v2.0.1...v2.1.0  
 [2.0.1]: https://github.com/philocalyst/infat/compare/v2.0.0...v2.0.1
