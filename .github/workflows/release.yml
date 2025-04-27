@@ -25,10 +25,15 @@ jobs:
       - name: Prerelease Check
         id: prerelease
         run: |
-          if [[ ${{ github.ref_name }} =~ ^[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
-              echo "value=false" >> $GITHUB_OUTPUT
+          run: |
+          # extract just the tag name (e.g. v1.2.3-alpha)
+          tag=${GITHUB_REF##*/}
+
+          # if it ends in -alpha or -beta → prerelease
+          if [[ "$tag" =~ -(alpha|beta)$ ]]; then
+            echo "value=true" >> $GITHUB_OUTPUT
           else
-              echo "value=true" >> $GITHUB_OUTPUT
+            echo "value=false" >> $GITHUB_OUTPUT
           fi
 
   package:
