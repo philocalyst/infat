@@ -49,9 +49,19 @@ compress-binaries target_directory=("."):
     if file "$file" | grep -q -E 'executable|ELF|Mach-O|shared object'; then
         # Get the base filename without the prepending components
         filename=$(basename "$file")
+        
         echo "Archiving binary file: $filename"
         # Create a compressed tar archive named after the original file
-        tar -czvf "${file}.tar.gz" "$file"
+
+        # Get the original, un-versioned name
+        inner="${file%%-*}"
+
+        # Build to archive with the un-versioned inner
+        tar -czf "${file}.tar.gz" \
+        -s "|^${file}$|${inner}|" \
+        -s "|^${file}/|${inner}/|" \
+        "${file}"
+
     fi
     done
 
