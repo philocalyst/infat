@@ -1,10 +1,10 @@
-# -*- mode: justfile -*-
+#!/usr/bin/env just
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
 set dotenv-load := true
 set allow-duplicate-recipes := true
 
-# ===== Variables =====
+# ▰▰▰ Variables ▰▰▰ #
 project_root     := justfile_directory()
 output_directory := project_root + "/dist"
 current_platform := `uname -m` + "-apple-macos"
@@ -13,7 +13,7 @@ build_dir        := project_root + "/.build"
 debug_bin        := build_dir + "/debug/" + default_bin
 release_bin      := build_dir + "/release/" + default_bin
 
-# ===== Default =====
+# ▰▰▰ Default ▰▰▰ #
 default: build
 
 [confirm("You've updated the versionings?")]
@@ -23,7 +23,7 @@ check:
 	@echo "At the CHANGELOG?"
 	grep "2.?.?"
 
-# ===== Build & Check =====
+# ▰▰▰ Build & Check ▰▰▰ #
 build target=(current_platform):
 	@echo "🔨 Building Swift package (debug)…"
 	swift build --triple {{target}}
@@ -32,7 +32,7 @@ build-release target=(current_platform):
 	@echo "🚀 Building Swift package (release)…"
 	swift build -c release -Xswiftc "-whole-module-optimization" --triple {{target}} -Xlinker "-dead_strip"
 
-# ===== Packaging =====
+# ▰▰▰ Packaging ▰▰▰ #
 package target=(current_platform) result_directory=(output_directory): 
 	just build-release {{target}}
 	@echo "📦 Packaging release binary…"
@@ -108,7 +108,7 @@ create-notes raw_tag outfile changelog:
     fi
 
 
-# ===== Run =====
+# ▰▰▰ Run ▰▰▰ #
 run +args="":
 	@echo "▶️ Running (debug)…"
 	swift run {{default_bin}} {{args}}
@@ -117,13 +117,13 @@ run-release +args="":
 	@echo "▶️ Running (release)…"
 	swift run -c release -Xswiftc "-whole-module-optimization" {{release_bin}} {{args}}
 
-# ===== Cleaning =====
+# ▰▰▰ Cleaning ▰▰▰ #
 clean:
 	@echo "🧹 Cleaning build artifacts…"
 	swift package clean
 	swift package resolve
 
-# ===== Installation & Update =====
+# ▰▰▰ Installation & Update ▰▰▰ #
 install: build-release
 	@echo "💾 Installing {{default_bin}} → /usr/local/bin…"
 	@cp {{release_bin}} /usr/local/bin/{{default_bin}}
@@ -136,7 +136,7 @@ update:
 	@echo "🔄 Updating Swift package dependencies…"
 	swift package update
 
-# ===== Aliases =====
+# ▰▰▰ Aliases ▰▰▰ #
 alias b   := build
 alias br  := build-release
 alias p   := package
