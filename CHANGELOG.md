@@ -6,6 +6,15 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [2.3.1] – 2025-04-27
+
+### Changed
+- Print success messages in italic formatting for `infat set` commands (file, scheme, and supertype bindings).
+- Clarify README instructions: allow user-relative paths via `~` and note that shell expansions are not supported.
+
+### Fixed
+- Remove duplicate `run` step in the GitHub Actions `release.yml` workflow.
+
 ## [2.3.0] – 2025-04-27
 
 ### Added
@@ -261,7 +270,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Corrected the bundle ID used internally and for logging from `com.example.burt` to `com.philocalyst.infat`.
 - Addressed minor code formatting inconsistencies across several files.
 
-[Unreleased]: https://github.com/your-org/your-repo/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/your-org/your-repo/compare/v2.3.1...HEAD
+[2.3.1]: https://github.com/your-org/your-repo/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/your-org/your-repo/compare/v2.2.0...v2.3.0
 [2.2.0]:     https://github.com/philocalyst/infat/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/your-org/your-repo/compare/v2.0.1...v2.1.0  
