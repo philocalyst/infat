@@ -6,12 +6,12 @@ set allow-duplicate-recipes := true
 
 # ▰▰▰ Variables ▰▰▰ #
 project_root     := justfile_directory()
-output_directory := project_root + "/dist"
-current_platform := `uname -m` + "-apple-macos"
+output_directory := project_root / "dist"
+current_platform := `uname -m` + "-apple-" + os()
 default_bin      := "infat"
-build_dir        := project_root + "/.build"
-debug_bin        := build_dir + "/debug/" + default_bin
-release_bin      := build_dir + "/release/" + default_bin
+build_dir        := project_root / ".build"
+debug_bin        := build_dir / "debug" / default_bin
+release_bin      := build_dir / "release" / default_bin
 
 # ▰▰▰ Default ▰▰▰ #
 default: build
