@@ -44,25 +44,26 @@ func setURLHandler(appName: String, scheme: String) throws {
 }
 
 func findApplication(named key: String) throws -> URL? {
+    let fullKey = (key as NSString).expandingTildeInPath
     let fm = FileManager.default
 
     // |1| Normalize the key in case user provided a ".app" extension.
-    let rawExt = (key as NSString).pathExtension.lowercased()
+    let rawExt = (fullKey as NSString).pathExtension.lowercased()
     let baseName =
         rawExt == "app"
-        ? (key as NSString).deletingPathExtension
-        : key
+        ? (fullKey as NSString).deletingPathExtension
+        : fullKey
 
     // |2| If this is a valid file‐system path or a file:// URL,
     // perform basic checks and return instantly if a .app bundle.
 
-    let isFileURL = (URL(string: key)?.isFileURL) ?? false
-    if isFileURL || fm.fileExists(atPath: key) {
+    let isFileURL = (URL(string: fullKey)?.isFileURL) ?? false
+    if isFileURL || fm.fileExists(atPath: fullKey) {
         // Initalize properly depending on type of URL
         let url =
             isFileURL
-            ? URL(string: key)!
-            : URL(fileURLWithPath: key)
+            ? URL(string: fullKey)!
+            : URL(fileURLWithPath: fullKey)
 
         let r = try url.resourceValues(
             forKeys: [.isDirectoryKey, .typeIdentifierKey]
