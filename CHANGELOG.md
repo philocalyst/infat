@@ -6,6 +6,15 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [2.3.2] – 2025-04-27
+
+### Fixed
+- Set `overwrite: true` in the GitHub Actions release workflow to ensure existing releases can be replaced.
+- Refine the `just check` recipe to ignore `CHANGELOG*`, `README*`, `Package*` files and the `.build` directory when scanning for version patterns.
+- Update the `compress-binaries` recipe in Justfile so that archives
+  - strip version suffixes from file names  
+  - use only the base filename when creating the `.tar.gz`  
+
 ## [2.3.1] – 2025-04-27
 
 ### Changed
@@ -270,7 +279,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Corrected the bundle ID used internally and for logging from `com.example.burt` to `com.philocalyst.infat`.
 - Addressed minor code formatting inconsistencies across several files.
 
-[Unreleased]: https://github.com/your-org/your-repo/compare/v2.3.1...HEAD
+[Unreleased]: https://github.com/your-org/your-repo/compare/v2.3.2...HEAD
+[2.3.2]: https://github.com/your-org/your-repo/compare/v2.3.1...v2.3.2
 [2.3.1]: https://github.com/your-org/your-repo/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/your-org/your-repo/compare/v2.2.0...v2.3.0
 [2.2.0]:     https://github.com/philocalyst/infat/compare/v2.1.0...v2.2.0
