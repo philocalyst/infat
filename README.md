@@ -123,7 +123,7 @@ just build-release
 just run "list txt"
 
 # Enable verbose logging for troubleshooting
-infat --verbose info pdf
+infat --verbose info --ext pdf
 ```
 
 ---
