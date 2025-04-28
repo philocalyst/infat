@@ -133,7 +133,7 @@ infat --verbose info --ext pdf
 ### Homebrew
 
 ```bash
-brew install philocalyst/tap/infat
+brew install infat
 ```
 
 ### From Source
