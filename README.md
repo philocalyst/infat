@@ -58,8 +58,33 @@ infat set Mail --scheme mailto
 infat set VSCode --type plain-text
 ```
 
-Run `infat info --help` for a list of all available types.
+Infat currently supports these supertypes:
 
+- plain-text
+- text
+- csv
+- image
+- raw-image
+- audio
+- video
+- movie
+- mp4-audio
+- quicktime
+- mp4-movie
+- archive
+- sourcecode
+- c-source
+- cpp-source
+- objc-source
+- shell
+- makefile
+- data
+- directory
+- folder
+- symlink
+- executable
+- unix-executable
+- app-bundle
 
 ### 5. Configuration
 
@@ -129,6 +154,8 @@ infat --verbose info --ext pdf
 ---
 
 ## Install
+
+> While we're getting completion support up in our homebrew formulae, you can generate the completions manually and move them to a location of your choosing. [Docs](https://swiftpackageindex.com/apple/swift-argument-parser/1.5.0/documentation/argumentparser/installingcompletionscripts)
 
 ### Homebrew
 
