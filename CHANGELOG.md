@@ -6,6 +6,27 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [2.3.3] – 2025-04-29
+
+### Added
+- Support XDG Base Directory spec for configuration file search: respect  
+  `XDG_CONFIG_HOME` (default `~/.config/infat/config.toml`) and  
+  `XDG_CONFIG_DIRS` (default `/etc/xdg/infat/config.toml`).
+- Add a GitHub Actions **homebrew** job to automatically bump the Homebrew  
+  formula on tagged releases.
+
+### Changed
+- Refactor Zsh, Bash and Fish completion scripts to use the official file-type  
+  list and improve argument parsing.
+- Update README:
+  - Change Homebrew installation to `brew install infat`.
+  - Add instructions for manual generation of shell completions until the formula  
+    supports them.
+- Update `.github/workflows/release.yml` to integrate the Homebrew bump step.
+
+### Fixed
+- Correct README misdocumentation by updating the list of supported file supertypes.
+
 ## [2.3.2] – 2025-04-27
 
 ### Fixed
@@ -279,7 +300,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Corrected the bundle ID used internally and for logging from `com.example.burt` to `com.philocalyst.infat`.
 - Addressed minor code formatting inconsistencies across several files.
 
-[Unreleased]: https://github.com/your-org/your-repo/compare/v2.3.2...HEAD
+[Unreleased]: https://github.com/your-org/your-repo/compare/v2.3.3...HEAD
+[2.3.3]: https://github.com/philocalyst/infat/compare/v2.3.2...v2.3.3  
 [2.3.2]: https://github.com/your-org/your-repo/compare/v2.3.1...v2.3.2
 [2.3.1]: https://github.com/your-org/your-repo/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/your-org/your-repo/compare/v2.2.0...v2.3.0
