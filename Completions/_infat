@@ -1,76 +1,96 @@
-#!/usr/bin/env zsh
 #compdef infat
-
-# ZSH completion script for infat
+local context state state_descr line
+_infat_commandname=$words[1]
+typeset -A opt_args
 
 _infat() {
-    local -a commands options
-
-    # Define global options
-    options=(
-        '(-c --config)'{-c,--config}'[Path to the configuration file]:config file:_files'
-        '(-v --verbose)'{-v,--verbose}'[Enable verbose logging]'
-        '(-q --quiet)'{-q,--quiet}'[Quiet output]'
-        '(-h --help)'{-h,--help}'[Show help]'
-        '--version[Show version]'
+    integer ret=1
+    local -a args
+    args+=(
+        '(-c --config)'{-c,--config}'[Path to the configuration file.]:config:'
+        '(-v --verbose)'{-v,--verbose}'[Enable verbose logging.]'
+        '(-q --quiet)'{-q,--quiet}'[Quiet output.]'
+        '--version[Show the version.]'
+        '(-h --help)'{-h,--help}'[Show help information.]'
+        '(-): :->command'
+        '(-)*:: :->arg'
     )
-
-    # Define subcommands
-    commands=(
-        'list:Lists information for a given filetype'
-        'set:Sets an application association'
-        'info:Displays system information'
-    )
-
-    # Function to get file extensions in current directory
-    _file_extensions() {
-        local -a extensions
-        extensions=(${(f)"$(find . -type f -name "*.*" 2>/dev/null | sed 's/.*\.//' | sort -u)"})
-        _describe 'file extension' extensions
-    }
-
-    # Function to get macOS applications
-    _macos_applications() {
-        local -a apps
-        apps=(${(f)"$(find /Applications /System/Applications ~/Applications -maxdepth 1 -name "*.app" 2>/dev/null | sed 's/.*\///;s/\.app$//' | sort -u)"})
-        _describe 'application' apps
-    }
-
-    # Handle subcommands
-    _arguments -C \
-        $options \
-        ': :->command' \
-        '*:: :->args' && return 0
-
+    _arguments -w -s -S $args[@] && ret=0
     case $state in
-        command)
-            # Complete subcommands
-            _describe -t commands 'infat commands' commands
+        (command)
+            local subcommands
+            subcommands=(
+                'info:Lists file association information.'
+                'set:Sets an application association.'
+                'help:Show subcommand help information.'
+            )
+            _describe "subcommand" subcommands
             ;;
-        args)
-            case $words[1] in
-                list)
-                    _arguments \
-                        '(-a --assigned)'{-a,--assigned}'[List all assigned apps for type]' \
-                        '(-h --help)'{-h,--help}'[Show help]' \
-                        ': :_file_extensions'
+        (arg)
+            case ${words[1]} in
+                (info)
+                    _infat_info
                     ;;
-                set)
-                    if (( CURRENT == 2 )); then
-                        _macos_applications
-                    elif (( CURRENT == 3 )); then
-                        _file_extensions
-                    elif (( CURRENT == 4 )); then
-                        _message 'role (optional)'
-                    fi
+                (set)
+                    _infat_set
                     ;;
-                info)
-                    _arguments \
-                        '(-h --help)'{-h,--help}'[Show help]'
+                (help)
+                    _infat_help
                     ;;
             esac
             ;;
     esac
+
+    return ret
 }
 
-_infat "$@"
+_infat_info() {
+    integer ret=1
+    local -a args
+    args+=(
+        '(-a --app)'{-a,--app}'[Application name (e.g., '"'"'Google Chrome'"'"').]:app:'
+        '(-e --ext)'{-e,--ext}'[File extension (without the dot, e.g., '"'"'html'"'"').]:ext:'
+        '(-t --type)'{-t,--type}'[File type (e.g., text).]:type:(plain-text text csv image raw-image audio video movie mp4-audio quicktime mp4-movie archive sourcecode c-source cpp-source objc-source shell makefile data directory folder symlink executable unix-executable app-bundle)'
+        '--version[Show the version.]'
+        '(-h --help)'{-h,--help}'[Show help information.]'
+    )
+    _arguments -w -s -S $args[@] && ret=0
+
+    return ret
+}
+
+_infat_set() {
+    integer ret=1
+    local -a args
+    args+=(
+        ':app-name:'
+        '--ext[A file extension without leading dot.]:ext:'
+        '--scheme[A URL scheme. ex: mailto.]:scheme:'
+        '--type[A file class. ex: image]:type:(plain-text text csv image raw-image audio video movie mp4-audio quicktime mp4-movie archive sourcecode c-source cpp-source objc-source shell makefile data directory folder symlink executable unix-executable app-bundle)'
+        '--version[Show the version.]'
+        '(-h --help)'{-h,--help}'[Show help information.]'
+    )
+    _arguments -w -s -S $args[@] && ret=0
+
+    return ret
+}
+
+_infat_help() {
+    integer ret=1
+    local -a args
+    args+=(
+        ':subcommands:'
+        '--version[Show the version.]'
+    )
+    _arguments -w -s -S $args[@] && ret=0
+
+    return ret
+}
+
+
+_custom_completion() {
+    local completions=("${(@f)$($*)}")
+    _describe '' completions
+}
+
+_infat

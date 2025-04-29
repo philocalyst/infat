@@ -1,66 +1,88 @@
-#!/usr/bin/env bash
-# Bash completion script for infat
+#!/bin/bash
 
-_infat_completion() {
-    local cur prev words cword
-    _init_completion || return
-
-    # List of subcommands
-    local subcommands="list set info"
-
-    # Global options
-    local global_options="-c --config -v --verbose -q --quiet -h --help --version"
-    
-    # Check if we're completing a subcommand
-    local command_position
-    for ((command_position=1; command_position < cword; command_position++)); do
-        if [[ ${words[command_position]} == "list" || ${words[command_position]} == "set" || ${words[command_position]} == "info" ]]; then
-            break
-        fi
-    done
-
-    # If we're at the main command level
-    if [[ $command_position -eq $cword ]]; then
-        COMPREPLY=( $(compgen -W "$subcommands $global_options" -- "$cur") )
-        return 0
+_infat() {
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    COMPREPLY=()
+    opts="-c --config -v --verbose -q --quiet --version -h --help info set help"
+    if [[ $COMP_CWORD == "1" ]]; then
+        COMPREPLY=( $(compgen -W "$opts" -- "$cur") )
+        return
     fi
+    case $prev in
+        -c|--config)
 
-    local command=${words[command_position]}
-
-    # Complete options for the specific subcommand
-    case $command in
-        list)
-            if [[ $prev == "-a" || $prev == "--assigned" ]]; then
-                # After -a/--assigned flag, complete file extensions
-                COMPREPLY=( $(compgen -W "$(find . -type f -name "*.*" | sed 's/.*\.//' | sort -u)" -- "$cur") )
-            elif [[ $prev == "list" || $cur == -* ]]; then
-                # Complete options for the list subcommand
-                COMPREPLY=( $(compgen -W "-a --assigned -h --help" -- "$cur") )
-            else
-                # Complete file extensions for the identifier argument
-                COMPREPLY=( $(compgen -W "$(find . -type f -name "*.*" | sed 's/.*\.//' | sort -u)" -- "$cur") )
-            fi
+            return
+        ;;
+    esac
+    case ${COMP_WORDS[1]} in
+        (info)
+            _infat_info 2
+            return
             ;;
-        set)
-            if [[ $prev == "set" ]]; then
-                # After 'set', complete with application names
-                local app_names=$(find /Applications /System/Applications ~/Applications -maxdepth 1 -name "*.app" 2>/dev/null | sed 's/.*\///;s/\.app$//' | sort -u)
-                COMPREPLY=( $(compgen -W "$app_names" -- "$cur") )
-            elif [[ $prev != "-"* && $cword -eq $(($command_position + 2)) ]]; then
-                # After app name, suggest file extensions
-                COMPREPLY=( $(compgen -W "$(find . -type f -name "*.*" | sed 's/.*\.//' | sort -u)" -- "$cur") )
-            elif [[ $cur == -* ]]; then
-                # Options for set subcommand
-                COMPREPLY=( $(compgen -W "-h --help" -- "$cur") )
-            fi
+        (set)
+            _infat_set 2
+            return
             ;;
-        info)
-            # Options for info subcommand
-            COMPREPLY=( $(compgen -W "-h --help" -- "$cur") )
+        (help)
+            _infat_help 2
+            return
             ;;
     esac
+    COMPREPLY=( $(compgen -W "$opts" -- "$cur") )
+}
+_infat_info() {
+    opts="-a --app -e --ext -t --type --version -h --help"
+    if [[ $COMP_CWORD == "$1" ]]; then
+        COMPREPLY=( $(compgen -W "$opts" -- "$cur") )
+        return
+    fi
+    case $prev in
+        -a|--app)
 
-    return 0
+            return
+        ;;
+        -e|--ext)
+
+            return
+        ;;
+        -t|--type)
+            COMPREPLY=( $(compgen -W "plain-text text csv image raw-image audio video movie mp4-audio quicktime mp4-movie archive sourcecode c-source cpp-source objc-source shell makefile data directory folder symlink executable unix-executable app-bundle" -- "$cur") )
+            return
+        ;;
+    esac
+    COMPREPLY=( $(compgen -W "$opts" -- "$cur") )
+}
+_infat_set() {
+    opts="--ext --scheme --type --version -h --help"
+    if [[ $COMP_CWORD == "$1" ]]; then
+        COMPREPLY=( $(compgen -W "$opts" -- "$cur") )
+        return
+    fi
+    case $prev in
+        --ext)
+
+            return
+        ;;
+        --scheme)
+
+            return
+        ;;
+        --type)
+            COMPREPLY=( $(compgen -W "plain-text text csv image raw-image audio video movie mp4-audio quicktime mp4-movie archive sourcecode c-source cpp-source objc-source shell makefile data directory folder symlink executable unix-executable app-bundle" -- "$cur") )
+            return
+        ;;
+    esac
+    COMPREPLY=( $(compgen -W "$opts" -- "$cur") )
+}
+_infat_help() {
+    opts="--version"
+    if [[ $COMP_CWORD == "$1" ]]; then
+        COMPREPLY=( $(compgen -W "$opts" -- "$cur") )
+        return
+    fi
+    COMPREPLY=( $(compgen -W "$opts" -- "$cur") )
 }
 
-complete -F _infat_completion infat
+
+complete -F _infat infat

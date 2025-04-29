@@ -1,37 +1,31 @@
-function __infat_file_extensions
-    find . -type f -name "*.*" 2>/dev/null | sed 's/.*\.//' | sort -u
+function _swift_infat_using_command
+    set -l cmd (commandline -opc)
+    if [ (count $cmd) -eq (count $argv) ]
+        for i in (seq (count $argv))
+            if [ $cmd[$i] != $argv[$i] ]
+                return 1
+            end
+        end
+        return 0
+    end
+    return 1
 end
-
-function __infat_macos_applications
-    find /Applications /System/Applications ~/Applications -maxdepth 1 -name "*.app" 2>/dev/null | sed 's/.*\///;s/\.app$//' | sort -u
-end
-
-# Main command completions
-complete -c infat -f
-complete -c infat -n __fish_use_subcommand -s c -l config -d "Path to the configuration file" -r
-complete -c infat -n __fish_use_subcommand -s v -l verbose -d "Enable verbose logging"
-complete -c infat -n __fish_use_subcommand -s q -l quiet -d "Quiet output"
-complete -c infat -n __fish_use_subcommand -s h -l help -d "Show help"
-complete -c infat -n __fish_use_subcommand -l version -d "Show version"
-
-# Subcommand completions
-complete -c infat -n __fish_use_subcommand -a list -d "Lists information for a given filetype"
-complete -c infat -n __fish_use_subcommand -a set -d "Sets an application association"
-complete -c infat -n __fish_use_subcommand -a info -d "Displays system information"
-
-# 'list' subcommand
-complete -c infat -n "__fish_seen_subcommand_from list" -s a -l assigned -d "List all assigned apps for type"
-complete -c infat -n "__fish_seen_subcommand_from list" -s h -l help -d "Show help"
-complete -c infat -n "__fish_seen_subcommand_from list" -a "(__infat_file_extensions)"
-
-# 'set' subcommand
-complete -c infat -n "__fish_seen_subcommand_from set; and not __fish_seen_subcommand_from (__infat_macos_applications)" -a "(__infat_macos_applications)" -d Application
-
-# After application name, suggest file extensions
-complete -c infat -n "begin; 
-    __fish_seen_subcommand_from set; 
-    and test (count (commandline -opc)) -eq 3;
-end" -a "(__infat_file_extensions)" -d "File type"
-
-# 'info' subcommand
-complete -c infat -n "__fish_seen_subcommand_from info" -s h -l help -d "Show help"
+complete -c infat -n '_swift_infat_using_command infat' -f -r -s c -l config -d 'Path to the configuration file.'
+complete -c infat -n '_swift_infat_using_command infat' -f -s v -l verbose -d 'Enable verbose logging.'
+complete -c infat -n '_swift_infat_using_command infat' -f -s q -l quiet -d 'Quiet output.'
+complete -c infat -n '_swift_infat_using_command infat' -f -l version -d 'Show the version.'
+complete -c infat -n '_swift_infat_using_command infat' -f -s h -l help -d 'Show help information.'
+complete -c infat -n '_swift_infat_using_command infat' -f -a info -d 'Lists file association information.'
+complete -c infat -n '_swift_infat_using_command infat' -f -a set -d 'Sets an application association.'
+complete -c infat -n '_swift_infat_using_command infat' -f -a help -d 'Show subcommand help information.'
+complete -c infat -n '_swift_infat_using_command infat info' -f -r -s a -l app -d 'Application name (e.g., \'Google Chrome\').'
+complete -c infat -n '_swift_infat_using_command infat info' -f -r -s e -l ext -d 'File extension (without the dot, e.g., \'html\').'
+complete -c infat -n '_swift_infat_using_command infat info' -f -r -s t -l type -d 'File type (e.g., text).'
+complete -c infat -n '_swift_infat_using_command infat info -t' -f -k -a 'plain-text text csv image raw-image audio video movie mp4-audio quicktime mp4-movie archive sourcecode c-source cpp-source objc-source shell makefile data directory folder symlink executable unix-executable app-bundle'
+complete -c infat -n '_swift_infat_using_command infat info --type' -f -k -a 'plain-text text csv image raw-image audio video movie mp4-audio quicktime mp4-movie archive sourcecode c-source cpp-source objc-source shell makefile data directory folder symlink executable unix-executable app-bundle'
+complete -c infat -n '_swift_infat_using_command infat info' -f -s h -l help -d 'Show help information.'
+complete -c infat -n '_swift_infat_using_command infat set' -f -r -l ext -d 'A file extension without leading dot.'
+complete -c infat -n '_swift_infat_using_command infat set' -f -r -l scheme -d 'A URL scheme. ex: mailto.'
+complete -c infat -n '_swift_infat_using_command infat set' -f -r -l type -d 'A file class. ex: image'
+complete -c infat -n '_swift_infat_using_command infat set --type' -f -k -a 'plain-text text csv image raw-image audio video movie mp4-audio quicktime mp4-movie archive sourcecode c-source cpp-source objc-source shell makefile data directory folder symlink executable unix-executable app-bundle'
+complete -c infat -n '_swift_infat_using_command infat set' -f -s h -l help -d 'Show help information.'
