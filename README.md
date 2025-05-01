@@ -155,8 +155,6 @@ infat --verbose info --ext pdf
 
 ## Install
 
-> While we're getting completion support up in our homebrew formulae, you can generate the completions manually and move them to a location of your choosing. [Docs](https://swiftpackageindex.com/apple/swift-argument-parser/1.5.0/documentation/argumentparser/installingcompletionscripts)
-
 ### Homebrew
 
 ```bash
