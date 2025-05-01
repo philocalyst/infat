@@ -22,7 +22,7 @@ Get started by installing Infat — jump to the [Install](#install) section belo
 
 ### 1. Getting assocation information
 
-```bash
+```shell
 # Show the default app for .txt files and all registered apps
 infat info --ext txt
 ```
@@ -31,7 +31,7 @@ infat info --ext txt
 > [!TIP]
 > These aren't strict extensions, for example, yml and yaml extensions share a common resolver.
 
-```bash
+```shell
 # Use TextEdit for .md files
 infat set TextEdit --ext md
 
@@ -41,7 +41,7 @@ infat set VSCode --ext json
 
 ### 3. Binding a URL Scheme
 
-```bash
+```shell
 # Use Mail.app for mailto: links
 infat set Mail --scheme mailto
 ```
@@ -116,7 +116,7 @@ plain-text = "VSCode"
 
 Run without arguments to apply all entries.
 
-```bash
+```shell
 infat --config ~/.config/infat/config.toml
 ```
 
@@ -137,7 +137,7 @@ infat --config ~/.config/infat/config.toml
 
 You’ll need [just](https://github.com/casey/just) and Swift 5.9+:
 
-```bash
+```shell
 # Debug build
 just build
 
@@ -157,14 +157,16 @@ infat --verbose info --ext pdf
 
 ### Homebrew
 
-```bash
+```shell
+brew update # Optional but recommended
 brew install infat
 ```
 
 ### From Source
 
 Please make sure `just` (our command-runner) is installed before running. If you don't want to use `just`, the project is managed with SPM, and you can build with "Swift build -c release" and move the result in the .build folder to wherever. 
-```bash
+
+```shell
 git clone https://github.com/philocalyst/infat.git && cd infat
 just package && mv dist/infat* /usr/local/bin/infat # Wildcard because output name includes platform
 ```
