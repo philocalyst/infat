@@ -21,32 +21,6 @@ struct ConfigManager {
 			throw InfatError.noConfigTables(path: configPath)
 		}
 
-		// MARK: – Process [extensions]
-		if let extensionTable = tomlConfig.table(extensionTableName) {
-			logger.info("Processing [extensions] associations...")
-			print("\(extensionTableName.uppercased().bold().underline())")
-			for key in extensionTable.keyNames {
-				guard let appName = extensionTable.string(key.components) else {
-					throw InfatError.tomlValueNotString(
-						path: configPath,
-						key: key.components.joined()
-					)
-				}
-				let ext = key.components.joined()
-				switch ext.lowercased() {
-				case "html":
-					// Route .html to the http URL handler
-					try setURLHandler(appName: appName, scheme: "http")
-					print("Set .\(ext) → \(appName) (routed to http)")
-				default:
-					try await setDefaultApplication(appName: appName, ext: ext)
-					print("Set .\(ext) → \(appName)")
-				}
-			}
-		} else {
-			logger.debug("No [extensions] table found in \(configPath)")
-		}
-
 		// MARK: – Process [types]
 		if let typeTable = tomlConfig.table(typeTableName) {
 			logger.info("Processing [types] associations...")
@@ -83,6 +57,32 @@ struct ConfigManager {
 			}
 		} else {
 			logger.debug("No [types] table found in \(configPath)")
+		}
+
+		// MARK: – Processs [extensions]
+		if let extensionTable = tomlConfig.table(extensionTableName) {
+			logger.info("Processing [extensions] associations...")
+			print("\(extensionTableName.uppercased().bold().underline())")
+			for key in extensionTable.keyNames {
+				guard let appName = extensionTable.string(key.components) else {
+					throw InfatError.tomlValueNotString(
+						path: configPath,
+						key: key.components.joined()
+					)
+				}
+				let ext = key.components.joined()
+				switch ext.lowercased() {
+				case "html":
+					// Route .html to the http URL handler
+					try setURLHandler(appName: appName, scheme: "http")
+					print("Set .\(ext) → \(appName) (routed to http)")
+				default:
+					try await setDefaultApplication(appName: appName, ext: ext)
+					print("Set .\(ext) → \(appName)")
+				}
+			}
+		} else {
+			logger.debug("No [extensions] table found in \(configPath)")
 		}
 
 		// MARK: – Process [schemes]
