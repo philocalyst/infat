@@ -6,6 +6,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [2.3.4] – 2025-04-29
+
+### Changed
+- Loading order. Now goes Types -> Extensions -> Schemes.
+
 ## [2.3.3] – 2025-04-29
 
 ### Added
