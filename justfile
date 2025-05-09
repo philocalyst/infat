@@ -69,6 +69,8 @@ compress-binaries target_directory=("."):
     done
 
 
+format:
+	find . -name "*.swift" -type f -exec swift-format format -i {} +
 
 checksum directory=(output_directory):
 	@echo "🔒 Creating checksums in {{directory}}…"
