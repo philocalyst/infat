@@ -77,7 +77,19 @@ struct ConfigManager {
           try setURLHandler(appName: appName, scheme: "http")
           print("Set .\(ext) → \(appName) (routed to http)")
         default:
-          try await setDefaultApplication(appName: appName, ext: ext)
+          do {
+            try await setDefaultApplication(
+              appName: appName,
+              ext: ext,
+            )
+          } catch InfatError.applicationNotFound(_) {
+            print("Application not found but ignoring due to passed options".bold().red())
+            // Just eat that thing up
+          } catch {
+            // propogate the rest
+            throw error
+          }
+
           print("Set .\(ext) → \(appName)")
         }
       }

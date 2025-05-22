@@ -18,6 +18,9 @@ extension Infat {
     @Option(name: .long, help: "A file class. ex: image")
     var type: Supertypes?
 
+    @Flag(name: .long, help: "Ignore missing app errors")
+    var robust: Bool = false
+
     mutating func run() async throws {
       let providedCount = [scheme != nil, ext != nil, type != nil]
         .filter { $0 }
@@ -41,10 +44,23 @@ extension Infat {
           try setURLHandler(appName: appName, scheme: "http")
           print("Successfully bound \(appName) to http")
         default:
-          try await setDefaultApplication(
-            appName: appName,
-            ext: fType
-          )
+          do {
+            try await setDefaultApplication(
+              appName: appName,
+              ext: fType,
+            )
+          } catch InfatError.applicationNotFound(let name) {
+            // Only throw for real if not robust
+            if !robust {
+              throw InfatError.applicationNotFound(name: name)
+            }
+            print("Application not found but ignoring due to passed options".bold().red())
+            return
+            // Otherwise just eat that thing up
+          } catch {
+            // propogate the rest
+            throw error
+          }
           print("Successfully bound \(appName) to \(fType)".italic())
         }
 
