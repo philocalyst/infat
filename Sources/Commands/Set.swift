@@ -54,7 +54,8 @@ extension Infat {
             if !robust {
               throw InfatError.applicationNotFound(name: name)
             }
-            print("Application not found but ignoring due to passed options".bold().red())
+            print(
+              "Application '\(appName)' not found but ignoring due to passed options".bold().red())
             return
             // Otherwise just eat that thing up
           } catch {
