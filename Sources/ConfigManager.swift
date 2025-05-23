@@ -83,7 +83,8 @@ struct ConfigManager {
               ext: ext,
             )
           } catch InfatError.applicationNotFound(_) {
-            print("Application not found but ignoring due to passed options".bold().red())
+            print(
+              "Application '\(appName)' not found but ignoring due to passed options".bold().red())
             // Just eat that thing up
           } catch {
             // propogate the rest

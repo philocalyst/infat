@@ -10,7 +10,7 @@ var logger = Logger(label: "com.philocalyst.infat")
 struct Infat: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     abstract: "Declaritively set assocations for URLs and files",
-    version: "2.3.4",
+    version: "2.4.0",
     subcommands: [Info.self, Set.self]
   )
 

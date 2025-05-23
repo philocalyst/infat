@@ -6,6 +6,18 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [2.4.0] – 2025-05-22
+
+### Added
+- Introduce a new `--robust` flag to the `infat set` command and configuration loader.  
+  When enabled, missing applications are no longer treated as errors; instead you’ll see  
+  a clear warning:
+  ```
+  Application '<name>' not found but ignoring due to passed options
+  ```
+- Add a `format` target to the Justfile (`just format`), which runs `swift-format` on all  
+  `.swift` source files for consistent code styling.
+
 ## [2.3.4] – 2025-04-29
 
 ### Changed
@@ -307,7 +319,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-[Unreleased]: https://github.com/your-org/your-repo/compare/v2.3.3...HEAD
+[Unreleased]: https://github.com/philocalyst/infat/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/philocalyst/infat/compare/v2.3.4...v2.4.0  
 [2.3.3]: https://github.com/philocalyst/infat/compare/v2.3.2...v2.3.3  
 [2.3.2]: https://github.com/your-org/your-repo/compare/v2.3.1...v2.3.2
 [2.3.1]: https://github.com/your-org/your-repo/compare/v2.3.0...v2.3.1
