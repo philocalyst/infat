@@ -47,7 +47,7 @@ extension Infat {
           do {
             try await setDefaultApplication(
               appName: appName,
-              ext: fType,
+              ext: fType
             )
           } catch InfatError.applicationNotFound(let name) {
             // Only throw for real if not robust
