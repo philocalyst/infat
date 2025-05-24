@@ -80,7 +80,7 @@ struct ConfigManager {
           do {
             try await setDefaultApplication(
               appName: appName,
-              ext: ext,
+              ext: ext
             )
           } catch InfatError.applicationNotFound(_) {
             print(
