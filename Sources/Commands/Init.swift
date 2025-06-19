@@ -22,7 +22,7 @@ extension Infat {
 
     mutating func run() async throws {
       guard let homeDirectory = FileManager.default.homeDirectoryForCurrentUser as URL? else {
-        throw InfatError.directoryReadError(path: "Home directory")
+        throw InfatError.pathExpansionError(path: "Home directory")
       }
 
       let launchServices =

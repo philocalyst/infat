@@ -50,7 +50,7 @@ struct ConfigManager {
         }
 
         logger.debug(
-          "Queueing default app for type \(typeKey) " + "(\(targetUTType.identifier)) → \(appName)"
+          "Queueing default app for type \(typeKey) (\(targetUTType.identifier)) → \(appName)"
         )
         try await setDefaultApplication(
           appName: appName,
