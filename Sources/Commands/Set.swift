@@ -6,6 +6,7 @@ extension Infat {
     static let configuration = CommandConfiguration(
       abstract: "Sets an application association."
     )
+
     @Argument(help: "The name of the application.")
     var appName: String
 
@@ -17,9 +18,6 @@ extension Infat {
 
     @Option(name: .long, help: "A file class. ex: image")
     var type: Supertypes?
-
-    @Flag(name: .long, help: "Ignore missing app errors")
-    var robust: Bool = false
 
     mutating func run() async throws {
       let providedCount = [scheme != nil, ext != nil, type != nil]
