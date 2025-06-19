@@ -41,6 +41,11 @@ extension Infat {
         throw InfatError.pathExpansionError(path: "Home directory")
       }
 
+      // App on the left
+      let typesDict: [String: String] = [:]
+      let extensionsDict: [String: String] = [:]
+      let schemesDict: [String: String] = [:]
+
       let launchServices =
         homeDirectory
         .appendingPathComponent("Library")
