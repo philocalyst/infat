@@ -51,7 +51,7 @@ struct Infat: AsyncParsableCommand {
   mutating func run() async throws {
     // First check if a config was passed through the CLI. Then check if one was found at the XDG config home. If neither, error.
     if let cfg = globalOptions.config {
-      try await ConfigManager.loadConfig(from: cfg)
+      try await ConfigManager.loadConfig(from: cfg, robust: globalOptions.robust)
     } else {
       // No config path passed, try XDG‐compliant locations:
       let env = ProcessInfo.processInfo.environment
@@ -85,7 +85,7 @@ struct Infat: AsyncParsableCommand {
       // |4| Try each path in order
       for url in searchPaths {
         if FileManager.default.fileExists(atPath: url.path) {
-          try await ConfigManager.loadConfig(from: url.path)
+          try await ConfigManager.loadConfig(from: url.path, robust: globalOptions.robust)
           return
         }
       }

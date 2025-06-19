@@ -4,7 +4,7 @@ import Logging
 import TOMLKit
 
 struct ConfigManager {
-  static func loadConfig(from configPath: String) async throws {
+  static func loadConfig(from configPath: String, robust: Bool) async throws {
     // Read and parse the TOML file
     let tomlContent = try String(
       contentsOf: URL(fileURLWithPath: configPath)
@@ -52,10 +52,25 @@ struct ConfigManager {
         logger.debug(
           "Queueing default app for type \(typeKey) (\(targetUTType.identifier)) → \(appName)"
         )
-        try await setDefaultApplication(
-          appName: appName,
-          supertype: targetUTType
-        )
+        do {
+          try await setDefaultApplication(
+            appName: appName,
+            supertype: targetUTType
+          )
+        } catch InfatError.applicationNotFound(let app) {
+          if !robust {
+            throw InfatError.applicationNotFound(name: appName)
+          }
+          print(
+            "Application '\(app)' not found but ignoring "
+              + "due to passed options"
+              .bold().red()
+          )
+          // Just eat that thing up
+        } catch {
+          // propagate the rest
+          throw error
+        }
         print("Set type \(typeKey) → \(appName)")
       }
     } else {
@@ -84,9 +99,12 @@ struct ConfigManager {
               appName: appName,
               ext: ext
             )
-          } catch InfatError.applicationNotFound(_) {
+          } catch InfatError.applicationNotFound(let app) {
+            if !robust {
+              throw InfatError.applicationNotFound(name: appName)
+            }
             print(
-              "Application '\(appName)' not found but ignoring "
+              "Application '\(app)' not found but ignoring "
                 + "due to passed options"
                 .bold().red()
             )
@@ -119,7 +137,22 @@ struct ConfigManager {
           try setURLHandler(appName: appName, scheme: "http")
           print("Set https → \(appName) (routed to http)")
         default:
-          try setURLHandler(appName: appName, scheme: scheme)
+          do {
+            try setURLHandler(appName: appName, scheme: scheme)
+          } catch InfatError.applicationNotFound(let app) {
+            if !robust {
+              throw InfatError.applicationNotFound(name: appName)
+            }
+            print(
+              "Application '\(app)' not found but ignoring "
+                + "due to passed options"
+                .bold().red()
+            )
+            // Just eat that thing up
+          } catch {
+            // propagate the rest
+            throw error
+          }
           print("Set \(scheme) → \(appName)")
         }
       }

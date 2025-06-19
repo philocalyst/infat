@@ -7,6 +7,8 @@ extension Infat {
       abstract: "Sets an application association."
     )
 
+    @OptionGroup var globalOptions: GlobalOptions
+
     @Argument(help: "The name of the application.")
     var appName: String
 
@@ -49,7 +51,7 @@ extension Infat {
             )
           } catch InfatError.applicationNotFound(let name) {
             // Only throw for real if not robust
-            if !robust {
+            if !globalOptions.robust {
               throw InfatError.applicationNotFound(name: name)
             }
             print(

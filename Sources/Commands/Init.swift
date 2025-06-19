@@ -34,6 +34,8 @@ struct Handler: Decodable, Encodable {
 
 extension Infat {
   struct Init: AsyncParsableCommand {
+    @OptionGroup var globalOptions: GlobalOptions
+
     static let configuration = CommandConfiguration(
       abstract: "Initalizes a config with the currently set associations"
     )
@@ -72,6 +74,11 @@ extension Infat {
           do {
             app = try getAppName(from: app_bundle)
           } catch InfatError.applicationNotFound(let name) {
+            // Only throw for real if not robust
+            if !globalOptions.robust {
+              throw InfatError.applicationNotFound(name: name)
+            }
+
             logger.warning(
               "Application '\(name)' not found ")
             continue
@@ -91,6 +98,8 @@ extension Infat {
           {
             // Guard against the condition that it doesn't exist, everything's variable
             guard let ext = item.LSHandlerContentTag else {
+              logger.warning(
+                "Blank association for \(item)")
               continue
             }
 
@@ -101,11 +110,9 @@ extension Infat {
         }
       }
 
-      print(schemesDict)
-
       let encoder = TOMLEncoder()
 
-      let output = try encoder.encode(ls_data)
+      let output = try encoder.encode(extensionsDict)
 
     }
   }
