@@ -61,7 +61,7 @@ extension Infat {
       for item in ls_data {
         if let app = item.LSHandlerRoleAll {
           // This is what malformed apps manifest as I believe?
-          guard app == "-" else {
+          guard app != "-" else {
             continue
           }
 
