@@ -138,6 +138,47 @@ enum Supertypes: String, CaseIterable, ExpressibleByArgument {
   case internetLocation = "internet-location"
   case internetShortcut = "internet-shortcut"
 
+  case icalBackupPackage = "com.apple.ical.backup-package"
+  case defaultAppWebBrowser = "com.apple.default-app.web-browser"
+  case defaultAppMailClient = "com.apple.default-app.mail-client"
+  case m4vVideo = "com.apple.m4v-video"
+  case m4aAudio = "com.apple.m4a-audio"
+  case adobePostscript = "com.adobe.postscript"
+  case adobeFlashVideo = "com.adobe.flash.video"
+  case microsoftWordDoc = "com.microsoft.word.doc"
+  case microsoftWindowsMediaWMV = "com.microsoft.windows-media-wmv"
+  case microsoftWindowsMediaWMA = "com.microsoft.windows-media-wma"
+  case microsoftAdvancedSystemsFormat = "com.microsoft.advanced-systems-format"
+
+  // Third-party types
+  case iinaMKV = "io.iina.mkv"
+  case iinaAPE = "io.iina.ape"
+  case iinaWV = "io.iina.wv"
+  case iinaQuickTime = "io.iina.quicktime"
+  case iinaAC3 = "io.iina.ac3"
+  case iinaOpus = "io.iina.opus"
+  case iinaMPEGVideo = "io.iina.mpeg-video"
+  case iinaMPEG4Video = "io.iina.mpeg4-video"
+  case iinaMPEGAudio = "io.iina.mpeg-audio"
+  case iinaMPEG3Audio = "io.iina.mpeg3-audio"
+  case iinaMPEGStream = "io.iina.mpeg-stream"
+  case matroskaMKV = "org.matroska.mkv"
+  case matroskaMKA = "org.matroska.mka"
+  case xiphFLAC = "org.xiph.flac"
+  case xiphOggAudio = "org.xiph.ogg-audio"
+  case webmProjectWebM = "org.webmproject.webm"
+  case asciidoc = "org.asciidoc"
+  case markdown = "net.ia.markdown"
+
+  // Public types
+  case ac3Audio = "public.ac3-audio"
+  case aacAudio = "public.aac-audio"
+  case dvMovie = "public.dv-movie"
+  case mp2 = "public.mp2"
+  case avchdMPEG2TransportStream = "public.avchd-mpeg-2-transport-stream"
+  case gpp = "public.3gpp"
+  case gpp2 = "public.3gpp2"
+
   // Computed property to get the actual UTType
   var utType: UTType? {
     switch self {
@@ -249,6 +290,42 @@ enum Supertypes: String, CaseIterable, ExpressibleByArgument {
     case .bookmark: return .bookmark
     case .internetLocation: return .internetLocation
     case .internetShortcut: return .internetShortcut
+    case .icalBackupPackage: return UTType("com.apple.ical.backup-package")
+    case .defaultAppWebBrowser: return UTType("com.apple.default-app.web-browser")
+    case .defaultAppMailClient: return UTType("com.apple.default-app.mail-client")
+    case .m4vVideo: return UTType("com.apple.m4v-video")
+    case .m4aAudio: return UTType("com.apple.m4a-audio")
+    case .adobePostscript: return UTType("com.adobe.postscript")
+    case .adobeFlashVideo: return UTType("com.adobe.flash.video")
+    case .microsoftWordDoc: return UTType("com.microsoft.word.doc")
+    case .microsoftWindowsMediaWMV: return UTType("com.microsoft.windows-media-wmv")
+    case .microsoftWindowsMediaWMA: return UTType("com.microsoft.windows-media-wma")
+    case .microsoftAdvancedSystemsFormat: return UTType("com.microsoft.advanced-systems-format")
+    case .iinaMKV: return UTType("io.iina.mkv")
+    case .iinaAPE: return UTType("io.iina.ape")
+    case .iinaWV: return UTType("io.iina.wv")
+    case .iinaQuickTime: return UTType("io.iina.quicktime")
+    case .iinaAC3: return UTType("io.iina.ac3")
+    case .iinaOpus: return UTType("io.iina.opus")
+    case .iinaMPEGVideo: return UTType("io.iina.mpeg-video")
+    case .iinaMPEG4Video: return UTType("io.iina.mpeg4-video")
+    case .iinaMPEGAudio: return UTType("io.iina.mpeg-audio")
+    case .iinaMPEG3Audio: return UTType("io.iina.mpeg3-audio")
+    case .iinaMPEGStream: return UTType("io.iina.mpeg-stream")
+    case .matroskaMKV: return UTType("org.matroska.mkv")
+    case .matroskaMKA: return UTType("org.matroska.mka")
+    case .xiphFLAC: return UTType("org.xiph.flac")
+    case .xiphOggAudio: return UTType("org.xiph.ogg-audio")
+    case .webmProjectWebM: return UTType("org.webmproject.webm")
+    case .asciidoc: return UTType("org.asciidoc")
+    case .markdown: return UTType("net.ia.markdown")
+    case .ac3Audio: return UTType("public.ac3-audio")
+    case .aacAudio: return UTType("public.aac-audio")
+    case .dvMovie: return UTType("public.dv-movie")
+    case .mp2: return UTType("public.mp2")
+    case .avchdMPEG2TransportStream: return UTType("public.avchd-mpeg-2-transport-stream")
+    case .gpp: return UTType("public.3gpp")
+    case .gpp2: return UTType("public.3gpp2")
     }
   }
 
