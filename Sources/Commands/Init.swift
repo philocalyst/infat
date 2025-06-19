@@ -93,6 +93,15 @@ extension Infat {
           } else if let raw_type = item.LSHandlerContentType {
             // Since these are already verified and added to the launch services, we can assume they can be converted
             let type = UTType(raw_type).unsafelyUnwrapped
+            let supertype: Supertypes
+            if let supahtype = Supertypes.allCases.first(where: { $0.utType == type }) {
+              supertype = supahtype
+            } else {
+              logger.warning("Cannot find supertype for \(type)")
+              continue
+            }
+
+            typesDict[app] = supertype.toString()
           } else if let tag_class = item.LSHandlerContentTagClass,
             tag_class == "public.filename-extension"
           {
@@ -112,7 +121,16 @@ extension Infat {
 
       let encoder = TOMLEncoder()
 
-      let output = try encoder.encode(extensionsDict)
+      let tomlStructure: [String: Dictionary] = [
+        "extensions": extensionsDict,
+        "schemes": schemesDict,
+        "types": typesDict,
+      ]
+
+      // Encode the nested dictionary to TOML
+      let encodedTOML = try encoder.encode(tomlStructure)
+
+      print(encodedTOML)
 
     }
   }
