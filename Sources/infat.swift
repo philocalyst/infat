@@ -6,14 +6,8 @@ import class Foundation.ProcessInfo
 
 var logger = Logger(label: "com.philocalyst.infat")
 
-@main
-struct Infat: AsyncParsableCommand {
-  static let configuration = CommandConfiguration(
-    abstract: "Declaritively set assocations for URLs and files",
-    version: "2.4.0",
-    subcommands: [Info.self, Set.self, Init.self]
-  )
-
+// Globals
+struct GlobalOptions: ParsableArguments {
   @Option(
     name: [.short, .long],
     help: "Path to the configuration file.")
@@ -29,8 +23,23 @@ struct Infat: AsyncParsableCommand {
     help: "Quiet output.")
   var quiet = false
 
+  @Flag(name: .long, help: "Ignore missing app errors")
+  var robust: Bool = false
+}
+
+@main
+struct Infat: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    abstract: "Declaritively set assocations for URLs and files",
+    version: "2.4.0",
+    subcommands: [Info.self, Set.self, Init.self]
+  )
+
+  @OptionGroup var globalOptions: GlobalOptions
+
   func validate() throws {
-    let level: Logger.Level = verbose ? .trace : (quiet ? .critical : .warning)
+    let level: Logger.Level =
+      globalOptions.verbose ? .trace : (globalOptions.quiet ? .critical : .warning)
     LoggingSystem.bootstrap { label in
       var h = StreamLogHandler.standardOutput(label: label)
       h.logLevel = level
@@ -41,7 +50,7 @@ struct Infat: AsyncParsableCommand {
 
   mutating func run() async throws {
     // First check if a config was passed through the CLI. Then check if one was found at the XDG config home. If neither, error.
-    if let cfg = config {
+    if let cfg = globalOptions.config {
       try await ConfigManager.loadConfig(from: cfg)
     } else {
       // No config path passed, try XDG‐compliant locations:
