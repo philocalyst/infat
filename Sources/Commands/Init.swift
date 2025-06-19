@@ -1,12 +1,13 @@
 import ArgumentParser
 import Foundation
 import Logging
+import TOMLKit
 
-struct LaunchServices: Decodable {
+struct LaunchServices: Encodable, Decodable {
   let LSHandlers: [Handler]
 }
 
-struct Handler: Decodable {
+struct Handler: Decodable, Encodable {
   let LSHandlerContentType: String?
   let LSHandlerRoleAll: String?
   let LSHandlerRoleViewer: String?
@@ -37,7 +38,11 @@ extension Infat {
       let decoder = PropertyListDecoder()
       let ls_data = try decoder.decode(LaunchServices.self, from: launchServicesData)
 
-      print(ls_data)
+      var encoder = TOMLEncoder()
+
+      let output = try encoder.encode(ls_data)
+
+      print(output)
 
     }
   }
