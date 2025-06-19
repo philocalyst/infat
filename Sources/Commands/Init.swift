@@ -130,8 +130,24 @@ extension Infat {
       // Encode the nested dictionary to TOML
       let encodedTOML = try encoder.encode(tomlStructure)
 
-      print(encodedTOML)
+      if let cfg = globalOptions.config {
+        if let url = URL(string: cfg) {
+          try encodedTOML.write(to: url, atomically: true, encoding: .utf8)
+        }
+      } else {
+        // No config path passed, try XDG‐compliant locations:
+        let searchPaths = getConfig()
+        for url in searchPaths {
+          try encodedTOML.write(to: url, atomically: true, encoding: .utf8)
+          return
+        }
 
+        // Nothing found → error
+        print(
+          "Did you mean to pass in a config? Use -c or put one at " + "\(searchPaths[0].path)"
+        )
+        throw InfatError.missingOption
+      }
     }
   }
 }
