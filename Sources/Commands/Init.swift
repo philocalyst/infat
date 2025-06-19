@@ -21,14 +21,21 @@ extension Infat {
     )
 
     mutating func run() async throws {
-      let fileURL = URL(
-        fileURLWithPath:
-          "/Users/philocalyst/Library/Preferences/com.apple.LaunchServices/com.apple.launchservices.secure.plist"
-      )
-      let data = try Data(contentsOf: fileURL)
+      guard let homeDirectory = FileManager.default.homeDirectoryForCurrentUser as URL? else {
+        throw InfatError.directoryReadError(path: "Home directory")
+      }
+
+      let launchServices =
+        homeDirectory
+        .appendingPathComponent("Library")
+        .appendingPathComponent("Preferences")
+        .appendingPathComponent("com.apple.LaunchServices")
+        .appendingPathComponent("com.apple.launchservices.secure.plist")
+
+      let launchServicesData = try Data(contentsOf: launchServices)
 
       let decoder = PropertyListDecoder()
-      let ls_data = try decoder.decode(LaunchServices.self, from: data)
+      let ls_data = try decoder.decode(LaunchServices.self, from: launchServicesData)
 
       print(ls_data)
 
