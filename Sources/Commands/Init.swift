@@ -67,7 +67,9 @@ extension Infat {
 
           if let scheme = item.LSHandlerURLScheme {
             schemesDict[app] = scheme
-          } else if let type = item.LSHandlerContentType {
+          } else if let raw_type = item.LSHandlerContentType {
+            // Since these are already verified and added to the launch services, we can assume they can be converted
+            let type = UTType(raw_type).unsafelyUnwrapped
           } else if let tag_class = item.LSHandlerContentTagClass,
             tag_class == "public.filename-extension"
           {
