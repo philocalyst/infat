@@ -1,7 +1,9 @@
+import AppKit
 import ArgumentParser
 import Foundation
 import Logging
 import TOMLKit
+import UniformTypeIdentifiers
 
 struct LaunchServices: Encodable, Decodable, Sequence {
   let LSHandlers: [Handler]
@@ -59,10 +61,29 @@ extension Infat {
       let ls_data = try decoder.decode(LaunchServices.self, from: launchServicesData)
 
       for item in ls_data {
-        if let app = item.LSHandlerRoleAll {
+        if let app_bundle = item.LSHandlerRoleAll {
           // This is what malformed apps manifest as I believe?
-          guard app != "-" else {
+          guard app_bundle != "-" else {
             continue
+          }
+
+          // Get the app name, as we're observing bundle ID's
+          let workspace = NSWorkspace.shared
+          let appURL = workspace.urlForApplication(withBundleIdentifier: app_bundle)
+            .unsafelyUnwrapped
+
+          let app: String
+
+          if let bundle = Bundle(url: appURL) {
+            // Try to get the display name first (localized name)
+            let displayName = bundle.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
+
+            // Fallback to the default name if display name is not available
+            app =
+              displayName
+              ?? (bundle.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "Unknown")
+          } else {
+            throw InfatError.operationTimeout
           }
 
           if let scheme = item.LSHandlerURLScheme {
@@ -84,6 +105,8 @@ extension Infat {
           continue
         }
       }
+
+      print(schemesDict)
 
       let encoder = TOMLEncoder()
 
