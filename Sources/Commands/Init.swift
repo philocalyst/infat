@@ -67,32 +67,6 @@ extension Infat {
             continue
           }
 
-          // Get the app name, as we're observing bundle ID's
-          let workspace = NSWorkspace.shared
-
-          let appURL: URL
-
-          // Check if the app remains on the system
-          if let url = workspace.urlForApplication(withBundleIdentifier: app_bundle) {
-            appURL = url
-          } else {
-            throw InfatError.operationTimeout
-          }
-
-          let app: String
-
-          if let bundle = Bundle(url: appURL) {
-            // Try to get the display name first (localized name)
-            let displayName = bundle.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
-
-            // Fallback to the default name if display name is not available
-            app =
-              displayName
-              ?? (bundle.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "Unknown")
-          } else {
-            throw InfatError.operationTimeout
-          }
-
           if let scheme = item.LSHandlerURLScheme {
             schemesDict[app] = scheme
           } else if let raw_type = item.LSHandlerContentType {
