@@ -23,7 +23,7 @@ struct Handler: Decodable, Encodable {
 
   // Version and metadata
   let LSHandlerPreferredVersions: [String: String]?
-  let LSHandlerModificationDate: Date?
+  let LSHandlerModificationDate: Double?
 }
 
 extension Infat {
@@ -46,16 +46,14 @@ extension Infat {
 
       let launchServicesData = try Data(contentsOf: launchServices)
 
-      print(launchServices)
-
       let decoder = PropertyListDecoder()
       let ls_data = try decoder.decode(LaunchServices.self, from: launchServicesData)
 
-      // var encoder = TOMLEncoder()
+      var encoder = TOMLEncoder()
 
-      // let output = try encoder.encode(ls_data)
+      let output = try encoder.encode(ls_data)
 
-      print(ls_data)
+      print(output)
     }
   }
 }
