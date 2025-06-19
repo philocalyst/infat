@@ -1,11 +1,15 @@
 import ColorizeSwift
 import Foundation
 import Logging
-import Toml
+import TOMLKit
 
 struct ConfigManager {
   static func loadConfig(from configPath: String) async throws {
-    let tomlConfig = try Toml(contentsOfFile: configPath)
+    // Read and parse the TOML file
+    let tomlContent = try String(
+      contentsOf: URL(fileURLWithPath: configPath)
+    )
+    let tomlConfig = try TOMLTable(string: tomlContent)
 
     // Convenience names
     let extensionTableName = "extensions"
@@ -13,21 +17,20 @@ struct ConfigManager {
     let typeTableName = "types"
 
     // Check upfront that at least one table is present
-    let hasExtensions = tomlConfig.table(extensionTableName) != nil
-    let hasSchemes = tomlConfig.table(schemeTableName) != nil
-    let hasTypes = tomlConfig.table(typeTableName) != nil
+    let hasExtensions = tomlConfig[extensionTableName]?.table != nil
+    let hasSchemes = tomlConfig[schemeTableName]?.table != nil
+    let hasTypes = tomlConfig[typeTableName]?.table != nil
 
     guard hasExtensions || hasSchemes || hasTypes else {
       throw InfatError.noConfigTables(path: configPath)
     }
 
     // MARK: – Process [types]
-    if let typeTable = tomlConfig.table(typeTableName) {
+    if let typeTable = tomlConfig[typeTableName]?.table {
       logger.info("Processing [types] associations...")
       print("\(typeTableName.uppercased().bold().underline())")
-      for key in typeTable.keyNames {
-        let typeKey = key.components.joined()
-        guard let appName = typeTable.string(key.components) else {
+      for typeKey in typeTable.keys {
+        guard let appName = typeTable[typeKey]?.string else {
           logger.warning(
             "Value for key '\(typeKey)' in [types] is not a string. Skipping."
           )
@@ -47,7 +50,7 @@ struct ConfigManager {
         }
 
         logger.debug(
-          "Queueing default app for type \(typeKey) (\(targetUTType.identifier)) → \(appName)"
+          "Queueing default app for type \(typeKey) " + "(\(targetUTType.identifier)) → \(appName)"
         )
         try await setDefaultApplication(
           appName: appName,
@@ -60,17 +63,16 @@ struct ConfigManager {
     }
 
     // MARK: – Processs [extensions]
-    if let extensionTable = tomlConfig.table(extensionTableName) {
+    if let extensionTable = tomlConfig[extensionTableName]?.table {
       logger.info("Processing [extensions] associations...")
       print("\(extensionTableName.uppercased().bold().underline())")
-      for key in extensionTable.keyNames {
-        guard let appName = extensionTable.string(key.components) else {
+      for ext in extensionTable.keys {
+        guard let appName = extensionTable[ext]?.string else {
           throw InfatError.tomlValueNotString(
             path: configPath,
-            key: key.components.joined()
+            key: ext
           )
         }
-        let ext = key.components.joined()
         switch ext.lowercased() {
         case "html":
           // Route .html to the http URL handler
@@ -84,13 +86,15 @@ struct ConfigManager {
             )
           } catch InfatError.applicationNotFound(_) {
             print(
-              "Application '\(appName)' not found but ignoring due to passed options".bold().red())
+              "Application '\(appName)' not found but ignoring "
+                + "due to passed options"
+                .bold().red()
+            )
             // Just eat that thing up
           } catch {
-            // propogate the rest
+            // propagate the rest
             throw error
           }
-
           print("Set .\(ext) → \(appName)")
         }
       }
@@ -99,17 +103,16 @@ struct ConfigManager {
     }
 
     // MARK: – Process [schemes]
-    if let schemeTable = tomlConfig.table(schemeTableName) {
+    if let schemeTable = tomlConfig[schemeTableName]?.table {
       logger.info("Processing [schemes] associations...")
       print("\(schemeTableName.uppercased().bold().underline())")
-      for key in schemeTable.keyNames {
-        guard let appName = schemeTable.string(key.components) else {
+      for scheme in schemeTable.keys {
+        guard let appName = schemeTable[scheme]?.string else {
           throw InfatError.tomlValueNotString(
             path: configPath,
-            key: key.components.joined()
+            key: scheme
           )
         }
-        let scheme = key.components.joined()
         switch scheme.lowercased() {
         case "https":
           // Route https to the http URL handler
