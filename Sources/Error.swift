@@ -2,6 +2,7 @@ import Foundation
 
 enum InfatError: Error, LocalizedError {
   case couldNotDeriveUTI(msg: String)
+  case invalidBundle(bundle: String, app: String)
   case missingOption
   case noConfigTables(path: String)
   case infoPlistNotFound(appPath: String)
@@ -26,6 +27,8 @@ enum InfatError: Error, LocalizedError {
     switch self {
     case .couldNotDeriveUTI(let ext):
       return "Cannot determine UTI for extension '.\(ext)'"
+    case .invalidBundle(let bundle, let app):
+      return "Bundle \(bundle) in app \(app) is corrupted/invalid"
     case .missingOption:
       return "No option provided"
     case .noConfigTables(let path):

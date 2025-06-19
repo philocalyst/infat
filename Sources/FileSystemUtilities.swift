@@ -67,7 +67,7 @@ struct FileSystemUtilities {
   }
 }
 
-func getAppName(with bundle: String) throws -> String {
+func getAppName(from bundle: String) throws -> String {
   // Get the app name, as we're observing bundle ID's
   let workspace = NSWorkspace.shared
 
@@ -92,7 +92,7 @@ func getAppName(with bundle: String) throws -> String {
       displayName
       ?? (bundle.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "Unknown")
   } else {
-    throw InfatError.operationTimeout
+    throw InfatError.invalidBundle(bundle: bundle, app: appURL.absoluteString)
   }
 
   return app
