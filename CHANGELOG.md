@@ -1,10 +1,40 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.5.0] – 2025-06-19
+
+### Added
+- New `init` command to bootstrap a declarative TOML config from the system’s LaunchServices settings, emitting nested  
+  tables `[extensions]`, `[schemes]` and `[types]`.  
+- `GlobalOptions` struct and a `--robust` flag to continue on missing‐application errors (with warnings).  
+- Two new `InfatError` variants:  
+  - `superTypeMissing(intendedType: UTType)` when a UTI’s supertype isn’t in the known bundle  
+  - `invalidBundle(bundle: String, app: String)` for corrupted/invalid app bundles  
+- A comprehensive expansion of the `Supertypes` enum with dozens of new UTType conformances (e.g. RealMedia, IINA, Matroska,  
+  Xiph formats, Asciidoc, Markdown, AC3/AAC audio, DV, MP2, USD/USDC, fonts, certificates, 3D scene formats, etc.), each mapping  
+  to its `UTType` identifier  
+- Helper `getAppName(from:)` to resolve bundle identifiers to human-readable application names
+
+### Changed
+- Switched from `swift-toml` to **TOMLKit** for all TOML parsing and encoding  
+- Refactored `ConfigManager` and CLI subcommands (`set`, `init`) to consume `GlobalOptions` via `@OptionGroup` and respect  
+  the `--robust` flag  
+- Updated `Package.swift`: bumped macOS deployment target to **15.2** and added `TOMLKit` dependency  
+- Improved file-system utilities and error handling in `getAppName` and path expansions; unified error propagation  
+- Consolidated global flags `--verbose`, `--quiet`, `--config` under `GlobalOptions`  
+- Enhanced TOML processing in `ConfigManager`: guard against missing tables, validate that values are strings, and emit clearer  
+  error messages
+
+### Fixed
+- Corrected guard logic in the `init` command to skip malformed entries (`LSHandlerRoleAll == "-"`) and missing extensions  
+- Fixed a type mismatch for `LSHandlerModificationDate` in the LaunchServices decoder  
+- Removed trailing commas that were causing Swift compilation errors  
+- Resolved string‐concatenation and formatting issues in log messages and TOML output  
+
 
 ## [2.4.0] – 2025-05-22
 
@@ -319,7 +349,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-[Unreleased]: https://github.com/philocalyst/infat/compare/v2.4.0...HEAD
+[Unreleased]: https://github.com/<owner>/infat/compare/v2.5.0…HEAD
+[2.5.0]: https://github.com/<owner>/infat/compare/v2.4.0…v2.5.0  
 [2.4.0]: https://github.com/philocalyst/infat/compare/v2.3.4...v2.4.0  
 [2.3.3]: https://github.com/philocalyst/infat/compare/v2.3.2...v2.3.3  
 [2.3.2]: https://github.com/your-org/your-repo/compare/v2.3.1...v2.3.2
