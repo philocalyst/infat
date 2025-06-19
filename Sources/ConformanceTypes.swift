@@ -179,6 +179,16 @@ enum Supertypes: String, CaseIterable, ExpressibleByArgument {
   case gpp = "public.3gpp"
   case gpp2 = "public.3gpp2"
 
+  // RealMedia types
+  case realMedia = "com.real.realmedia"
+  case realAudio = "com.real.realaudio"
+  case realMediaVBR = "com.real.realmedia-vbr"
+
+  // Third-party types
+  case iinaXM = "io.iina.xm"
+  case iinaWTV = "io.iina.wtv"
+  case mpvDivX = "io.mpv.divx"
+
   // Computed property to get the actual UTType
   var utType: UTType? {
     switch self {
@@ -326,6 +336,12 @@ enum Supertypes: String, CaseIterable, ExpressibleByArgument {
     case .avchdMPEG2TransportStream: return UTType("public.avchd-mpeg-2-transport-stream")
     case .gpp: return UTType("public.3gpp")
     case .gpp2: return UTType("public.3gpp2")
+    case .realMedia: return UTType("com.real.realmedia")
+    case .realAudio: return UTType("com.real.realaudio")
+    case .realMediaVBR: return UTType("com.real.realmedia-vbr")
+    case .iinaXM: return UTType("io.iina.xm")
+    case .iinaWTV: return UTType("io.iina.wtv")
+    case .mpvDivX: return UTType("io.mpv.divx")
     }
   }
 
