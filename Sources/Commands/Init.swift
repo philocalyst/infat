@@ -3,8 +3,12 @@ import Foundation
 import Logging
 import TOMLKit
 
-struct LaunchServices: Encodable, Decodable {
+struct LaunchServices: Encodable, Decodable, Sequence {
   let LSHandlers: [Handler]
+
+  func makeIterator() -> Array<Handler>.Iterator {
+    return LSHandlers.makeIterator()
+  }
 }
 
 struct Handler: Decodable, Encodable {
