@@ -67,6 +67,20 @@ extension Infat {
             continue
           }
 
+          let app: String
+
+          do {
+            app = try getAppName(from: app_bundle)
+          } catch InfatError.applicationNotFound(let name) {
+            logger.warning(
+              "Application '\(name)' not found ")
+            continue
+            // Otherwise just eat that thing up
+          } catch {
+            // propogate the rest
+            throw error
+          }
+
           if let scheme = item.LSHandlerURLScheme {
             schemesDict[app] = scheme
           } else if let raw_type = item.LSHandlerContentType {
