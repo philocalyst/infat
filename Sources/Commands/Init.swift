@@ -42,9 +42,9 @@ extension Infat {
       }
 
       // App on the left
-      let typesDict: [String: String] = [:]
-      let extensionsDict: [String: String] = [:]
-      let schemesDict: [String: String] = [:]
+      var typesDict: [String: String] = [:]
+      var extensionsDict: [String: String] = [:]
+      var schemesDict: [String: String] = [:]
 
       let launchServices =
         homeDirectory
@@ -58,7 +58,28 @@ extension Infat {
       let decoder = PropertyListDecoder()
       let ls_data = try decoder.decode(LaunchServices.self, from: launchServicesData)
 
-      var encoder = TOMLEncoder()
+      for item in ls_data {
+        if let app = item.LSHandlerRoleAll {
+          // This is what malformed apps manifest as I believe?
+          guard app == "-" else {
+            continue
+          }
+
+          if let scheme = item.LSHandlerURLScheme {
+            schemesDict[app] = scheme
+          } else if let type = item.LSHandlerContentType {
+
+          } else if let ext = item.LSHandlerContentTag {
+            extensionsDict[app] = ext
+          }
+        } else {
+          continue
+        }
+      }
+
+      print(extensionsDict)
+
+      let encoder = TOMLEncoder()
 
       let output = try encoder.encode(ls_data)
 
