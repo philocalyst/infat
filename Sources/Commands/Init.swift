@@ -8,11 +8,22 @@ struct LaunchServices: Encodable, Decodable {
 }
 
 struct Handler: Decodable, Encodable {
+  // Content type identification
   let LSHandlerContentType: String?
+  let LSHandlerContentTag: String?
+  let LSHandlerContentTagClass: String?
+
+  // URL scheme handling
+  let LSHandlerURLScheme: String?
+
+  // Role assignments
   let LSHandlerRoleAll: String?
   let LSHandlerRoleViewer: String?
+  let LSHandlerRoleEditor: String?
+
+  // Version and metadata
   let LSHandlerPreferredVersions: [String: String]?
-  let LSHandlerURLScheme: String?
+  let LSHandlerModificationDate: Date?
 }
 
 extension Infat {
@@ -35,15 +46,16 @@ extension Infat {
 
       let launchServicesData = try Data(contentsOf: launchServices)
 
+      print(launchServices)
+
       let decoder = PropertyListDecoder()
       let ls_data = try decoder.decode(LaunchServices.self, from: launchServicesData)
 
-      var encoder = TOMLEncoder()
+      // var encoder = TOMLEncoder()
 
-      let output = try encoder.encode(ls_data)
+      // let output = try encoder.encode(ls_data)
 
-      print(output)
-
+      print(ls_data)
     }
   }
 }
