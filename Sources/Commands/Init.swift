@@ -69,8 +69,15 @@ extension Infat {
 
           // Get the app name, as we're observing bundle ID's
           let workspace = NSWorkspace.shared
-          let appURL = workspace.urlForApplication(withBundleIdentifier: app_bundle)
-            .unsafelyUnwrapped
+
+          let appURL: URL
+
+          // Check if the app remains on the system
+          if let url = workspace.urlForApplication(withBundleIdentifier: app_bundle) {
+            appURL = url
+          } else {
+            throw InfatError.operationTimeout
+          }
 
           let app: String
 
