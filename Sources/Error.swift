@@ -1,4 +1,5 @@
 import Foundation
+import UniformTypeIdentifiers
 
 enum InfatError: Error, LocalizedError {
   case couldNotDeriveUTI(msg: String)
@@ -10,6 +11,7 @@ enum InfatError: Error, LocalizedError {
   case cannotSetURL(appName: String)
   case cannotRegisterURL(error: Int32)
   case unsupportedOSVersion
+  case superTypeMissing(intendedType: UTType)
   case conflictingOptions(error: String)
   case directoryReadError(path: String, underlyingError: Error)
   case pathExpansionError(path: String)
@@ -27,6 +29,8 @@ enum InfatError: Error, LocalizedError {
     switch self {
     case .couldNotDeriveUTI(let ext):
       return "Cannot determine UTI for extension '.\(ext)'"
+    case .superTypeMissing(let intendedType):
+      return "Supertype \(intendedType) not present in known supertypes"
     case .invalidBundle(let bundle, let app):
       return "Bundle \(bundle) in app \(app) is corrupted/invalid"
     case .missingOption:
