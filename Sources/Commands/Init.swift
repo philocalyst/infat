@@ -68,8 +68,14 @@ extension Infat {
           if let scheme = item.LSHandlerURLScheme {
             schemesDict[app] = scheme
           } else if let type = item.LSHandlerContentType {
+          } else if let tag_class = item.LSHandlerContentTagClass,
+            tag_class == "public.filename-extension"
+          {
+            // Guard against the condition that it doesn't exist, everything's variable
+            guard let ext = item.LSHandlerContentTag else {
+              continue
+            }
 
-          } else if let ext = item.LSHandlerContentTag {
             extensionsDict[app] = ext
           }
         } else {
@@ -77,13 +83,10 @@ extension Infat {
         }
       }
 
-      print(extensionsDict)
-
       let encoder = TOMLEncoder()
 
       let output = try encoder.encode(ls_data)
 
-      print(output)
     }
   }
 }
