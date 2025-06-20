@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
   name: "infat",
   platforms: [
-    .macOS("15.2")
+    .macOS(.v13)
   ],
 
   dependencies: [

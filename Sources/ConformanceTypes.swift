@@ -222,9 +222,18 @@ enum Supertypes: String, CaseIterable, ExpressibleByArgument {
     case .heif: return .heif
     case .livePhoto: return .livePhoto
     case .rawImage: return .rawImage
-    case .dng: return .dng
-    case .exr: return .exr
-    case .jpegXL: return .jpegxl
+    case .dng:
+      guard #available(macOS 15.0, iOS 17.0, *) else { return nil }
+      return .dng
+    case .exr:
+      guard #available(macOS 15.0, iOS 17.0, *) else { return nil }
+      return .exr
+    case .jpegXL:
+      guard #available(macOS 15.2, iOS 17.2, *) else { return nil }
+      return .jpegxl
+    case .tarArchive:
+      guard #available(macOS 15.0, iOS 17.0, *) else { return nil }
+      return .tarArchive
     case .audio: return .audio
     case .mp3: return .mp3
     case .wav: return .wav
@@ -247,7 +256,6 @@ enum Supertypes: String, CaseIterable, ExpressibleByArgument {
     case .zip: return .zip
     case .gzip: return .gzip
     case .bz2: return .bz2
-    case .tarArchive: return .tarArchive
     case .appleArchive: return .appleArchive
     case .sourceCode: return .sourceCode
     case .cSource: return .cSource
