@@ -31,6 +31,7 @@ struct ConfigManager {
       logger.info("Processing [types] associations...")
       print("\(typeTableName.uppercased().bold().underline())")
       for typeKey in typeTable.keys {
+        // See if it has a corresponding UTTYPE
         let uttype = UTType(typeKey)
         guard let appName = typeTable[typeKey]?.string else {
           logger.warning(
@@ -38,9 +39,12 @@ struct ConfigManager {
           )
           continue
         }
-        let typem: Supertypes
-        if let supahtype = Supertypes.allCases.first(where: { $0.utType == uttype }) {
-          typem = supahtype
+
+        // Holding value
+        var typem: Supertypes? = nil
+
+        // If it already has a UType, AYE!! Skip
+        if uttype != nil {
         } else if let supahhhType = Supertypes(rawValue: typeKey) {
           typem = supahhhType
         } else {
@@ -50,27 +54,30 @@ struct ConfigManager {
           continue
         }
 
-        guard let targetUTType = typem.utType else {
+        let result = typem?.utType ?? uttype
+
+        // If this is somehow invalid we in trouble!!
+        if result == nil {
           logger.error(
             "Well-known type '\(typeKey)' not supported or invalid. Skipping."
           )
           throw InfatError.unsupportedOrInvalidSupertype(name: typeKey)
         }
 
-        if targetUTType.description == "com.apple.default-app.web-browser"
-          || targetUTType.description == "public.html"
+        if result?.description == "com.apple.default-app.web-browser"
+          || result?.description == "public.html"
         {
           try setURLHandler(appName: appName, scheme: "http")
-          print("Set .\(targetUTType.description) → \(appName) (routed to http)")
+          print("Set .\(result?.description) → \(appName) (routed to http)")
           continue
         }
         logger.debug(
-          "Queueing default app for type \(typeKey) (\(targetUTType.identifier)) → \(appName)"
+          "Queueing default app for type \(typeKey) (\(result?.identifier)) → \(appName)"
         )
         do {
           try await setDefaultApplication(
             appName: appName,
-            supertype: targetUTType
+            supertype: result!
           )
         } catch InfatError.applicationNotFound(let app) {
           if !robust {
