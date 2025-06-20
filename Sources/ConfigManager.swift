@@ -2,6 +2,7 @@ import ColorizeSwift
 import Foundation
 import Logging
 import TOMLKit
+import UniformTypeIdentifiers
 
 struct ConfigManager {
   static func loadConfig(from configPath: String, robust: Bool) async throws {
@@ -36,13 +37,17 @@ struct ConfigManager {
           )
           continue
         }
-        guard let supertypeEnum = Supertypes(rawValue: typeKey) else {
+        let typem: Supertypes
+        if let supahtype = Supertypes.allCases.first(where: { $0.utType == uttype }) {
+          typem = supahtype
+        } else {
           logger.error(
             "Invalid type key '\(typeKey)' found in [types]. Skipping."
           )
           continue
         }
-        guard let targetUTType = supertypeEnum.utType else {
+
+        guard let targetUTType = typem.utType else {
           logger.error(
             "Well-known type '\(typeKey)' not supported or invalid. Skipping."
           )
