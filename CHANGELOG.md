@@ -5,6 +5,24 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [2.5.1] – 2025-06-20
+
+### Added
+- Support for multiple supertype initialization schemes, allowing identifiers not in the enum to be processed correctly
+- Enhanced type key processing that can handle both UTType-based and raw value-based supertype initialization
+- Automatic routing of HTML and web browser types to HTTP URL handlers for improved web application handling
+- Conditional availability checks for newer UTTypes (DNG, EXR, JPEG XL, TAR archives) with proper fallback for older macOS versions
+
+### Changed
+- Improved type association logic in ConfigManager to be more flexible with type identifiers
+- Updated minimum macOS requirement from 15.2 to 13.0 for broader compatibility
+- Refactored supertype mapping to use conditional compilation for macOS version-specific types
+- Enhanced error handling for unsupported or invalid supertypes
+
+### Fixed
+- Corrected dictionary key-value mapping in Init command for schemes, types, and extensions (was previously reversed)
+- Resolved issues with HTML and HTTPS type handling by implementing proper HTTP scheme routing
+
 ## [2.5.0] – 2025-06-19
 
 ### Added
@@ -349,7 +367,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-[Unreleased]: https://github.com/<owner>/infat/compare/v2.5.0…HEAD
+[Unreleased]: https://github.com/<owner>/infat/compare/v2.5.1…HEAD
+[2.5.1]: https://github.com/<owner>/infat/compare/v2.5.0…v2.5.1  
 [2.5.0]: https://github.com/<owner>/infat/compare/v2.4.0…v2.5.0  
 [2.4.0]: https://github.com/philocalyst/infat/compare/v2.3.4...v2.4.0  
 [2.3.3]: https://github.com/philocalyst/infat/compare/v2.3.2...v2.3.3  

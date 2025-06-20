@@ -31,7 +31,7 @@ struct GlobalOptions: ParsableArguments {
 struct Infat: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     abstract: "Declaritively set assocations for URLs and files",
-    version: "2.5.0",
+    version: "2.5.1",
     subcommands: [Info.self, Set.self, Init.self]
   )
 
