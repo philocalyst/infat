@@ -31,6 +31,7 @@ struct ConfigManager {
       logger.info("Processing [types] associations...")
       print("\(typeTableName.uppercased().bold().underline())")
       for typeKey in typeTable.keys {
+        let uttype = UTType(typeKey)
         guard let appName = typeTable[typeKey]?.string else {
           logger.warning(
             "Value for key '\(typeKey)' in [types] is not a string. Skipping."
@@ -40,6 +41,8 @@ struct ConfigManager {
         let typem: Supertypes
         if let supahtype = Supertypes.allCases.first(where: { $0.utType == uttype }) {
           typem = supahtype
+        } else if let supahhhType = Supertypes(rawValue: typeKey) {
+          typem = supahhhType
         } else {
           logger.error(
             "Invalid type key '\(typeKey)' found in [types]. Skipping."
