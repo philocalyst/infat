@@ -54,6 +54,13 @@ struct ConfigManager {
           throw InfatError.unsupportedOrInvalidSupertype(name: typeKey)
         }
 
+        if targetUTType.description == "com.apple.default-app.web-browser"
+          || targetUTType.description == "public.html"
+        {
+          try setURLHandler(appName: appName, scheme: "http")
+          print("Set .\(targetUTType.description) → \(appName) (routed to http)")
+          continue
+        }
         logger.debug(
           "Queueing default app for type \(typeKey) (\(targetUTType.identifier)) → \(appName)"
         )
