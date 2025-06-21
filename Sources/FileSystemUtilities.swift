@@ -67,11 +67,21 @@ struct FileSystemUtilities {
   }
 }
 
+func isSystemService(_ bundleId: String) -> Bool {
+  return bundleId.hasPrefix("com.apple.")
+    && (bundleId.contains("service") || bundleId.contains("ui") || bundleId.contains("daemon"))
+}
+
 func getAppName(from bundle: String) throws -> String {
   // Get the app name, as we're observing bundle ID's
   let workspace = NSWorkspace.shared
 
   let appURL: URL
+
+  // Make sure the app isn't a system service
+  if isSystemService(bundle) {
+    throw InfatError.systemService(bundle: bundle)
+  }
 
   // Check if the app remains on the system
   if let url = workspace.urlForApplication(withBundleIdentifier: bundle) {

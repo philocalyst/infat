@@ -83,6 +83,9 @@ extension Infat {
               "Application '\(name)' not found ")
             continue
             // Otherwise just eat that thing up
+          } catch InfatError.systemService(let bundle) {
+            logger.info("Skipping system service \(bundle)")
+            continue
           } catch {
             // propogate the rest
             throw error

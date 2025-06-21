@@ -4,6 +4,7 @@ import UniformTypeIdentifiers
 enum InfatError: Error, LocalizedError {
   case couldNotDeriveUTI(msg: String)
   case invalidBundle(bundle: String, app: String)
+  case systemService(bundle: String)
   case missingOption
   case noConfigTables(path: String)
   case infoPlistNotFound(appPath: String)
@@ -29,6 +30,8 @@ enum InfatError: Error, LocalizedError {
     switch self {
     case .couldNotDeriveUTI(let ext):
       return "Cannot determine UTI for extension '.\(ext)'"
+    case .systemService(let bundle):
+      return "\(bundle) is a system service, ignoring"
     case .superTypeMissing(let intendedType):
       return "Supertype \(intendedType) not present in known supertypes"
     case .invalidBundle(let bundle, let app):
