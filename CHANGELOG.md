@@ -5,6 +5,16 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [2.5.2] – 2025-06-21
+
+### Added
+- System service detection and graceful handling during initialization
+  - Applications identified as system services are now automatically skipped with informational logging
+  - Prevents processing errors when encountering macOS system services during app discovery
+
+### Changed
+- Updated `.gitignore` to exclude `dist` directory from version control
+
 ## [2.5.1] – 2025-06-20
 
 ### Added
@@ -367,19 +377,20 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-[Unreleased]: https://github.com/<owner>/infat/compare/v2.5.1…HEAD
-[2.5.1]: https://github.com/<owner>/infat/compare/v2.5.0…v2.5.1  
-[2.5.0]: https://github.com/<owner>/infat/compare/v2.4.0…v2.5.0  
+[Unreleased]: https://github.com/philocalyst/infat/compare/v2.5.2…HEAD
+[2.5.2]: https://github.com/philocalyst/infat/compare/v2.5.1…v2.5.2  
+[2.5.1]: https://github.com/philocalyst/infat/compare/v2.5.0…v2.5.1  
+[2.5.0]: https://github.com/philocalyst/infat/compare/v2.4.0…v2.5.0  
 [2.4.0]: https://github.com/philocalyst/infat/compare/v2.3.4...v2.4.0  
 [2.3.3]: https://github.com/philocalyst/infat/compare/v2.3.2...v2.3.3  
-[2.3.2]: https://github.com/your-org/your-repo/compare/v2.3.1...v2.3.2
-[2.3.1]: https://github.com/your-org/your-repo/compare/v2.3.0...v2.3.1
-[2.3.0]: https://github.com/your-org/your-repo/compare/v2.2.0...v2.3.0
-[2.2.0]:     https://github.com/philocalyst/infat/compare/v2.1.0...v2.2.0
-[2.1.0]: https://github.com/your-org/your-repo/compare/v2.0.1...v2.1.0  
+[2.3.2]: https://github.com/philocalyst/infat/compare/v2.3.1...v2.3.2
+[2.3.1]: https://github.com/philocalyst/infat/compare/v2.3.0...v2.3.1
+[2.3.0]: https://github.com/philocalyst/infat/compare/v2.2.0...v2.3.0
+[2.2.0]: https://github.com/philocalyst/infat/compare/v2.1.0...v2.2.0
+[2.1.0]: https://github.com/philocalyst/infat/compare/v2.0.1...v2.1.0  
 [2.0.1]: https://github.com/philocalyst/infat/compare/v2.0.0...v2.0.1
-[2.0.0]: https://github.com/yourorg/yourrepo/compare/v1.3.0...v2.0.0  
-[1.3.0]: https://github.com/your-org/infat/compare/v1.2.0...v1.3.0  
+[2.0.0]: https://github.com/philocalyst/infat/compare/v1.3.0...v2.0.0  
+[1.3.0]: https://github.com/philocalyst/infat/compare/v1.2.0...v1.3.0  
 [1.2.0]: https://github.com/philocalyst/infat/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/philocalyst/infat/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/philocalyst/infat/compare/v0.6.0...v1.0.0 
