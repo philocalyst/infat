@@ -14,8 +14,11 @@ debug_bin        := build_dir / "debug" / default_bin
 release_bin      := build_dir / "release" / default_bin
 
 # ▰▰▰ Default ▰▰▰ #
+[doc('Build the project (default action)')]
 default: build
 
+[group('validation')]
+[doc('Verify that version numbers have been updated across all files')]
 [confirm("You've updated the versionings?")]
 check:
 	@echo "At the README?"
@@ -30,15 +33,21 @@ check:
 	.
 
 # ▰▰▰ Build & Check ▰▰▰ #
+[group('build')]
+[doc('Build Swift package in debug mode for specified target')]
 build target=(current_platform):
 	@echo "🔨 Building Swift package (debug)…"
 	swift build --triple ${target}
 
+[group('build')]
+[doc('Build Swift package in release mode with optimizations')]
 build-release target=(current_platform):
 	@echo "🚀 Building Swift package (release)…"
 	swift build -c release -Xswiftc "-whole-module-optimization" --triple ${target} -Xlinker "-dead_strip"
 
 # ▰▰▰ Packaging ▰▰▰ #
+[group('packaging')]
+[doc('Build release binary and package it for distribution')]
 package target=(current_platform) result_directory=(output_directory): 
 	just build-release ${target}
 	@echo "📦 Packaging release binary…"
@@ -46,6 +55,8 @@ package target=(current_platform) result_directory=(output_directory):
 	@cp ${release_bin} "${result_directory}/${default_bin}-${target}"
 	@echo "✅ Packaged → ${result_directory}/${default_bin}-${target}"
 
+[group('packaging')]
+[doc('Compress binary files in target directory into tar.gz archives')]
 compress-binaries target_directory=("."):
     #!/usr/bin/env bash
     
@@ -68,10 +79,13 @@ compress-binaries target_directory=("."):
     fi
     done
 
-
+[group('development')]
+[doc('Format all Swift source files using swift-format')]
 format:
 	find . -name "*.swift" -type f -exec swift-format format -i {} +
 
+[group('packaging')]
+[doc('Generate SHA256 checksums for all files in specified directory')]
 checksum directory=(output_directory):
 	@echo "🔒 Creating checksums in ${directory}…"
 	@find "${directory}" -type f \
@@ -80,6 +94,8 @@ checksum directory=(output_directory):
 	    -exec sh -c 'sha256sum "$1" > "$1.sha256"' _ {} \;
 	@echo "✅ Checksums created!"
 
+[group('release')]
+[doc('Extract release notes from changelog for specified tag')]
 create-notes raw_tag outfile changelog:
     #!/usr/bin/env bash
     
@@ -122,31 +138,42 @@ create-notes raw_tag outfile changelog:
       echo "Warning: '${outfile}' is empty. Is '## [$tag]' present in '${changelog}'?" >&2
     fi
 
-
 # ▰▰▰ Run ▰▰▰ #
+[group('execution')]
+[doc('Run the application in debug mode with optional arguments')]
 run +args="":
 	@echo "▶️ Running (debug)…"
 	swift run ${default_bin} ${args}
 
+[group('execution')]
+[doc('Run the application in release mode with optimizations')]
 run-release +args="":
 	@echo "▶️ Running (release)…"
 	swift run -c release -Xswiftc "-whole-module-optimization" ${release_bin} ${args}
 
 # ▰▰▰ Cleaning ▰▰▰ #
+[group('maintenance')]
+[doc('Clean build artifacts and resolve package dependencies')]
 clean:
 	@echo "🧹 Cleaning build artifacts…"
 	swift package clean
 	swift package resolve
 
 # ▰▰▰ Installation & Update ▰▰▰ #
+[group('installation')]
+[doc('Build and install the binary to /usr/local/bin')]
 install: build-release
 	@echo "💾 Installing ${default_bin} → /usr/local/bin…"
 	@cp ${release_bin} /usr/local/bin/${default_bin}
 
+[group('installation')]
+[doc('Force install the binary to /usr/local/bin (overwrite existing)')]
 install-force: build-release
 	@echo "💾 Force installing ${default_bin} → /usr/local/bin…"
 	@cp ${release_bin} /usr/local/bin/${default_bin} --force
 
+[group('maintenance')]
+[doc('Update Swift package dependencies to latest versions')]
 update:
 	@echo "🔄 Updating Swift package dependencies…"
 	swift package update
