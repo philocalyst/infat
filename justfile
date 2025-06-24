@@ -28,16 +28,16 @@ build target=(current_platform):
 [group('build')]
 build-release target=(current_platform):
     @echo "🚀 Building Swift package (release)…"
-    swift build -c release -Xswiftc "-whole-module-optimization" --triple ${target} -Xlinker "-dead_strip"
+    swift build -c release -Xswiftc "-whole-module-optimization" --triple {{target}} -Xlinker "-dead_strip"
 
 [doc('Build release binary and package it for distribution')]
 [group('packaging')]
 package target=(current_platform) result_directory=(output_directory):
-    just build-release ${target}
+    just build-release {{target}}
     @echo "📦 Packaging release binary…"
-    @mkdir -p ${output_directory}
-    @cp ${release_bin} "${result_directory}/${default_bin}-${target}"
-    @echo "✅ Packaged → ${result_directory}/${default_bin}-${target}"
+    @mkdir -p {{output_directory}}
+    @cp {{release_bin}} "{{result_directory}}/{{default_bin}}-{{target}}"
+    @echo "✅ Packaged → {{result_directory}}/{{default_bin}}-{{target}}"
 
 [doc('Compress binary files in target directory into tar.gz archives')]
 [group('packaging')]
@@ -71,8 +71,8 @@ format:
 [doc('Generate SHA256 checksums for all files in specified directory')]
 [group('packaging')]
 checksum directory=(output_directory):
-    @echo "🔒 Creating checksums in ${directory}…"
-    @find "${directory}" -type f \
+    @echo "🔒 Creating checksums in {{directory}}…"
+    @find "{{directory}}" -type f \
         ! -name "checksums.sha256" \
         ! -name "*.sha256" \
         -exec sh -c 'sha256sum "$1" > "$1.sha256"' _ {} \;
@@ -87,14 +87,14 @@ create-notes raw_tag outfile changelog:
     tag="${tag_v#v}" # Remove prefix v
 
     # Changes header for release notes
-    printf "# What's new\n" > "${outfile}"
+    printf "# What's new\n" > "{{outfile}}"
 
-    if [[ ! -f "${changelog}" ]]; then
-      echo "Error: ${changelog} not found." >&2
+    if [[ ! -f "{{changelog}}" ]]; then
+      echo "Error: {{changelog}} not found." >&2
       exit 1
     fi
 
-    echo "Extracting notes for tag: ${raw_tag} (searching for section [$tag])"
+    echo "Extracting notes for tag: {{raw_tag}} (searching for section [$tag])"
     # Use awk to extract the relevant section from the changelog
     awk -v tag="$tag" '
       # start printing when we see "## [<tag>]" (escape brackets for regex)
@@ -112,39 +112,39 @@ create-notes raw_tag outfile changelog:
           exit 1
         }
       }
-    ' "${changelog}" >> "${outfile}"
+    ' "{{changelog}}" >> "{{outfile}}"
 
     # Check if the output file has content
-    if [[ -s ${outfile} ]]; then
-      echo "Successfully extracted release notes to '${outfile}'."
+    if [[ -s {{outfile}} ]]; then
+      echo "Successfully extracted release notes to '{{outfile}}'."
     else
       # Output a warning if no notes were found for the tag
-      echo "Warning: '${outfile}' is empty. Is '## [$tag]' present in '${changelog}'?" >&2
+      echo "Warning: '{{outfile}}' is empty. Is '## [$tag]' present in '{{changelog}}'?" >&2
     fi
 
 [doc('Run the application in debug mode with optional arguments')]
 [group('execution')]
 run +args="":
     @echo "▶️ Running (debug)…"
-    swift run ${default_bin} ${args}
+    swift run {{default_bin}} {{args}}
 
 [doc('Run the application in release mode with optimizations')]
 [group('execution')]
 run-release +args="":
     @echo "▶️ Running (release)…"
-    swift run -c release -Xswiftc "-whole-module-optimization" ${release_bin} ${args}
+    swift run -c release -Xswiftc "-whole-module-optimization" {{release_bin}} {{args}}
 
 [doc('Build and install the binary to /usr/local/bin')]
 [group('installation')]
 install: build-release
-    @echo "💾 Installing ${default_bin} → /usr/local/bin…"
-    @cp ${release_bin} /usr/local/bin/${default_bin}
+    @echo "💾 Installing {{default_bin}} → /usr/local/bin…"
+    @cp {{release_bin}} /usr/local/bin/{{default_bin}}
 
 [doc('Force install the binary to /usr/local/bin (overwrite existing)')]
 [group('installation')]
 install-force: build-release
-    @echo "💾 Force installing ${default_bin} → /usr/local/bin…"
-    @cp ${release_bin} /usr/local/bin/${default_bin} --force
+    @echo "💾 Force installing {{default_bin}} → /usr/local/bin…"
+    @cp {{release_bin}} /usr/local/bin/{{default_bin}} --force
 
 [doc('Clean build artifacts and resolve package dependencies')]
 [group('maintenance')]
