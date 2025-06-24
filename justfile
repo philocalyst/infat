@@ -166,6 +166,7 @@ alias p := package
 alias cb := compress-binaries
 alias ch := checksum
 alias r := run
+alias f := format
 alias rr := run-release
 alias cl := clean
 alias i := install
