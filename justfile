@@ -18,19 +18,19 @@ release_bin := build_dir / "release" / default_bin
 default:
     @just --list
 
-[doc('Build Swift package in debug mode for specified target')]
+[doc('Build Swift package in debug mode')]
 [group('build')]
 build target=(current_platform):
     @echo "🔨 Building Swift package (debug)…"
     swift build --triple {{target}}
 
-[doc('Build Swift package in release mode with optimizations')]
+[doc('Build Swift package in release mode')]
 [group('build')]
 build-release target=(current_platform):
     @echo "🚀 Building Swift package (release)…"
     swift build -c release -Xswiftc "-whole-module-optimization" --triple {{target}} -Xlinker "-dead_strip"
 
-[doc('Build release binary and package it for distribution')]
+[doc('Finalize release binary')]
 [group('packaging')]
 package target=(current_platform) result_directory=(output_directory):
     just build-release {{target}}
@@ -39,7 +39,7 @@ package target=(current_platform) result_directory=(output_directory):
     @cp {{release_bin}} "{{result_directory}}/{{default_bin}}-{{target}}"
     @echo "✅ Packaged → {{result_directory}}/{{default_bin}}-{{target}}"
 
-[doc('Compress binary files in target directory into tar.gz archives')]
+[doc('Compress binary files in target directory')]
 [group('packaging')]
 compress-binaries target_directory=("."):
     #!/usr/bin/env bash
@@ -63,12 +63,12 @@ compress-binaries target_directory=("."):
     fi
     done
 
-[doc('Format all Swift source files using swift-format')]
+[doc('Format all Swift source files')]
 [group('development')]
 format:
     find . -name "*.swift" -type f -exec swift-format format -i {} +
 
-[doc('Generate SHA256 checksums for all files in specified directory')]
+[doc('Generate SHA256 checksums for files in a directory')]
 [group('packaging')]
 checksum directory=(output_directory):
     @echo "🔒 Creating checksums in {{directory}}…"
@@ -122,13 +122,13 @@ create-notes raw_tag outfile changelog:
       echo "Warning: '{{outfile}}' is empty. Is '## [$tag]' present in '{{changelog}}'?" >&2
     fi
 
-[doc('Run the application in debug mode with optional arguments')]
+[doc('Run the application in debug mode')]
 [group('execution')]
 run +args="":
     @echo "▶️ Running (debug)…"
     swift run {{default_bin}} {{args}}
 
-[doc('Run the application in release mode with optimizations')]
+[doc('Run the application in release mode')]
 [group('execution')]
 run-release +args="":
     @echo "▶️ Running (release)…"
@@ -140,20 +140,20 @@ install: build-release
     @echo "💾 Installing {{default_bin}} → /usr/local/bin…"
     @cp {{release_bin}} /usr/local/bin/{{default_bin}}
 
-[doc('Force install the binary to /usr/local/bin (overwrite existing)')]
+[doc('Force install the binary')]
 [group('installation')]
 install-force: build-release
     @echo "💾 Force installing {{default_bin}} → /usr/local/bin…"
     @cp {{release_bin}} /usr/local/bin/{{default_bin}} --force
 
-[doc('Clean build artifacts and resolve package dependencies')]
+[doc('Clean artifacts and resolve dependencies')]
 [group('maintenance')]
 clean:
     @echo "🧹 Cleaning build artifacts…"
     swift package clean
     swift package resolve
     
-[doc('Update Swift package dependencies to latest versions')]
+[doc('Update Swift package dependencies')]
 [group('maintenance')]
 update:
     @echo "🔄 Updating Swift package dependencies…"
