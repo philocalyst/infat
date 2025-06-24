@@ -1,42 +1,28 @@
 #!/usr/bin/env just
-
 set shell := ["bash", "-euo", "pipefail", "-c"]
 set dotenv-load := true
 set allow-duplicate-recipes := true
 
-# ▰▰▰ Variables ▰▰▰ #
-
+# --- Variables --- #
 project_root := justfile_directory()
-output_directory := project_root / "dist"
-current_platform := `uname -m` + "-apple-" + os()
-default_bin := "infat"
-build_dir := project_root / ".build"
+output_directory := project_root / "dist" # The output artifacts lie here
+
+current_platform := `uname -m` + "-apple-" + os() # The tuple that swift expects
+
+default_bin := "infat" # The main artifact of the project
+build_dir := project_root / ".build" # Where the building artifcats are stored
 debug_bin := build_dir / "debug" / default_bin
 release_bin := build_dir / "release" / default_bin
 
-[doc('Build the project (default action)')]
-default: build
-
-[confirm("You've updated the versionings?")]
-[doc('Verify that version numbers have been updated across all files')]
-[group('validation')]
-check:
-    @echo "At the README?"
-    @echo "At the swift bundle?"
-    @echo "At the CHANGELOG?"
-    grep -R \
-    --exclude='CHANGELOG*' \
-    --exclude='README*' \
-    --exclude='Package*' \
-    --exclude-dir='.build' \
-    -nE '\b([0-9]+\.){2}[0-9]+\b' \
-    .
+[doc('List the project (default action)')]
+default:
+    @just --list
 
 [doc('Build Swift package in debug mode for specified target')]
 [group('build')]
 build target=(current_platform):
     @echo "🔨 Building Swift package (debug)…"
-    swift build --triple ${target}
+    swift build --triple {{target}}
 
 [doc('Build Swift package in release mode with optimizations')]
 [group('build')]
@@ -148,13 +134,6 @@ run-release +args="":
     @echo "▶️ Running (release)…"
     swift run -c release -Xswiftc "-whole-module-optimization" ${release_bin} ${args}
 
-[doc('Clean build artifacts and resolve package dependencies')]
-[group('maintenance')]
-clean:
-    @echo "🧹 Cleaning build artifacts…"
-    swift package clean
-    swift package resolve
-
 [doc('Build and install the binary to /usr/local/bin')]
 [group('installation')]
 install: build-release
@@ -167,14 +146,20 @@ install-force: build-release
     @echo "💾 Force installing ${default_bin} → /usr/local/bin…"
     @cp ${release_bin} /usr/local/bin/${default_bin} --force
 
+[doc('Clean build artifacts and resolve package dependencies')]
+[group('maintenance')]
+clean:
+    @echo "🧹 Cleaning build artifacts…"
+    swift package clean
+    swift package resolve
+    
 [doc('Update Swift package dependencies to latest versions')]
 [group('maintenance')]
 update:
     @echo "🔄 Updating Swift package dependencies…"
     swift package update
 
-# ▰▰▰ Aliases ▰▰▰ #
-
+# --- Aliases --- #
 alias b := build
 alias br := build-release
 alias p := package
