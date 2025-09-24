@@ -2,6 +2,7 @@
 //! Launch Services database parsing for the init command
 
 use crate::error::{InfatError, Result};
+use crate::macos::workspace::{self, resolve_to_bundle_id};
 use plist::Value;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -85,6 +86,7 @@ pub fn read_launch_services_database() -> Result<LaunchServicesDatabase> {
         "Successfully loaded Launch Services database with {} handlers",
         db.handlers.len()
     );
+
     Ok(db)
 }
 
@@ -114,26 +116,26 @@ pub fn generate_config_from_launch_services(robust: bool) -> Result<crate::confi
                 continue;
             }
 
-            // Get app name from bundle ID
-            let app_name = match crate::macos::workspace::get_app_name_from_bundle_id(&bundle_id) {
-                Ok(name) => name,
-                Err(InfatError::SystemService { .. }) => {
-                    debug!("Skipping system service: {}", bundle_id);
-                    skipped_count += 1;
-                    continue;
-                }
-                Err(InfatError::ApplicationNotFound { .. }) => {
+            // Canonicalize the id
+            let canonical_id = match resolve_to_bundle_id(&bundle_id) {
+                Ok(id) => id,
+                Err(_) => {
+                    // couldn’t resolve, so skip or warn
                     if robust {
-                        warn!("Application not found for bundle ID: {}", bundle_id);
+                        warn!("Skipping unresolved bundle id {:?}", bundle_id);
                         skipped_count += 1;
                         continue;
                     } else {
                         return Err(InfatError::ApplicationNotFound { name: bundle_id });
                     }
                 }
+            };
+
+            let app_name = match workspace::get_app_name_from_bundle_id(&canonical_id) {
+                Ok(name) => name,
                 Err(e) => {
                     if robust {
-                        warn!("Failed to get app name for {}: {}", bundle_id, e);
+                        warn!("Skipping {}: {}", canonical_id, e);
                         skipped_count += 1;
                         continue;
                     } else {
