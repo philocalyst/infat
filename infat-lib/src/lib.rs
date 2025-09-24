@@ -1,4 +1,4 @@
-// infat-lib/src/lib.rs - FINAL VERSION
+#![allow(unexpected_cfgs)]
 //! Infat - Declarative macOS file association and URL scheme management
 //!
 //! This library provides functionality to inspect and modify default applications

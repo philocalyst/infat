@@ -1,12 +1,7 @@
 // infat-lib/src/macos/ffi.rs
 //! Raw FFI bindings to macOS Launch Services and related APIs
 
-use core_foundation::{
-    array::CFArrayRef,
-    base::OSStatus,
-    string::CFStringRef,
-    url::CFURLRef,
-};
+use core_foundation::{array::CFArrayRef, base::OSStatus, string::CFStringRef, url::CFURLRef};
 
 pub type LSRolesMask = u32;
 pub const K_LS_ROLES_VIEWER: LSRolesMask = 2;

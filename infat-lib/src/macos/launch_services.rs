@@ -3,12 +3,7 @@
 
 use super::ffi::*;
 use crate::error::{InfatError, Result};
-use core_foundation::{
-    array::CFArray,
-    base::TCFType,
-    string::CFString,
-    url::CFURL,
-};
+use core_foundation::{array::CFArray, base::TCFType, string::CFString, url::CFURL};
 use std::path::Path;
 use tracing::debug;
 

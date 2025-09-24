@@ -3,7 +3,7 @@
 
 use crate::error::{InfatError, Result};
 use objc::{class, msg_send, runtime::Object, sel, sel_impl};
-use objc_foundation::{INSObject, INSString, NSString};
+use objc_foundation::{INSString, NSString};
 use std::path::{Path, PathBuf};
 use tracing::debug;
 

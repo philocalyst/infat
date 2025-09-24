@@ -1,12 +1,10 @@
-// infat-cli/src/main.rs - COMPLETE IMPLEMENTATION
+// infat-cli/src/main.rs
 use clap::{Parser, Subcommand};
 use color_eyre::{
     eyre::{Context, Result},
     owo_colors::OwoColorize,
 };
-use infat_lib::{
-    app, association, config, macos::launch_services_db, GlobalOptions,
-};
+use infat_lib::{app, association, config, macos::launch_services_db, GlobalOptions};
 use std::path::PathBuf;
 use tracing::info;
 

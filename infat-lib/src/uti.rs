@@ -386,7 +386,6 @@ impl FromStr for SuperType {
         match normalized.as_str() {
             "text" => Ok(Self::Text),
             "plain-text" => Ok(Self::PlainText),
-            "csv" => Ok(Self::Csv),
             "json" => Ok(Self::Json),
             "xml" => Ok(Self::Xml),
             "yaml" => Ok(Self::Yaml),
