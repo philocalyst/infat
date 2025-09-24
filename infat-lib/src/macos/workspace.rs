@@ -114,6 +114,17 @@ pub fn get_app_name_from_bundle_id(bundle_id: &str) -> Result<String> {
         .and_then(|val| val.as_string())
         .unwrap_or("Unknown");
 
+    let authoritive_id = dict
+        .get("CFBundleIdentifier")
+        .expect("Required for any registered app")
+        .as_string()
+        .unwrap_or("Unknown");
+
+    // Prioritize the pretty name but fallbak on the authoritive
+    if app_name != authoritive_id {
+        return Ok(app_name.to_string());
+    }
+
     debug!("App name for {}: {}", bundle_id, app_name);
     Ok(app_name.to_string())
 }
