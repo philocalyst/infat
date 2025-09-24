@@ -2,12 +2,11 @@
 //! Raw FFI bindings to macOS Launch Services and related APIs
 
 use core_foundation::{
-    array::{CFArray, CFArrayRef},
-    base::{CFTypeRef, OSStatus, TCFType},
-    string::{CFString, CFStringRef},
-    url::{CFURLRef, CFURL},
+    array::CFArrayRef,
+    base::OSStatus,
+    string::CFStringRef,
+    url::CFURLRef,
 };
-use std::ffi::c_void;
 
 pub type LSRolesMask = u32;
 pub const K_LS_ROLES_VIEWER: LSRolesMask = 2;

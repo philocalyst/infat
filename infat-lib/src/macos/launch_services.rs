@@ -4,13 +4,13 @@
 use super::ffi::*;
 use crate::error::{InfatError, Result};
 use core_foundation::{
-    array::{CFArray, CFArrayRef},
-    base::{CFType, OSStatus, TCFType},
-    string::{CFString, CFStringRef},
+    array::CFArray,
+    base::TCFType,
+    string::CFString,
     url::CFURL,
 };
 use std::path::Path;
-use tracing::{debug, warn};
+use tracing::debug;
 
 /// Set the default application for a URL scheme
 pub fn set_default_app_for_url_scheme(scheme: &str, bundle_id: &str) -> Result<()> {
@@ -31,7 +31,7 @@ pub fn set_default_app_for_url_scheme(scheme: &str, bundle_id: &str) -> Result<(
 
     if status != 0 {
         return Err(InfatError::LaunchServicesError {
-            message: format!("Failed to set URL scheme handler: error {}", status),
+            message: format!("Failed to set URL scheme handler: error {status}"),
         });
     }
 
@@ -56,7 +56,7 @@ pub fn set_default_app_for_uti(uti: &str, bundle_id: &str) -> Result<()> {
 
     if status != 0 {
         return Err(InfatError::LaunchServicesError {
-            message: format!("Failed to set UTI handler: error {}", status),
+            message: format!("Failed to set UTI handler: error {status}"),
         });
     }
 
@@ -161,7 +161,7 @@ pub fn register_application<P: AsRef<Path>>(app_path: P) -> Result<()> {
 
     if status != 0 {
         return Err(InfatError::LaunchServicesError {
-            message: format!("Failed to register application: error {}", status),
+            message: format!("Failed to register application: error {status}"),
         });
     }
 

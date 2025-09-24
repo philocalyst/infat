@@ -7,7 +7,7 @@ use crate::{
 };
 use plist::Value;
 use std::path::PathBuf;
-use tracing::{debug, warn};
+use tracing::debug;
 
 /// Information about an application's declared file types and URL schemes
 #[derive(Debug, Clone)]
@@ -75,10 +75,10 @@ pub fn get_app_info(app_name_or_bundle_id: &str) -> Result<AppInfo> {
         .to_string();
 
     // Parse declared document types
-    let declared_types = parse_document_types(&dict);
+    let declared_types = parse_document_types(dict);
 
     // Parse declared URL schemes
-    let declared_schemes = parse_url_schemes(&dict);
+    let declared_schemes = parse_url_schemes(dict);
 
     Ok(AppInfo {
         bundle_id,

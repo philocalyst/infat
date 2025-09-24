@@ -104,7 +104,7 @@ pub fn get_info_for_extension(extension: &str) -> Result<AssociationInfo> {
     let all_apps = launch_services::get_all_apps_for_uti(&uti)?;
 
     Ok(AssociationInfo {
-        identifier: format!(".{}", extension),
+        identifier: format!(".{extension}"),
         uti: Some(uti),
         default_app,
         all_apps,

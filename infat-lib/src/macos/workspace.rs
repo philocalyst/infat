@@ -3,9 +3,9 @@
 
 use crate::error::{InfatError, Result};
 use objc::{class, msg_send, runtime::Object, sel, sel_impl};
-use objc_foundation::{INSObject, INSString, NSObject, NSString};
+use objc_foundation::{INSObject, INSString, NSString};
 use std::path::{Path, PathBuf};
-use tracing::{debug, warn};
+use tracing::debug;
 
 #[link(name = "AppKit", kind = "framework")]
 extern "C" {}
@@ -155,7 +155,7 @@ pub fn find_applications() -> Result<Vec<PathBuf>> {
                 let mut found_count = 0;
                 for entry in entries.flatten() {
                     let entry_path = entry.path();
-                    if entry_path.extension().map_or(false, |ext| ext == "app") {
+                    if entry_path.extension().is_some_and(|ext| ext == "app") {
                         apps.push(entry_path);
                         found_count += 1;
                     }
@@ -187,7 +187,7 @@ pub fn find_application(name_or_bundle_id: &str) -> Result<Option<PathBuf>> {
 
     // Try as a file path
     let path = PathBuf::from(name_or_bundle_id);
-    if path.exists() && path.extension().map_or(false, |ext| ext == "app") {
+    if path.exists() && path.extension().is_some_and(|ext| ext == "app") {
         return Ok(Some(path));
     }
 

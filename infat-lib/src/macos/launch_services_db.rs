@@ -6,7 +6,6 @@ use crate::macos::workspace::{self, resolve_to_bundle_id};
 use plist::Value;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::path::PathBuf;
 use tracing::{debug, info, warn};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -74,12 +73,12 @@ pub fn read_launch_services_database() -> Result<LaunchServicesDatabase> {
     let plist_data = std::fs::read(&ls_path)?;
     let value: Value =
         plist::from_bytes(&plist_data).map_err(|e| InfatError::LaunchServicesError {
-            message: format!("Failed to parse Launch Services database: {}", e),
+            message: format!("Failed to parse Launch Services database: {e}"),
         })?;
 
     let db: LaunchServicesDatabase =
         plist::from_value(&value).map_err(|e| InfatError::LaunchServicesError {
-            message: format!("Failed to deserialize Launch Services database: {}", e),
+            message: format!("Failed to deserialize Launch Services database: {e}"),
         })?;
 
     info!(

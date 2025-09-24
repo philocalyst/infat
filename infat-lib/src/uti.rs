@@ -503,7 +503,7 @@ impl std::fmt::Display for SuperType {
             Self::M4vVideo => "m4v-video",
             Self::M4aAudio => "m4a-audio",
             _ => {
-                return write!(f, "{:?}", self)
+                return write!(f, "{self:?}")
                     .map(|_| ())
                     .map_err(|_| std::fmt::Error)
             }

@@ -5,10 +5,10 @@ use color_eyre::{
     owo_colors::OwoColorize,
 };
 use infat_lib::{
-    app, association, config, macos::launch_services_db, uti::SuperType, GlobalOptions,
+    app, association, config, macos::launch_services_db, GlobalOptions,
 };
 use std::path::PathBuf;
-use tracing::{error, info};
+use tracing::info;
 
 #[derive(Parser, Debug, Clone)]
 #[command(
@@ -233,7 +233,7 @@ async fn handle_info_command(
         info!("Getting info for application: {}", app_name);
 
         let app_info = app::get_app_info(&app_name)
-            .wrap_err_with(|| format!("Failed to get info for app: {}", app_name))?;
+            .wrap_err_with(|| format!("Failed to get info for app: {app_name}"))?;
 
         // Display application information
         println!("{}", "Application Information".bright_blue().bold());
@@ -264,7 +264,7 @@ async fn handle_info_command(
                     let exts: Vec<String> = declared_type
                         .extensions
                         .iter()
-                        .map(|ext| format!(".{}", ext))
+                        .map(|ext| format!(".{ext}"))
                         .collect();
                     println!("    Extensions: {}", exts.join(", ").bright_green());
                 }
@@ -279,11 +279,11 @@ async fn handle_info_command(
         info!("Getting info for extension: .{}", extension);
 
         let info = association::get_info_for_extension(&extension)
-            .wrap_err_with(|| format!("Failed to get info for extension: .{}", extension))?;
+            .wrap_err_with(|| format!("Failed to get info for extension: .{extension}"))?;
 
         println!(
             "📄 File Extension: {}",
-            format!(".{}", extension).bright_green()
+            format!(".{extension}").bright_green()
         );
 
         if let Some(uti) = &info.uti {
@@ -303,7 +303,7 @@ async fn handle_info_command(
         if !all_app_names.is_empty() {
             println!("\n{}", "All registered apps:".bright_blue().bold());
             for app_name in all_app_names {
-                println!("  • {}", app_name);
+                println!("  • {app_name}");
             }
         } else {
             println!(
@@ -315,7 +315,7 @@ async fn handle_info_command(
         info!("Getting info for type: {}", type_name);
 
         let info = association::get_info_for_type(&type_name)
-            .wrap_err_with(|| format!("Failed to get info for type: {}", type_name))?;
+            .wrap_err_with(|| format!("Failed to get info for type: {type_name}"))?;
 
         println!("🏷️  File Type: {}", type_name.bright_green());
 
@@ -336,7 +336,7 @@ async fn handle_info_command(
         if !all_app_names.is_empty() {
             println!("\n{}", "All registered apps:".bright_blue().bold());
             for app_name in all_app_names {
-                println!("  • {}", app_name);
+                println!("  • {app_name}");
             }
         } else {
             println!("\n{}", "No applications registered for this type".yellow());
@@ -381,7 +381,7 @@ async fn handle_set_command(
 
         association::set_default_app_for_extension(&extension, &app_name)
             .await
-            .wrap_err_with(|| format!("Failed to set default app for .{}", extension))?;
+            .wrap_err_with(|| format!("Failed to set default app for .{extension}"))?;
 
         if !opts.quiet {
             println!(
@@ -396,7 +396,7 @@ async fn handle_set_command(
 
         association::set_default_app_for_url_scheme(&url_scheme, &app_name)
             .await
-            .wrap_err_with(|| format!("Failed to set default app for {} scheme", url_scheme))?;
+            .wrap_err_with(|| format!("Failed to set default app for {url_scheme} scheme"))?;
 
         if !opts.quiet {
             println!(
@@ -411,7 +411,7 @@ async fn handle_set_command(
 
         association::set_default_app_for_type(&type_name, &app_name)
             .await
-            .wrap_err_with(|| format!("Failed to set default app for type {}", type_name))?;
+            .wrap_err_with(|| format!("Failed to set default app for type {type_name}"))?;
 
         if !opts.quiet {
             println!(

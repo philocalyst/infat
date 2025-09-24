@@ -153,7 +153,7 @@ pub async fn apply_config(config: &Config, robust: bool) -> Result<()> {
                     success_count += 1;
                 }
                 Err(e) => {
-                    let msg = format!("Failed to set type {} → {}: {}", type_name, app_name, e);
+                    let msg = format!("Failed to set type {type_name} → {app_name}: {e}");
                     if robust {
                         warn!("{}", msg);
                         errors.push(msg);
@@ -178,7 +178,7 @@ pub async fn apply_config(config: &Config, robust: bool) -> Result<()> {
                     success_count += 1;
                 }
                 Err(e) => {
-                    let msg = format!("Failed to set .{} → {}: {}", ext, app_name, e);
+                    let msg = format!("Failed to set .{ext} → {app_name}: {e}");
                     if robust {
                         warn!("{}", msg);
                         errors.push(msg);
@@ -203,7 +203,7 @@ pub async fn apply_config(config: &Config, robust: bool) -> Result<()> {
                     success_count += 1;
                 }
                 Err(e) => {
-                    let msg = format!("Failed to set {} → {}: {}", scheme, app_name, e);
+                    let msg = format!("Failed to set {scheme} → {app_name}: {e}");
                     if robust {
                         warn!("{}", msg);
                         errors.push(msg);
