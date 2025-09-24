@@ -46,6 +46,7 @@ pub enum SuperType {
 
     // Video
     Video,
+    Mpeg2TransportStream,
     Movie,
     QuicktimeMovie,
     Mp4Movie,
@@ -58,6 +59,7 @@ pub enum SuperType {
     RealAudio,
     Webm,
     Matroska,
+    M3uPlaylist,
 
     // Archives
     Archive,
@@ -186,7 +188,9 @@ impl SuperType {
             Self::DvMovie => "public.dv-movie",
             Self::RealMedia => "com.real.realmedia",
             Self::RealAudio => "com.real.realaudio",
+            Self::Mpeg2TransportStream => "mpeg2-transport-stream",
             Self::Webm => "org.webmproject.webm",
+            Self::M3uPlaylist => "m3u-playlist",
             Self::Matroska => "org.matroska.mkv",
 
             Self::Archive => "public.archive",
@@ -267,6 +271,7 @@ impl SuperType {
             Self::Json,
             Self::Xml,
             Self::Yaml,
+            Self::M3uPlaylist,
             Self::Html,
             Self::Markdown,
             Self::Rtf,
@@ -352,6 +357,7 @@ impl SuperType {
             Self::FileUrl,
             Self::UrlBookmarkData,
             Self::PropertyList,
+            Self::Mpeg2TransportStream,
             Self::XmlPropertyList,
             Self::BinaryPropertyList,
             Self::Log,
@@ -413,6 +419,12 @@ impl FromStr for SuperType {
             "mp4-movie" => Ok(Self::Mp4Movie),
             "mpeg" => Ok(Self::Mpeg),
             "avi" => Ok(Self::Avi),
+
+            "csv" | "comma-separated-text" => Ok(Self::Csv),
+            "mpeg2-video" => Ok(Self::Mpeg2Video),
+            "mpeg2-transport-stream" => Ok(Self::Mpeg2TransportStream),
+            "mpeg4-movie" => Ok(Self::Mp4Movie),
+            "m3u" | "m3u-playlist" => Ok(Self::M3uPlaylist),
 
             "archive" => Ok(Self::Archive),
             "zip" => Ok(Self::Zip),
