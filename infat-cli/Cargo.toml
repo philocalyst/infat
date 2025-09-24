@@ -17,3 +17,10 @@ tokio = { version = "1.0", features = ["rt-multi-thread", "macros"] }
 eyre = { workspace = true }
 color-eyre = { workspace = true }
 tracing = { workspace = true }
+clap_complete = "4.5.58"
+
+[build-dependencies]
+clap_complete = "4.5.58"
+infat-lib = { path = "../infat-lib" }
+clap = { workspace = true }
+
