@@ -85,6 +85,7 @@ pub fn get_app_name_from_bundle_id(bundle_id: &str) -> Result<String> {
     }
 
     let app_paths = get_app_paths_for_bundle_id(bundle_id)?;
+
     let app_path = app_paths
         .first()
         .ok_or_else(|| InfatError::ApplicationNotFound {
@@ -218,11 +219,6 @@ pub fn is_system_service(bundle_id: &str) -> bool {
 /// Resolve app name or bundle ID to a bundle ID
 pub fn resolve_to_bundle_id(name_or_bundle_id: &str) -> Result<String> {
     debug!("Resolving to bundle ID: {}", name_or_bundle_id);
-
-    // If it already looks like a bundle ID, return it
-    if name_or_bundle_id.contains('.') && !name_or_bundle_id.contains('/') {
-        return Ok(name_or_bundle_id.to_string());
-    }
 
     // Find the application and get its bundle ID
     let app_path =
