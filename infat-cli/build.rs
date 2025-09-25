@@ -37,7 +37,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     fs::create_dir_all(&dest)?;
 
     // generate completions
-    let bin_name = env!("CARGO_PKG_NAME");
+    let bin_name = "infat";
     let mut cmd = Cli::command();
 
     for &shell in Shell::value_variants() {
