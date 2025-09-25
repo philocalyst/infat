@@ -1,0 +1,6 @@
+[
+	hyperfine,
+	jujutsu,
+	jq,
+	xh,
+];
