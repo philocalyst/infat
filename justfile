@@ -1,5 +1,5 @@
 #!/usr/bin/env just
-
+ 
 # --- Settings --- #
 set shell := ["nu", "-c"]
 set positional-arguments := true
@@ -8,17 +8,16 @@ set windows-shell := ["nu", "-c"]
 set dotenv-load := true
 
 # --- Variables --- #
-project_root    := justfile_directory()
+project_root := justfile_directory()
 output_directory := project_root + "/dist"
 build_directory := `cargo metadata --format-version 1 | jq -r .target_directory`
-
 system := `rustc --version --verbose |  grep '^host:' | awk '{print $2}'`
-main_package      := "infat"
+main_package := "infat"
 
 # ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ #
 #      Recipes      #
 # ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ #
-    
+
 [doc('List all available recipes')]
 default:
     @just --list
@@ -34,13 +33,13 @@ check:
 [group('build')]
 build target="aarch64-apple-darwin" package=(main_package):
     @echo "🔨 Building workspace (debug)..."
-    cargo build --workspace --bin '{{main_package}}' --target '{{target}}'
+    cargo build --workspace --bin '{{ main_package }}' --target '{{ target }}'
 
 [doc('Build workspace in release mode')]
 [group('build')]
 build-release target=(system) package=(main_package):
-    @echo "🚀 Building workspace (release) for {{target}}…"
-    cargo build --workspace --release --bin '{{main_package}}' --target '{{target}}'
+    @echo "🚀 Building workspace (release) for {{ target }}…"
+    cargo build --workspace --release --bin '{{ main_package }}' --target '{{ target }}'
 
 # --- Packaging --- #
 [doc('Package release binary with completions for distribution')]
@@ -60,10 +59,10 @@ package target=(system):
     print "📦 Packaging release binary…"
 
 
-    let target = '{{target}}'
-    let prime = '{{main_package}}'
-    let out = "{{output_directory}}"
-    let artifact_dir = $'{{build_directory}}/($target)/release'
+    let target = '{{ target }}'
+    let prime = '{{ main_package }}'
+    let out = "{{ output_directory }}"
+    let artifact_dir = $'{{ build_directory }}/($target)/release'
 
     try {
         just build-release $target
@@ -75,7 +74,7 @@ package target=(system):
 
         # Example: package-triplet
         let qualified_name = $"($prime)-($target)"
-        
+
         let bin_path = $'($artifact_dir)/($prime)($ext)' # Where rust puts the binary artifact
         let out_path = $'($out)/($qualified_name)($ext)'
 
@@ -92,7 +91,7 @@ package target=(system):
         for completion in $completions {
             let src = $'($artifact_dir)/($completion)'
             let dst = $'($out)/($completion)'
-            
+
             if ($src | path exists) {
                 try {
                     cp --force $src $dst # Using force here because default nu copy only works with existing files otherwise
@@ -112,7 +111,7 @@ package target=(system):
         } catch {  |e| 
             build_error $"Failed to copy binary ($bin_path)" $e
         }
-        
+
     } catch {  |e| 
         build_error "Packaging failed" $e
     }
@@ -131,8 +130,8 @@ checksum directory=(output_directory):
             exit 1
         }
     }
-    
-    let dir = '{{directory}}'
+
+    let dir = '{{ directory }}'
     print $"🔒 Generating checksums in '($dir)'…"
 
     # Validate directory exists
@@ -142,7 +141,7 @@ checksum directory=(output_directory):
 
     try {
         cd $dir
-        
+
         # Remove existing checksum files
         try {
             glob '*.sum' | each { |file| rm $file }
@@ -196,7 +195,7 @@ checksum directory=(output_directory):
         }
 
         print $"✅ Checksums created in '($dir)'"
-        
+
     } catch {|e| 
         build_error $"Checksum generation failed" $e
     }
@@ -215,10 +214,10 @@ compress directory=(output_directory):
             exit 1
         }
     }
-    
+
     print "🗜️ Compressing release packages..."
-    
-    let dir = '{{directory}}'
+
+    let dir = '{{ directory }}'
     if not ($dir | path exists) {
         build_error $"Directory '($dir)' does not exist"
     }
@@ -226,7 +225,7 @@ compress directory=(output_directory):
     try {
         # Find all package directories
         mut package_dirs = ls $dir | where type == dir | get name
-        
+
         if (($package_dirs | length) == 0) {
             # Just one package found to compress
             $package_dirs = ($package_dirs | append $dir)
@@ -235,27 +234,27 @@ compress directory=(output_directory):
         for pkg_dir in $package_dirs {
             let pkg_name = ($pkg_dir | path basename)
             print $"🎁 Compressing package: ($pkg_name)"
-            
+
             try {
                 let parent_dir = ($pkg_dir | path dirname)
                 let archive_name = $'($pkg_dir).tar.gz'
-                
+
                 # Use tar command to create compressed archive
                 let result = (run-external 'tar' '-czf' $archive_name '-C' $parent_dir $pkg_name | complete)
-                
+
                 if $result.exit_code != 0 {
                     build_error $"Failed to create archive for ($pkg_name): ($result.stderr)"
                 }
-                
+
                 print $"✅ Successfully compressed ($pkg_name)"
-                
+
             } catch { |e| 
                 build_error $"Compression failed for ($pkg_name)" $e
             }
         }
-        
+
         print "🎉 All packages compressed successfully!"
-        
+
     } catch { |e| 
         build_error $"Compression process failed" $e
     }
@@ -269,25 +268,25 @@ release: build-release
 [doc('Run application in debug mode')]
 [group('execution')]
 run package=(main_package) +args="":
-    @echo "▶️ Running {{package}} (debug)..."
-    cargo run --bin '{{package}}' -- '$@'
+    @echo "▶️ Running {{ package }} (debug)..."
+    cargo run --bin '{{ package }}' -- '$@'
 
 [doc('Run application in release mode')]
 [group('execution')]
 run-release package=(main_package) +args="":
-    @echo "▶️ Running '{{package}}' (release)..."
-    cargo run --bin '{{package}}' --release -- '$@'
+    @echo "▶️ Running '{{ package }}' (release)..."
+    cargo run --bin '{{ package }}' --release -- '$@'
 
 # --- Testing --- #
 [doc('Run all workspace tests')]
 [group('testing')]
-test: 
+test:
     @echo "🧪 Running workspace tests..."
     cargo test --workspace
 
 [doc('Run workspace tests with additional arguments')]
 [group('testing')]
-test-with +args: 
+test-with +args:
     @echo "🧪 Running workspace tests with args: '$@'"
     cargo test --workspace -- '$@'
 
@@ -297,14 +296,12 @@ test-with +args:
 fmt:
     @echo "💅 Formatting Rust code..."
     cargo fmt 
-    
 
 [doc('Check if Rust code is properly formatted')]
 [group('quality')]
 fmt-check:
     @echo "💅 Checking Rust code formatting..."
     cargo fmt 
-    
 
 [doc('Lint code with Clippy in debug mode')]
 [group('quality')]
@@ -346,11 +343,11 @@ create-notes raw_tag outfile changelog:
             exit 1
         }
     }
-   
-    let tag_v = '{{raw_tag}}'
+
+    let tag_v = '{{ raw_tag }}'
     let tag = ($tag_v | str replace --regex '^v' '')  # Remove prefix v
-    let outfile = '{{outfile}}'
-    let changelog_file = '{{changelog}}'
+    let outfile = '{{ outfile }}'
+    let changelog_file = '{{ changelog }}'
 
     try {
         # Verify changelog exists
@@ -366,10 +363,10 @@ create-notes raw_tag outfile changelog:
         # Read and process changelog
         let content = (open $changelog_file | lines)
         let section_header = $"## [($tag)]"
-        
+
         # Find the start of the target section
         let start_idx = ($content | enumerate | where item == $section_header | get index | first)
-        
+
         if ($start_idx | is-empty) {
             build_error $"Could not find section header ($section_header) in ($changelog_file)"
         }
@@ -377,7 +374,7 @@ create-notes raw_tag outfile changelog:
         # Find the end of the target section (next ## [ header)
         let remaining_lines = ($content | skip ($start_idx + 1))
         let next_section_idx = ($remaining_lines | enumerate | where item =~ '^## \[' | get index | first)
-        
+
         let section_lines = if ($next_section_idx | is-empty) {
             $remaining_lines
         } else {
@@ -414,15 +411,15 @@ clean:
 # --- Installation --- #
 [doc('Build and install binary to system')]
 [group('installation')]
-install package=(main_package): build-release 
-    @echo "💾 Installing {{main_package}} binary..."
-    cargo install --bin '{{package}}'
+install package=(main_package): build-release
+    @echo "💾 Installing {{ main_package }} binary..."
+    cargo install --bin '{{ package }}'
 
 [doc('Force install binary')]
 [group('installation')]
 install-force package=(main_package): build-release
-    @echo "💾 Force installing {{main_package}} binary..."
-    cargo install --bin '{{package}}' --force
+    @echo "💾 Force installing {{ main_package }} binary..."
+    cargo install --bin '{{ package }}' --force
 
 # --- Aliases --- #
 alias b    := build
