@@ -32,8 +32,13 @@ async fn main() -> Result<()> {
                 .await
                 .wrap_err("Failed to load and apply configuration")?;
         }
-        Some(Commands::Info { app, ext, r#type }) => {
-            handle_info_command(app, ext, r#type)
+        Some(Commands::Info {
+            app,
+            ext,
+            scheme,
+            r#type,
+        }) => {
+            handle_info_command(app, ext, scheme, r#type)
                 .await
                 .wrap_err("Info command failed")?;
         }
@@ -122,28 +127,36 @@ async fn handle_config_load(opts: &GlobalOptions) -> Result<()> {
 async fn handle_info_command(
     app: Option<String>,
     ext: Option<String>,
+    scheme: Option<String>,
     r#type: Option<String>,
 ) -> Result<()> {
-    let provided_count = [app.is_some(), ext.is_some(), r#type.is_some()]
-        .iter()
-        .filter(|&&x| x)
-        .count();
+    let provided_count = [
+        app.is_some(),
+        ext.is_some(),
+        scheme.is_some(),
+        r#type.is_some(),
+    ]
+    .iter()
+    .filter(|&&x| x)
+    .count();
 
     // Some basic validation that clap can't provide
     if provided_count == 0 {
         return Err(color_eyre::eyre::eyre!(
-            "Must provide one of: {}, {}, or {}",
+            "Must provide one of: {}, {}, {}, or {}",
             "--app".bright_yellow(),
             "--ext".bright_yellow(),
+            "--scheme".bright_yellow(),
             "--type".bright_yellow()
         ));
     }
 
     if provided_count > 1 {
         return Err(color_eyre::eyre::eyre!(
-            "Only one of {}, {}, or {} may be provided",
+            "Only one of {}, {}, {}, or {} may be provided",
             "--app".bright_yellow(),
             "--ext".bright_yellow(),
+            "--scheme".bright_yellow(),
             "--type".bright_yellow()
         ));
     }
@@ -230,6 +243,35 @@ async fn handle_info_command(
             println!(
                 "\n{}",
                 "No applications registered for this extension".yellow()
+            );
+        }
+    } else if let Some(url_scheme) = scheme {
+        info!("Getting info for URL scheme: {}", url_scheme);
+
+        let info = association::get_info_for_url_scheme(&url_scheme)
+            .wrap_err_with(|| format!("Failed to get info for URL scheme: {url_scheme}"))?;
+
+        println!("🔗 URL Scheme: {}", url_scheme.bright_green());
+
+        match info.default_app_name()? {
+            Some(app_name) => {
+                println!("   Default app: {}", app_name.bright_yellow());
+            }
+            None => {
+                println!("   Default app: {}", "None".bright_red());
+            }
+        }
+
+        let all_app_names = info.all_app_names();
+        if !all_app_names.is_empty() {
+            println!("\n{}", "All registered apps:".bright_blue().bold());
+            for app_name in all_app_names {
+                println!("  • {app_name}");
+            }
+        } else {
+            println!(
+                "\n{}",
+                "No applications registered for this scheme".yellow()
             );
         }
     } else if let Some(type_name) = r#type {

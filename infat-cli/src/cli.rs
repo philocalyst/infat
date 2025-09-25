@@ -36,35 +36,38 @@ pub(crate) struct Cli {
 pub(crate) enum Commands {
     /// Show file association information
     Info {
-        /// Application name to inspect
-        #[arg(short, long, value_name = "APP")]
+        /// Show information for a specific application
+        #[arg(long, conflicts_with_all = ["ext", "scheme", "type"])]
         app: Option<String>,
 
-        /// File extension (without dot)
-        #[arg(short, long, value_name = "EXT")]
+        /// Show information for a file extension
+        #[arg(long, conflicts_with_all = ["app", "scheme", "type"])]
         ext: Option<String>,
 
-        /// File type/supertype
-        #[arg(short, long, value_name = "TYPE")]
+        /// Show information for a URL scheme
+        #[arg(long, conflicts_with_all = ["app", "ext", "type"])]
+        scheme: Option<String>,
+
+        /// Show information for a file type
+        #[arg(long, conflicts_with_all = ["app", "ext", "scheme"])]
         r#type: Option<String>,
     },
 
-    /// Set an application association
+    /// Set default application for file extension, URL scheme, or file type
     Set {
-        /// Application name or bundle identifier
-        #[arg(value_name = "APP")]
+        /// Application name to set as default
         app_name: String,
 
-        /// File extension (without dot)
-        #[arg(long, value_name = "EXT")]
+        /// File extension to associate (without the dot)
+        #[arg(long, conflicts_with_all = ["scheme", "type"])]
         ext: Option<String>,
 
-        /// URL scheme
-        #[arg(long, value_name = "SCHEME")]
+        /// URL scheme to associate
+        #[arg(long, conflicts_with_all = ["ext", "type"])]
         scheme: Option<String>,
 
-        /// File type/supertype
-        #[arg(long, value_name = "TYPE")]
+        /// File type to associate
+        #[arg(long, conflicts_with_all = ["ext", "scheme"])]
         r#type: Option<String>,
     },
 
