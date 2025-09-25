@@ -1,7 +1,7 @@
 [
-  git, 
-  just,
-  coreutils,
-  b3sum,
-  nushell,
-];
+  "git", 
+  "just",
+  "coreutils",
+  "b3sum",
+  "nushell",
+]

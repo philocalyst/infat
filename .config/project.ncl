@@ -8,9 +8,9 @@ let normalizePkgs = fun pkgs =>
       let pkgName =
         if std.is_string pkg then pkg
         else if std.is_enum pkg then std.enum.to_string pkg
-        else error "Unsupported package reference: %{pkg}"
+        else std.abort "Unsupported package reference: %{pkg}"
       in
-      acc & { "${pkgName}" = organist.import_nix "nixpkgs#${pkgName}" }
+      acc & { "%{pkgName}" = organist.import_nix "nixpkgs#%{pkgName}" }
     )
     {}
     pkgs

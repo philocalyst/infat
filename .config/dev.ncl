@@ -1,6 +1,10 @@
 [
-	hyperfine,
-	jujutsu,
-	jq,
-	xh,
-];
+	"hyperfine",
+	"jujutsu",
+  "cue",
+  "just-lsp",
+  "taplo",
+  "nickel",
+	"jq",
+	"xh",
+]
