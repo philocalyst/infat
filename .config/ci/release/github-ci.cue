@@ -3,7 +3,7 @@ package release
 
 #InstallNix: {
 	name: "Install Nix"
-	uses: "cachix/install-nix-action@v27"
+	uses: "cachix/install-nix-action@v31"
 	with: {
 		extra_nix_config: "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}"
 	}
