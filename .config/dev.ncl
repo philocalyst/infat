@@ -2,6 +2,7 @@
 	"hyperfine",
 	"jujutsu",
   "cue",
+  "typos-lsp",
   "just-lsp",
   "taplo",
   "nickel",

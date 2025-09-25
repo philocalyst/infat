@@ -186,7 +186,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 - Bumped CLI version to **2.0.1** and updated the abstract to
-  “Declaritively set associations for URLs and files.”
+  “Declaratively set associations for URLs and files.”
 - Revised README examples and docs:
   - Renamed `infat list` → `infat info`
   - Changed flag `--file-type` → `--ext`
@@ -224,7 +224,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Refactored the `list` command to use two exclusive `@Option` parameters (`--app`, `--ext`) with XOR validation.  
 - Switched PList parsing to `DictionaryPList(url:)` and UTI lookup to `UTType(filenameExtension:)`.  
 - Replaced ad-hoc `print` calls with `logger.info` for consistent, leveled logging.  
-- Renamed `deriveUTIFromExtension(extention:)` to `deriveUTIFromExtension(ext:)` for clarity and consistency.
+- Renamed `deriveUTIFromExtension(extension:)` to `deriveUTIFromExtension(ext:)` for clarity and consistency.
 
 ### Fixed
 - Corrected typos in `FileSystemUtilities.deriveUTIFromExtension` signature and related debug messages.  
@@ -240,7 +240,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Using function overloading to set default application based on Uttype or extension
 
 ### Deprecated
-- Removed --assocations option in list into the basic list command
+- Removed --associations option in list into the basic list command
 - Filetype option, now ext.
 
 ### Added
@@ -409,4 +409,4 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 [0.5.0]: https://github.com/philocalyst/infat/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/philocalyst/infat/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/philocalyst/infat/compare/v0.2.0...v0.3.0  
-[0.2.0]: https://github.com/philocalyst/infat/compare/63822faf94def58bf347f8be4983e62da90383bb...d32aec000bf040c48887f104decf4a9736aea78b (Comparing agaisnt the start of the project)
+[0.2.0]: https://github.com/philocalyst/infat/compare/63822faf94def58bf347f8be4983e62da90383bb...d32aec000bf040c48887f104decf4a9736aea78b (Comparing against the start of the project)

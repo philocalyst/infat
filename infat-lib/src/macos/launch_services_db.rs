@@ -117,7 +117,7 @@ pub fn generate_config_from_launch_services(robust: bool) -> Result<crate::confi
                 continue;
             }
 
-            // Canonicalize the id (There's sometimes a difference between the id the application provides to launchservices and the one it'll key itself as to be identifed as)
+            // Canonicalize the id (There's sometimes a difference between the id the application provides to launchservices and the one it'll key itself as to be identified as)
             let canonical_id = match resolve_to_bundle_id(&bundle_id) {
                 Ok(id) => id,
                 Err(_) => {

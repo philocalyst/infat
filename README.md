@@ -3,7 +3,7 @@
 [![Swift Version](https://badgen.net/static/Swift/5.9/orange)](https://swift.org)
 [![Apple Platform](https://badgen.net/badge/icon/macOS%2013+?icon=apple&label)](https://developer.apple.com/macOS)
 
-Infat is an ultra-powerful, macOS-native CLI tool for declaritively managing both file-type and URL-scheme associations. Avoid the hassle of navigating sub-menus to setup your default browser or image viewer, and the pain of doing that *every time* you get a new machine. Setup the rules once, and bask in your own ingenuity forevermore. Take back control, and bind your openers to whatever. You. Want. Override everything! Who's going to stop you?
+Infat is an ultra-powerful, macOS-native CLI tool for declaratively managing both file-type and URL-scheme associations. Avoid the hassle of navigating sub-menus to setup your default browser or image viewer, and the pain of doing that *every time* you get a new machine. Setup the rules once, and bask in your own ingenuity forevermore. Take back control, and bind your openers to whatever. You. Want. Override everything! Who's going to stop you?
 
 ---
 
@@ -20,7 +20,7 @@ Get started by installing Infat — jump to the [Install](#install) section belo
 
 ## Tutorial
 
-### 1. Getting assocation information
+### 1. Getting association information
 
 ```shell
 # Show the default app for .txt files and all registered apps
