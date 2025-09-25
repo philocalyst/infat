@@ -1,0 +1,129 @@
+package release
+
+workflows: release: {
+	name: "Release"
+	on: push: tags: ["*"]
+	defaults: run: shell: "bash"
+	env: {
+		RUSTFLAGS:   "--deny warnings"
+		BINARY_NAME: "infat"
+	}
+	jobs: {
+		prerelease: {
+			"runs-on": "ubuntu-latest"
+			outputs: value: "${{ steps.prerelease.outputs.value }}"
+			steps: [{
+				name: "Prerelease Check"
+				id:   "prerelease"
+				run: """
+					tag=${GITHUB_REF##*/}
+					if [[ "$tag" =~ -(alpha|beta)$ ]]; then
+					  echo "value=true" >> $GITHUB_OUTPUT
+					else
+					  echo "value=false" >> $GITHUB_OUTPUT
+					fi
+					"""
+			}]
+		}
+
+		package: {
+			strategy: {
+				"fail-fast": false
+				matrix: {
+					target: [
+						"aarch64-apple-darwin",
+						"x86_64-apple-darwin",
+					]
+					include: [{
+						target: "aarch64-apple-darwin"
+						os:     "macos-latest"
+					}, {
+						target: "x86_64-apple-darwin"
+						os:     "macos-latest"
+					}]
+				}
+			}
+			"runs-on": "${{ matrix.os }}"
+			needs: ["prerelease"]
+			environment: name: "main"
+			steps: [{
+				name: "Checkout code"
+				uses: "actions/checkout@v4"
+			}, {
+				name: "Install Nix"
+				uses: "cachix/install-nix-action@v27"
+				with: {
+					extra_nix_config: "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}"
+				}
+			}, {
+				name: "Cache Cargo registry and git"
+				uses: "actions/cache@v4"
+				with: {
+					path: """
+						~/.cargo/registry/index
+						~/.cargo/registry/cache
+						~/.cargo/git/db
+						"""
+					key:            "${{ runner.os }}-cargo-registry-${{ hashFiles('Cargo.lock') }}"
+					"restore-keys": "${{ runner.os }}-cargo-registry-"
+				}
+			}, {
+				name: "Build and Package"
+				run:  "nix develop --command just package ${{ matrix.target }}"
+			}, {
+				name: "Extract changelog for the tag"
+				run:  "nix develop --command just create-notes ${{ github.ref_name }} release_notes.md CHANGELOG.md"
+			}, {
+				name: "Publish Release"
+				uses: "softprops/action-gh-release@v2"
+				if:   "startsWith(github.ref, 'refs/tags/')"
+				with: {
+					files:       "dist/${{ env.BINARY_NAME }}-${{ matrix.target }}.tar.gz"
+					body_path:   "release_notes.md"
+					draft:       false
+					make_latest: true
+					prerelease:  "${{ needs.prerelease.outputs.value }}"
+					token:       "${{ secrets.PAT }}"
+				}
+			}]
+		}
+
+		checksum: {
+			"runs-on": "ubuntu-latest"
+			needs: ["package", "prerelease"]
+			if: "startsWith(github.ref, 'refs/tags/')"
+			environment: name: "main"
+			steps: [{
+				name: "Install Nix"
+				uses: "cachix/install-nix-action@v27"
+				with: {
+					extra_nix_config: "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}"
+				}
+			}, {
+				name: "Download Release Archives"
+				env: {
+					GH_TOKEN: "${{ secrets.PAT }}"
+					TAG_NAME: "${{ github.ref_name }}"
+				}
+				run: """
+					nix develop --command gh release download "$TAG_NAME" \\
+					  --repo "$GITHUB_REPOSITORY" \\
+					  --pattern '*' \\
+					  --dir dist
+					"""
+			}, {
+				name: "Generate Checksums"
+				run:  "nix develop --command just checksum dist"
+			}, {
+				name: "Publish Checksums"
+				uses: "softprops/action-gh-release@v2"
+				with: {
+					files:      "dist/*.sum"
+					draft:      false
+					prerelease: "${{ needs.prerelease.outputs.value }}"
+					token:      "${{ secrets.PAT }}"
+				}
+			}]
+		}
+	}
+}
