@@ -1,4 +1,13 @@
+@extern(embed)
 package release
+
+#InstallNix: {
+	name: "Install Nix"
+	uses: "cachix/install-nix-action@v27"
+	with: {
+		extra_nix_config: "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}"
+	}
+}
 
 workflows: release: {
 	name: "Release"
@@ -49,43 +58,38 @@ workflows: release: {
 			steps: [{
 				name: "Checkout code"
 				uses: "actions/checkout@v4"
-			}, {
-				name: "Install Nix"
-				uses: "cachix/install-nix-action@v27"
-				with: {
-					extra_nix_config: "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}"
-				}
-			}, {
-				name: "Cache Cargo registry and git"
-				uses: "actions/cache@v4"
-				with: {
-					path: """
+			},
+				#InstallNix, {
+					name: "Cache Cargo registry and git"
+					uses: "actions/cache@v4"
+					with: {
+						path: """
 						~/.cargo/registry/index
 						~/.cargo/registry/cache
 						~/.cargo/git/db
 						"""
-					key:            "${{ runner.os }}-cargo-registry-${{ hashFiles('Cargo.lock') }}"
-					"restore-keys": "${{ runner.os }}-cargo-registry-"
-				}
-			}, {
-				name: "Build and Package"
-				run:  "nix develop --command just package ${{ matrix.target }}"
-			}, {
-				name: "Extract changelog for the tag"
-				run:  "nix develop --command just create-notes ${{ github.ref_name }} release_notes.md CHANGELOG.md"
-			}, {
-				name: "Publish Release"
-				uses: "softprops/action-gh-release@v2"
-				if:   "startsWith(github.ref, 'refs/tags/')"
-				with: {
-					files:       "dist/${{ env.BINARY_NAME }}-${{ matrix.target }}.tar.gz"
-					body_path:   "release_notes.md"
-					draft:       false
-					make_latest: true
-					prerelease:  "${{ needs.prerelease.outputs.value }}"
-					token:       "${{ secrets.PAT }}"
-				}
-			}]
+						key:            "${{ runner.os }}-cargo-registry-${{ hashFiles('Cargo.lock') }}"
+						"restore-keys": "${{ runner.os }}-cargo-registry-"
+					}
+				}, {
+					name: "Build and Package"
+					run:  "nix develop --command just package ${{ matrix.target }}"
+				}, {
+					name: "Extract changelog for the tag"
+					run:  "nix develop --command just create-notes ${{ github.ref_name }} release_notes.md CHANGELOG.md"
+				}, {
+					name: "Publish Release"
+					uses: "softprops/action-gh-release@v2"
+					if:   "startsWith(github.ref, 'refs/tags/')"
+					with: {
+						files:       "dist/${{ env.BINARY_NAME }}-${{ matrix.target }}.tar.gz"
+						body_path:   "release_notes.md"
+						draft:       false
+						make_latest: true
+						prerelease:  "${{ needs.prerelease.outputs.value }}"
+						token:       "${{ secrets.PAT }}"
+					}
+				}]
 		}
 
 		checksum: {
@@ -93,13 +97,7 @@ workflows: release: {
 			needs: ["package", "prerelease"]
 			if: "startsWith(github.ref, 'refs/tags/')"
 			environment: name: "main"
-			steps: [{
-				name: "Install Nix"
-				uses: "cachix/install-nix-action@v27"
-				with: {
-					extra_nix_config: "access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}"
-				}
-			}, {
+			steps: [#InstallNix, {
 				name: "Download Release Archives"
 				env: {
 					GH_TOKEN: "${{ secrets.PAT }}"
