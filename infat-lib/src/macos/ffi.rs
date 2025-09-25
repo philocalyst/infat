@@ -1,9 +1,9 @@
-// infat-lib/src/macos/ffi.rs
 //! Raw FFI bindings to macOS Launch Services and related APIs
 
 use core_foundation::{array::CFArrayRef, base::OSStatus, string::CFStringRef, url::CFURLRef};
 
 pub type LSRolesMask = u32;
+
 pub const K_LS_ROLES_VIEWER: LSRolesMask = 2;
 pub const K_LS_ROLES_ALL: LSRolesMask = 0xFFFFFFFF;
 
@@ -11,6 +11,7 @@ pub const K_LS_ROLES_ALL: LSRolesMask = 0xFFFFFFFF;
 pub const K_LS_APPLICATION_NOT_FOUND_ERR: OSStatus = -10814;
 pub const K_LS_UNKNOWN_ERR: OSStatus = -10810;
 
+// Unsafe bindings
 #[link(name = "CoreServices", kind = "framework")]
 extern "C" {
     pub fn LSSetDefaultHandlerForURLScheme(

@@ -1,4 +1,3 @@
-// infat-lib/src/macos/workspace.rs
 //! NSWorkspace integration for app discovery and management
 
 use crate::error::{InfatError, Result};
@@ -7,6 +6,7 @@ use objc_foundation::{INSString, NSString};
 use std::path::{Path, PathBuf};
 use tracing::debug;
 
+// Make a point of linking the AppKit framework
 #[link(name = "AppKit", kind = "framework")]
 extern "C" {}
 

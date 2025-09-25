@@ -1,4 +1,3 @@
-// infat-lib/src/macos/launch_services_db.rs
 //! Launch Services database parsing for the init command
 
 use crate::error::{InfatError, Result};
@@ -50,6 +49,7 @@ pub fn read_launch_services_database() -> Result<LaunchServicesDatabase> {
         message: "Could not determine home directory".to_string(),
     })?;
 
+    // Needs to be consistent across systems
     let ls_path = home
         .join("Library")
         .join("Preferences")
@@ -69,6 +69,8 @@ pub fn read_launch_services_database() -> Result<LaunchServicesDatabase> {
             ),
         });
     }
+
+    // Here we first parse into an arbitrary value and then compare against our schema
 
     let plist_data = std::fs::read(&ls_path)?;
     let value: Value =
@@ -115,7 +117,7 @@ pub fn generate_config_from_launch_services(robust: bool) -> Result<crate::confi
                 continue;
             }
 
-            // Canonicalize the id
+            // Canonicalize the id (There's sometimes a difference between the id the application provides to launchservices and the one it'll key itself as to be identifed as)
             let canonical_id = match resolve_to_bundle_id(&bundle_id) {
                 Ok(id) => id,
                 Err(_) => {

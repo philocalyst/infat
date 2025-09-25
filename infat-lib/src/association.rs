@@ -1,4 +1,3 @@
-// infat-lib/src/association.rs
 //! High-level association management combining all the pieces
 
 use crate::{

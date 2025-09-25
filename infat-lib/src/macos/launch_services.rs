@@ -1,4 +1,3 @@
-// infat-lib/src/macos/launch_services.rs
 //! High-level Launch Services API wrappers
 
 use super::ffi::*;

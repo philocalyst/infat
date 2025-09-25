@@ -1,4 +1,3 @@
-// infat-lib/src/app.rs
 //! Application information and management
 
 use crate::{

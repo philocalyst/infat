@@ -1,4 +1,3 @@
-// infat-lib/src/error.rs
 use std::path::PathBuf;
 use thiserror::Error;
 

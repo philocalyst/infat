@@ -1,4 +1,3 @@
-// infat-lib/src/config.rs
 use crate::{
     association,
     error::{InfatError, Result},

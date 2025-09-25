@@ -13,7 +13,7 @@ use cli::{Cli, Commands};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Install color-eyre for beautiful error reports
+    // Color eyre for them goooood errors
     color_eyre::install().wrap_err("Failed to install color-eyre error handler")?;
 
     let cli = Cli::parse();
@@ -26,6 +26,8 @@ async fn main() -> Result<()> {
     match cli.command {
         None => {
             // No subcommand provided - load and apply configuration
+            // Kind of bespoke behavior but infat stands for infatuate
+            // I like to think it's just running the verb
             handle_config_load(&global_opts)
                 .await
                 .wrap_err("Failed to load and apply configuration")?;
@@ -68,7 +70,7 @@ async fn handle_config_load(opts: &GlobalOptions) -> Result<()> {
         }
         None => config::find_config_file().ok_or_else(|| {
             color_eyre::eyre::eyre!(
-                "No configuration file found. Use {} or place config at XDG location",
+                "No configuration file found. Use {} or place config at default location",
                 "--config".bright_yellow()
             )
         })?,
@@ -127,6 +129,7 @@ async fn handle_info_command(
         .filter(|&&x| x)
         .count();
 
+    // Some basic validation that clap can't provide
     if provided_count == 0 {
         return Err(color_eyre::eyre::eyre!(
             "Must provide one of: {}, {}, or {}",
@@ -157,6 +160,8 @@ async fn handle_info_command(
         println!("  Bundle ID: {}", app_info.bundle_id.bright_green());
         println!("  Version: {}", app_info.version);
         println!("  Path: {}", app_info.path.display().dimmed());
+
+        // Declared means just those it claims to support
 
         // Display declared URL schemes
         if !app_info.declared_schemes.is_empty() {

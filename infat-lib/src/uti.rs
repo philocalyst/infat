@@ -1,4 +1,3 @@
-// infat-lib/src/uti.rs - COMPLETE implementation
 use crate::error::{InfatError, Result};
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
