@@ -96,12 +96,8 @@ workflows: release: {
 					GH_TOKEN: "${{ secrets.PAT }}"
 					TAG_NAME: "${{ github.ref_name }}"
 				}
-				run: """
-					nix develop --command gh release download "$TAG_NAME" \\
-					  --repo "$GITHUB_REPOSITORY" \\
-					  --pattern '*' \\
-					  --dir dist
-					"""
+				// The installation script for getting the release archive
+				run: string @embed(file=repo-install.sh, type=text)
 			}, {
 				name: "Generate Checksums"
 				run:  "nix develop --command just checksum dist"
