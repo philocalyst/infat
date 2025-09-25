@@ -155,7 +155,18 @@ pub fn find_applications() -> Result<Vec<PathBuf>> {
                 let mut found_count = 0;
                 for entry in entries.flatten() {
                     let entry_path = entry.path();
-                    if entry_path.extension().is_some_and(|ext| ext == "app") {
+
+                    // Follow symlinks to get the actual target
+                    let resolved_path = if entry_path.is_symlink() {
+                        match std::fs::canonicalize(&entry_path) {
+                            Ok(canonical) => canonical,
+                            Err(_) => continue, // Skip broken symlinks
+                        }
+                    } else {
+                        entry_path.clone()
+                    };
+
+                    if resolved_path.extension().is_some_and(|ext| ext == "app") {
                         apps.push(entry_path);
                         found_count += 1;
                     }
