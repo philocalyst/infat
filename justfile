@@ -358,17 +358,16 @@ create-notes raw_tag outfile changelog:
         print $"Extracting notes for tag: ($tag_v) \(searching for section [($tag)]\)"
 
         # Write header to output file
-        "# What's new\n" | save $outfile
+        "# What's new\n" | save --force $outfile
 
         # Read and process changelog
         let content = (open $changelog_file | lines)
-        let section_header = $"## [($tag)]"
 
         # Find the start of the target section
-        let start_idx = ($content | enumerate | where item == $section_header | get index | first)
+        let start_idx = ($content | enumerate | where ($it.item | str contains $tag) | get index | first)
 
         if ($start_idx | is-empty) {
-            build_error $"Could not find section header ($section_header) in ($changelog_file)"
+            build_error $"Could not find tag ($tag) in ($changelog_file)"
         }
 
         # Find the end of the target section (next ## [ header)
@@ -389,7 +388,7 @@ create-notes raw_tag outfile changelog:
         if $output_size > 20 {  # More than just the header
             print $"Successfully extracted release notes to '($outfile)'."
         } else {
-            print --stderr $"Warning: '($outfile)' appears empty. Is '($section_header)' present in '($changelog_file)'?"
+            print --stderr $"Warning: '($outfile)' appears empty. Is '($tag)' present in '($changelog_file)'?"
         }
 
     } catch { |e| 

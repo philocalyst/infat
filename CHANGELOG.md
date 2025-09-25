@@ -5,6 +5,13 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [3.0.0] – 2025-09-25
+### Changed
+- Complete rewrite to Rust!
+
+### Added
+- `--scheme` option for the info subcommand
+
 ## [2.5.2] – 2025-06-21
 
 ### Added
@@ -377,7 +384,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-[Unreleased]: https://github.com/philocalyst/infat/compare/v2.5.2…HEAD
+[Unreleased]: https://github.com/philocalyst/infat/compare/v3.0.0…HEAD
+[3.0.0]: https://github.com/philocalyst/infat/compare/v2.5.2…v3.0.0  
 [2.5.2]: https://github.com/philocalyst/infat/compare/v2.5.1…v2.5.2  
 [2.5.1]: https://github.com/philocalyst/infat/compare/v2.5.0…v2.5.1  
 [2.5.0]: https://github.com/philocalyst/infat/compare/v2.4.0…v2.5.0  
