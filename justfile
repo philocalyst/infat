@@ -28,6 +28,8 @@ default:
 check:
     @echo "🔎 Checking workspace..."
     cargo check --workspace
+    cargo clippy
+    typos --sort
 
 [doc('Build workspace in debug mode')]
 [group('build')]
