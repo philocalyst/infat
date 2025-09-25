@@ -27,14 +27,8 @@ organist.OrganistExpression
       },
 
       editorconfig.sections = {
-        "*".indent_style = 'space,
-        "*".indent_size = 2,
-        "*".insert_final_newline = true,
-        "Makefile".indent_style = 'tab,
-        "*.py" = {
-          indent_style = 'space,
-          indent_size = 4,
-        },
+        "*".indent_style = 'tab,
+        "*".insert_final_newline = false,
       },
     },
 }
