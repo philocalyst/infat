@@ -72,7 +72,7 @@ workflows: release: {
 					run:  "nix develop --command just create-notes ${{ github.ref_name }} release_notes.md CHANGELOG.md"
 				}, {
 					name: "Publish Release"
-					uses: "softprops/action-gh-release@v5"
+					uses: "softprops/action-gh-release@v2.3"
 					if:   "startsWith(github.ref, 'refs/tags/')"
 					with: {
 						files:       "dist/${{ env.BINARY_NAME }}-${{ matrix.target }}.tar.gz"
