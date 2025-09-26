@@ -5,6 +5,24 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [3.0.0] – 2025-09-26
+### Changed
+ - The justfile was updated with better organization, formatting, and documentation.
+
+### Added
+ - A new build and CI pipeline using Nix, CUE, and Just, which includes fixes for version and script errors.
+ - --scheme option to the info command to get information about URL schemes.
+ - clap for command-line argument parsing, including shell completion generation.
+ - Linters like clippy and typos to improve code quality.
+ - Support for more supertypes in uti.rs.
+ - dist/ directory added to .gitignore.
+
+### Fixed
+ - Various typos in the codebase and documentation.
+ - Corrected an issue with an inaccurate environment variable for the binary name in the build script.
+ - Improved bundle ID canonicalization and input validation.
+ - Improved handling of symlinks.
+
 ## [3.0.0] – 2025-09-25
 ### Changed
 - Complete rewrite to Rust!
@@ -384,7 +402,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-[Unreleased]: https://github.com/philocalyst/infat/compare/v3.0.0…HEAD
+[Unreleased]: https://github.com/philocalyst/infat/compare/v3.0.1…HEAD
+[3.0.0]: https://github.com/philocalyst/infat/compare/v3.0.0…v3.0.1  
 [3.0.0]: https://github.com/philocalyst/infat/compare/v2.5.2…v3.0.0  
 [2.5.2]: https://github.com/philocalyst/infat/compare/v2.5.1…v2.5.2  
 [2.5.1]: https://github.com/philocalyst/infat/compare/v2.5.0…v2.5.1  
