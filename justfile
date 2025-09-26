@@ -74,11 +74,8 @@ package target=(system):
         # Windows the only one that has an executable extension
         let ext = if ($target | str contains 'windows-msvc') { '.exe' } else { '' }
 
-        # Example: package-triplet
-        let qualified_name = $"($prime)-($target)"
-
         let bin_path = $'($artifact_dir)/($prime)($ext)' # Where rust puts the binary artifact
-        let out_path = $'($out)/($qualified_name)($ext)'
+        let out_path = $'($out)/($prime)($ext)'
 
         # Create output directory structure
         try {
@@ -217,6 +214,9 @@ compress directory=(output_directory):
         }
     }
 
+    let prime = '{{ main_package }}'
+    let sys = '{{ system }}'
+
     print "🗜️ Compressing release packages..."
 
     let dir = '{{ directory }}'
@@ -239,7 +239,7 @@ compress directory=(output_directory):
 
             try {
                 let parent_dir = ($pkg_dir | path dirname)
-                let archive_name = $'($pkg_dir).tar.gz'
+                let archive_name = $'($prime)-($sys).tar.gz'
 
                 # Use tar command to create compressed archive
                 let result = (run-external 'tar' '-czf' $archive_name '-C' $parent_dir $pkg_name | complete)
