@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        taret:
+        target:
           - aarch64-apple-darwin
           - x86_64-apple-darwin
         include:
@@ -47,7 +47,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Install Nix
-        uses: cachix/install-nix-action@v27
+        uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
       - name: Cache Cargo registry and git
@@ -64,7 +64,7 @@ jobs:
       - name: Extract changelog for the tag
         run: nix develop --command just create-notes ${{ github.ref_name }} release_notes.md CHANGELOG.md
       - name: Publish Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v5
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: dist/${{ env.BINARY_NAME }}-${{ matrix.target }}.tar.gz
@@ -83,17 +83,17 @@ jobs:
       name: main
     steps:
       - name: Install Nix
-        uses: cachix/install-nix-action@v27
+        uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
       - name: Download Release Archives
         env:
           GH_TOKEN: ${{ secrets.PAT }}
           TAG_NAME: ${{ github.ref_name }}
-        run: |-
-          nix develop --command gh release download "$TAG_NAME" \
-            --repo "$GITHUB_REPOSITORY" \
-            --pattern '*' \
+        run: |
+          nix develop --command gh release download "$TAG_NAME" \\
+            --repo "$GITHUB_REPOSITORY" \\
+            --pattern '*' \\
             --dir dist
       - name: Generate Checksums
         run: nix develop --command just checksum dist
