@@ -1,5 +1,5 @@
 use clap::{CommandFactory, ValueEnum};
-use clap_complete::{generate_to, Shell};
+use clap_complete::{Shell, generate_to};
 use std::{env, error::Error, fs, path::Path};
 
 include!("src/cli.rs");
@@ -16,7 +16,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // grab PROFILE ("debug" or "release")
     let profile = env::var("PROFILE")?;
-    println!("PROFILE = {}", profile);
+    println!("PROFILE = {profile}");
 
     // walk up ancestors until we find the profile directory
     let mut candidate: &Path = out_dir.as_path();
@@ -46,7 +46,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 println!("  • {:?} -> {}", shell, path.display());
             }
             Err(e) => {
-                println!("failed to generate {:?}: {}", shell, e);
+                println!("failed to generate {shell:?}: {e}");
             }
         }
     }
