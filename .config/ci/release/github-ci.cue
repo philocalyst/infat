@@ -11,7 +11,10 @@ package release
 
 workflows: release: {
 	name: "Release"
-	on: push: tags: ["*"]
+	on: push: {
+		tags: ["*"]
+		workflow_dispatch: {}
+	}
 	defaults: run: shell: "bash"
 	env: {
 		RUSTFLAGS:   "--deny warnings"
