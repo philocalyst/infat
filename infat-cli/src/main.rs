@@ -3,7 +3,7 @@ use color_eyre::{
     eyre::{Context, Result},
     owo_colors::OwoColorize,
 };
-use infat_lib::{app, association, config, macos::launch_services_db, GlobalOptions};
+use infat_lib::{GlobalOptions, app, association, config, macos::launch_services_db};
 use std::path::PathBuf;
 use tracing::info;
 
@@ -73,7 +73,7 @@ async fn handle_config_load(opts: &GlobalOptions) -> Result<()> {
             }
             path.clone()
         }
-        None => config::find_config_file().ok_or_else(|| {
+        None => config::find_config_file()?.ok_or_else(|| {
             color_eyre::eyre::eyre!(
                 "No configuration file found. Use {} or place config at default location",
                 "--config".bright_yellow()
@@ -418,7 +418,7 @@ async fn handle_init_command(opts: &GlobalOptions, output: Option<PathBuf>) -> R
             Some(path) => path.clone(),
             None => {
                 let paths = config::get_config_paths();
-                paths
+                paths?
                     .first()
                     .ok_or_else(|| color_eyre::eyre::eyre!("Could not determine config path"))?
                     .clone()

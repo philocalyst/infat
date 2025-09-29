@@ -94,34 +94,35 @@ impl Config {
 }
 
 /// Get XDG-compliant configuration file paths in order of preference
-pub fn get_config_paths() -> Vec<std::path::PathBuf> {
+pub fn get_config_paths() -> Result<Vec<std::path::PathBuf>> {
     let mut paths = Vec::new();
 
-    // User config directory ($XDG_CONFIG_HOME or ~/.config)
+    // User-specified configuration directory
+    let xdg_config_dirs = std::env::var("XDG_CONFIG_HOME");
+
+    if let Ok(xdg_config) = xdg_config_dirs {
+        paths.push(
+            std::path::PathBuf::from(xdg_config)
+                .join("infat")
+                .join("config.toml"),
+        );
+    }
+
+    // Default configuration directory ($XDG_CONFIG_HOME or ~/Library/Application Support)
     if let Some(config_dir) = dirs::config_dir() {
         paths.push(config_dir.join("infat").join("config.toml"));
     }
 
-    // System config directories from $XDG_CONFIG_DIRS or fallback
-    let xdg_config_dirs =
-        std::env::var("XDG_CONFIG_DIRS").unwrap_or_else(|_| "/etc/xdg".to_string());
-
-    for dir in xdg_config_dirs.split(':') {
-        if !dir.is_empty() {
-            paths.push(
-                std::path::PathBuf::from(dir)
-                    .join("infat")
-                    .join("config.toml"),
-            );
-        }
+    if paths.is_empty() {
+        return Err(InfatError::Generic { message: "Couldn't derive a configuration location, please file an issue -- until it's resolved, please set XDG_CONFIG_HOME".to_string() });
     }
 
-    paths
+    Ok(paths)
 }
 
 /// Find the first existing configuration file
-pub fn find_config_file() -> Option<std::path::PathBuf> {
-    get_config_paths().into_iter().find(|path| path.exists())
+pub fn find_config_file() -> Result<Option<std::path::PathBuf>> {
+    Ok(get_config_paths()?.into_iter().find(|path| path.exists()))
 }
 
 /// Apply configuration settings
