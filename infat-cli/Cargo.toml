@@ -1,7 +1,7 @@
 # infat-cli/Cargo.toml
 [package]
 name = "infat-cli"
-version = "3.0.2"
+version = "3.0.3"
 edition = "2024"
 description = "Command-line interface for infat"
 license = "MIT"
