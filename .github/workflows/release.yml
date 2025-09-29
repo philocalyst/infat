@@ -64,7 +64,7 @@ jobs:
       - name: Extract changelog for the tag
         run: nix develop --command just create-notes ${{ github.ref_name }} release_notes.md CHANGELOG.md
       - name: Publish Release
-        uses: softprops/action-gh-release@v5
+        uses: softprops/action-gh-release@v2.3
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: dist/${{ env.BINARY_NAME }}-${{ matrix.target }}.tar.gz
@@ -91,9 +91,9 @@ jobs:
           GH_TOKEN: ${{ secrets.PAT }}
           TAG_NAME: ${{ github.ref_name }}
         run: |
-          nix develop --command gh release download "$TAG_NAME" \\
-            --repo "$GITHUB_REPOSITORY" \\
-            --pattern '*' \\
+          nix develop --command gh release download "$TAG_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern '*' \
             --dir dist
       - name: Generate Checksums
         run: nix develop --command just checksum dist
