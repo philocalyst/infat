@@ -5,7 +5,18 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
-## [3.0.0] – 2025-09-26
+## [3.0.2] – 2025-09-29  
+### Added  
+- Configuration handling now prefers **XDG-compliant directories** over traditional fallback locations, ensuring consistent behavior across environments.  
+  - Handles `XDG_CONFIG_HOME` correctly when set.  
+  - Provides explicit error guidance if no configuration path is derivable, prompting users to set `XDG_CONFIG_HOME`.  
+  - Automatically falls back to platforms’ default configuration directories (e.g., `~/.config`, `~/Library/Application Support`).  
+
+### Changed  
+- Internal `get_config_paths` and `find_config_file` APIs now return `Result` types instead of raw values, making error handling explicit.  
+- GitHub CI release workflow updated to use **softprops/action-gh-release@v2.3** (was `@v5`), ensuring compatibility with maintained versions.  
+
+## [3.0.1] – 2025-09-26
 ### Changed
  - The justfile was updated with better organization, formatting, and documentation.
 
@@ -402,8 +413,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-[Unreleased]: https://github.com/philocalyst/infat/compare/v3.0.1…HEAD
-[3.0.0]: https://github.com/philocalyst/infat/compare/v3.0.0…v3.0.1  
+[Unreleased]: https://github.com/your-org/your-repo/compare/v3.0.2...HEAD  
+[3.0.2]: https://github.com/your-org/your-repo/compare/v3.0.1...v3.0.2  
+[3.0.1]: https://github.com/philocalyst/infat/compare/v3.0.0…v3.0.1  
 [3.0.0]: https://github.com/philocalyst/infat/compare/v2.5.2…v3.0.0  
 [2.5.2]: https://github.com/philocalyst/infat/compare/v2.5.1…v2.5.2  
 [2.5.1]: https://github.com/philocalyst/infat/compare/v2.5.0…v2.5.1  
