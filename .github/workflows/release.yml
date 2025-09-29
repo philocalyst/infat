@@ -5,6 +5,7 @@ name: Release
   push:
     tags:
       - '*'
+    workflow_dispatch: {}
 defaults:
   run:
     shell: bash
