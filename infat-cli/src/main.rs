@@ -4,6 +4,10 @@ use color_eyre::{
     owo_colors::OwoColorize,
 };
 use infat_lib::{GlobalOptions, app, association, config, macos::launch_services_db};
+use nerdicons_rs::icons::md::{
+    RSCHART_BAR, RSCHECK, RSCONTENT_SAVE_MOVE_OUTLINE, RSFILE_DOCUMENT, RSFILE_SEARCH, RSLINK,
+    RSTAG,
+};
 use std::path::PathBuf;
 use tracing::info;
 
@@ -83,7 +87,7 @@ async fn handle_config_load(opts: &GlobalOptions) -> Result<()> {
 
     if !opts.quiet {
         println!(
-            "📄 Loading configuration from: {}",
+            "{RSFILE_DOCUMENT} Loading configuration from: {}",
             config_path.display().bright_cyan()
         );
     }
@@ -104,7 +108,7 @@ async fn handle_config_load(opts: &GlobalOptions) -> Result<()> {
     let summary = config.summary();
     if !opts.quiet {
         println!(
-            "📊 Found {} associations: {} extensions, {} schemes, {} types",
+            "{RSCHART_BAR} Found {} associations: {} extensions, {} schemes, {} types",
             summary.total().to_string().bright_green(),
             summary.extensions_count,
             summary.schemes_count,
@@ -118,7 +122,10 @@ async fn handle_config_load(opts: &GlobalOptions) -> Result<()> {
         .wrap_err("Failed to apply configuration settings")?;
 
     if !opts.quiet {
-        println!("{}", "✅ Configuration applied successfully".bright_green());
+        println!(
+            "{RSCHECK} {}",
+            "Configuration applied successfully".bright_green()
+        );
     }
 
     Ok(())
@@ -216,7 +223,7 @@ async fn handle_info_command(
             .wrap_err_with(|| format!("Failed to get info for extension: .{extension}"))?;
 
         println!(
-            "📄 File Extension: {}",
+            "{RSFILE_DOCUMENT} File Extension: {}",
             format!(".{extension}").bright_green()
         );
 
@@ -251,7 +258,7 @@ async fn handle_info_command(
         let info = association::get_info_for_url_scheme(&url_scheme)
             .wrap_err_with(|| format!("Failed to get info for URL scheme: {url_scheme}"))?;
 
-        println!("🔗 URL Scheme: {}", url_scheme.bright_green());
+        println!("{RSLINK} URL Scheme: {}", url_scheme.bright_green());
 
         match info.default_app_name()? {
             Some(app_name) => {
@@ -280,7 +287,7 @@ async fn handle_info_command(
         let info = association::get_info_for_type(&type_name)
             .wrap_err_with(|| format!("Failed to get info for type: {type_name}"))?;
 
-        println!("🏷️  File Type: {}", type_name.bright_green());
+        println!("{RSTAG}  File Type: {}", type_name.bright_green());
 
         if let Some(uti) = &info.uti {
             println!("    UTI: {}", uti.bright_cyan());
@@ -393,7 +400,7 @@ async fn handle_init_command(opts: &GlobalOptions, output: Option<PathBuf>) -> R
     info!("Initializing configuration from Launch Services database");
 
     if !opts.quiet {
-        println!("🔍 Reading Launch Services database...");
+        println!("{RSFILE_SEARCH} Reading Launch Services database...");
     }
 
     let config = launch_services_db::generate_config_from_launch_services(opts.robust)
@@ -403,7 +410,7 @@ async fn handle_init_command(opts: &GlobalOptions, output: Option<PathBuf>) -> R
 
     if !opts.quiet {
         println!(
-            "📊 Generated {} associations: {} extensions, {} schemes, {} types",
+            "{RSCHART_BAR} Generated {} associations: {} extensions, {} schemes, {} types",
             summary.total().to_string().bright_green(),
             summary.extensions_count,
             summary.schemes_count,
@@ -428,7 +435,7 @@ async fn handle_init_command(opts: &GlobalOptions, output: Option<PathBuf>) -> R
 
     if !opts.quiet {
         println!(
-            "💾 Writing configuration to: {}",
+            "{RSCONTENT_SAVE_MOVE_OUTLINE} Writing configuration to: {}",
             output_path.display().bright_cyan()
         );
     }
@@ -439,8 +446,8 @@ async fn handle_init_command(opts: &GlobalOptions, output: Option<PathBuf>) -> R
 
     if !opts.quiet {
         println!(
-            "{}",
-            "✅ Configuration initialized successfully".bright_green()
+            "{RSCHECK} {}",
+            "Configuration initialized successfully".bright_green()
         );
         println!("To apply these settings, run: {}", "infat".bright_yellow());
     }

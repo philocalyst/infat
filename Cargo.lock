@@ -313,6 +313,7 @@ dependencies = [
  "color-eyre",
  "eyre",
  "infat-lib",
+ "nerdicons_rs",
  "tokio",
  "tracing",
 ]
@@ -429,6 +430,16 @@ dependencies = [
  "libc",
  "wasi",
  "windows-sys 0.59.0",
+]
+
+[[package]]
+name = "nerdicons_rs"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "988d06af1a37aa0c5e3e9f571fb26b0f014c1ff3f4eb1ea95788a6099b74f4e2"
+dependencies = [
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -595,6 +606,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56f7d92ca342cea22a06f2121d944b4fd82af56988c270852495420f961d4ace"
 
 [[package]]
+name = "ryu"
+version = "1.0.20"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "28d3b2b1366ec20994f1fd18c3c594f05c5dd4bc44d8bb0c1c632c8d6829481f"
+
+[[package]]
 name = "serde"
 version = "1.0.226"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -622,6 +639,19 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "serde_json"
+version = "1.0.145"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "402a6f66d8c709116cf22f558eab210f5a50187f702eb4d7e5ef38d9a7f1c79c"
+dependencies = [
+ "itoa",
+ "memchr",
+ "ryu",
+ "serde",
+ "serde_core",
 ]
 
 [[package]]

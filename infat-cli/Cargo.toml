@@ -18,6 +18,7 @@ eyre = { workspace = true }
 color-eyre = { workspace = true }
 tracing = { workspace = true }
 clap_complete = "4.5.58"
+nerdicons_rs = "0.1.0"
 
 [build-dependencies]
 clap_complete = "4.5.58"
