@@ -5,4 +5,8 @@
   "coreutils",
   "b3sum",
   "nushell",
+
+  # Rust compiler yay
+  "cargo",
+  "rustc",
 ]
