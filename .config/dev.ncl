@@ -8,4 +8,11 @@
   "nickel",
 	"jq",
 	"xh",
+
+	# Rust stuff
+  "cargo",
+  "rustc",
+  "rust-analyzer",
+  "rustfmt",
+  "clippy",
 ]

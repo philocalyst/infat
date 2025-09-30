@@ -26,14 +26,14 @@ organist.OrganistExpression
 & {
   Schema,
   config | Schema = {
-    shells = organist.shells.Rust,
+    shells = organist.shells.Bash,
 
     shells.build = {
       packages = normalizePkgs buildPkgs & normalizePkgs commonPkgs,
     },
 
     shells.dev = {
-      packages = normalizePkgs devPkgs,
+      packages = normalizePkgs devPkgs & normalizePkgs commonPkgs,
     },
 
     editorconfig.sections = {
