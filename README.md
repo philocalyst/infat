@@ -1,6 +1,6 @@
 # Welcome to Infat
 
-[![Swift Version](https://badgen.net/static/Swift/5.9/orange)](https://swift.org)
+[![Rust Version](https://badgen.net/static/Rust/2024/orange)](https://swift.org)
 [![Apple Platform](https://badgen.net/badge/icon/macOS%2013+?icon=apple&label)](https://developer.apple.com/macOS)
 
 Infat is an ultra-powerful, macOS-native CLI tool for declaratively managing both file-type and URL-scheme associations. Avoid the hassle of navigating sub-menus to setup your default browser or image viewer, and the pain of doing that *every time* you get a new machine. Setup the rules once, and bask in your own ingenuity forevermore. Take back control, and bind your openers to whatever. You. Want. Override everything! Who's going to stop you?
@@ -135,7 +135,7 @@ infat --config ~/.config/infat/config.toml
 
 ## Building and Debugging
 
-You’ll need [just](https://github.com/casey/just) and Swift 5.9+:
+You’ll need [just](https://github.com/casey/just) and the rust compiler for the build. If you want to be simple, install nix, and run `nix develop .`
 
 ```shell
 # Debug build
@@ -177,16 +177,23 @@ For the full history of changes, see [CHANGELOG.md](CHANGELOG.md).
 
 ## Libraries Used
 
-- [ArgumentParser](https://github.com/apple/swift-argument-parser)  
-- [swift-log](https://github.com/apple/swift-log)  
-- [PListKit](https://github.com/orchetect/PListKit)  
-- [swift-toml](https://github.com/jdfergason/swift-toml)  
+- [clap](https://lib.rs/crates/clap)
+- [Toml](https://lib.rs/crates/toml)
+- [Serde](https://lib.rs/crates/serde)
+- [thiserror](https://lib.rs/crates/thiserror)
+- [eyre](https://lib.rs/crates/eyre)
+- [color-eyre](https://lib.rs/crates/color-eyre)
+- [tracing](https://lib.rs/crates/tracing)
+- [tracing-subscriber](https://lib.rs/crates/tracing-subscriber)
+- [core-foundation](https://lib.rs/crates/core-foundation)
+- [core-services](https://lib.rs/crates/core-services)
+
 
 ## Acknowledgements
 
 - Inspired by [duti](https://github.com/moretension/duti)  
-- Built with Swift, thanks to corporate overlord Apple’s frameworks  
-- Thanks to all contributors and issue submitters (One day!!)
+- Built with Apple API's, thank you's to our corporate overlord Apple for not locking these capabilities away and instead just having poorly-documented error codes :)
+- Thanks to all contributors and issue submitters, y'all rock and combat my lack of test-cases.. heh 
 
 ## License
 
