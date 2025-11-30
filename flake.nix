@@ -1,7 +1,9 @@
 {
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-  inputs.fenix.url = "github:nix-community/fenix";
-  inputs.organist.url = "github:nickel-lang/organist";
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    fenix.url = "github:nix-community/fenix";
+    organist.url = "github:nickel-lang/organist";
+  };
 
   nixConfig = {
     extra-substituters = [
