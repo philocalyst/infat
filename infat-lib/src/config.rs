@@ -126,7 +126,7 @@ pub fn find_config_file() -> Result<Option<std::path::PathBuf>> {
 }
 
 /// Apply configuration settings
-pub async fn apply_config(config: &Config, robust: bool) -> Result<()> {
+pub  fn apply_config(config: &Config, robust: bool) -> Result<()> {
     info!("Applying configuration settings");
 
     config.validate()?;
@@ -147,7 +147,7 @@ pub async fn apply_config(config: &Config, robust: bool) -> Result<()> {
             config.types.len()
         );
         for (type_name, app_name) in &config.types {
-            match association::set_default_app_for_type(type_name, app_name).await {
+            match association::set_default_app_for_type(type_name, app_name) {
                 Ok(_) => {
                     info!("✓ Set type {} → {}", type_name, app_name);
                     success_count += 1;
@@ -172,7 +172,7 @@ pub async fn apply_config(config: &Config, robust: bool) -> Result<()> {
             config.extensions.len()
         );
         for (ext, app_name) in &config.extensions {
-            match association::set_default_app_for_extension(ext, app_name).await {
+            match association::set_default_app_for_extension(ext, app_name) {
                 Ok(_) => {
                     info!("✓ Set .{} → {}", ext, app_name);
                     success_count += 1;
@@ -197,7 +197,7 @@ pub async fn apply_config(config: &Config, robust: bool) -> Result<()> {
             config.schemes.len()
         );
         for (scheme, app_name) in &config.schemes {
-            match association::set_default_app_for_url_scheme(scheme, app_name).await {
+            match association::set_default_app_for_url_scheme(scheme, app_name) {
                 Ok(_) => {
                     info!("✓ Set {} → {}", scheme, app_name);
                     success_count += 1;

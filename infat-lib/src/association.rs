@@ -1,5 +1,3 @@
-//! High-level association management combining all the pieces
-
 use crate::{
     error::{InfatError, Result},
     macos::{launch_services, workspace},
@@ -8,7 +6,7 @@ use crate::{
 use tracing::{debug, info};
 
 /// Set the default application for a file extension
-pub async fn set_default_app_for_extension(extension: &str, app_name: &str) -> Result<()> {
+pub  fn set_default_app_for_extension(extension: &str, app_name: &str) -> Result<()> {
     info!(
         "Setting default app for extension .{} to {}",
         extension, app_name
@@ -17,7 +15,7 @@ pub async fn set_default_app_for_extension(extension: &str, app_name: &str) -> R
     // Handle special routing for HTML
     if extension.to_lowercase() == "html" {
         debug!("Routing .html to HTTP scheme handler");
-        return set_default_app_for_url_scheme("http", app_name).await;
+        return set_default_app_for_url_scheme("http", app_name);
     }
 
     // Get the UTI for the extension
@@ -35,7 +33,7 @@ pub async fn set_default_app_for_extension(extension: &str, app_name: &str) -> R
 }
 
 /// Set the default application for a URL scheme
-pub async fn set_default_app_for_url_scheme(scheme: &str, app_name: &str) -> Result<()> {
+pub  fn set_default_app_for_url_scheme(scheme: &str, app_name: &str) -> Result<()> {
     info!(
         "Setting default app for URL scheme {} to {}",
         scheme, app_name
@@ -65,13 +63,13 @@ pub async fn set_default_app_for_url_scheme(scheme: &str, app_name: &str) -> Res
 }
 
 /// Set the default application for a supertype/UTI
-pub async fn set_default_app_for_type(type_name: &str, app_name: &str) -> Result<()> {
+pub  fn set_default_app_for_type(type_name: &str, app_name: &str) -> Result<()> {
     info!("Setting default app for type {} to {}", type_name, app_name);
 
     // Handle special routing for web types
     if type_name == "com.apple.default-app.web-browser" || type_name == "public.html" {
         debug!("Routing web browser type to HTTP scheme handler");
-        return set_default_app_for_url_scheme("http", app_name).await;
+        return set_default_app_for_url_scheme("http", app_name);
     }
 
     // Try to parse as a SuperType first
