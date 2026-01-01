@@ -15,8 +15,7 @@ mod cli;
 
 use cli::{Cli, Commands};
 
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
     // Color eyre for them goooood errors
     color_eyre::install().wrap_err("Failed to install color-eyre error handler")?;
 
@@ -32,9 +31,7 @@ async fn main() -> Result<()> {
             // No subcommand provided - load and apply configuration
             // Kind of bespoke behavior but infat stands for infatuate
             // I like to think it's just running the verb
-            handle_config_load(&global_opts)
-                .await
-                .wrap_err("Failed to load and apply configuration")?;
+            handle_config_load(&global_opts).wrap_err("Failed to load and apply configuration")?;
         }
         Some(Commands::Info {
             app,
@@ -42,9 +39,7 @@ async fn main() -> Result<()> {
             scheme,
             r#type,
         }) => {
-            handle_info_command(app, ext, scheme, r#type)
-                .await
-                .wrap_err("Info command failed")?;
+            handle_info_command(app, ext, scheme, r#type).wrap_err("Info command failed")?;
         }
         Some(Commands::Set {
             app_name,
@@ -53,20 +48,17 @@ async fn main() -> Result<()> {
             r#type,
         }) => {
             handle_set_command(&global_opts, app_name, ext, scheme, r#type)
-                .await
                 .wrap_err("Set command failed")?;
         }
         Some(Commands::Init { output }) => {
-            handle_init_command(&global_opts, output)
-                .await
-                .wrap_err("Init command failed")?;
+            handle_init_command(&global_opts, output).wrap_err("Init command failed")?;
         }
     }
 
     Ok(())
 }
 
-async fn handle_config_load(opts: &GlobalOptions) -> Result<()> {
+fn handle_config_load(opts: &GlobalOptions) -> Result<()> {
     let config_path = match &opts.config_path {
         Some(path) => {
             if !path.exists() {
@@ -118,7 +110,6 @@ async fn handle_config_load(opts: &GlobalOptions) -> Result<()> {
 
     // Apply configuration
     config::apply_config(&config, opts.robust)
-        .await
         .wrap_err("Failed to apply configuration settings")?;
 
     if !opts.quiet {
@@ -131,7 +122,7 @@ async fn handle_config_load(opts: &GlobalOptions) -> Result<()> {
     Ok(())
 }
 
-async fn handle_info_command(
+fn handle_info_command(
     app: Option<String>,
     ext: Option<String>,
     scheme: Option<String>,
@@ -316,7 +307,7 @@ async fn handle_info_command(
     Ok(())
 }
 
-async fn handle_set_command(
+fn handle_set_command(
     opts: &GlobalOptions,
     app_name: String,
     ext: Option<String>,
@@ -350,7 +341,6 @@ async fn handle_set_command(
         info!("Setting {} as default for .{}", app_name, extension);
 
         association::set_default_app_for_extension(&extension, &app_name)
-            .await
             .wrap_err_with(|| format!("Failed to set default app for .{extension}"))?;
 
         if !opts.quiet {
@@ -365,7 +355,6 @@ async fn handle_set_command(
         info!("Setting {} as default for {} scheme", app_name, url_scheme);
 
         association::set_default_app_for_url_scheme(&url_scheme, &app_name)
-            .await
             .wrap_err_with(|| format!("Failed to set default app for {url_scheme} scheme"))?;
 
         if !opts.quiet {
@@ -380,7 +369,6 @@ async fn handle_set_command(
         info!("Setting {} as default for type {}", app_name, type_name);
 
         association::set_default_app_for_type(&type_name, &app_name)
-            .await
             .wrap_err_with(|| format!("Failed to set default app for type {type_name}"))?;
 
         if !opts.quiet {
@@ -396,7 +384,7 @@ async fn handle_set_command(
     Ok(())
 }
 
-async fn handle_init_command(opts: &GlobalOptions, output: Option<PathBuf>) -> Result<()> {
+fn handle_init_command(opts: &GlobalOptions, output: Option<PathBuf>) -> Result<()> {
     info!("Initializing configuration from Launch Services database");
 
     if !opts.quiet {
