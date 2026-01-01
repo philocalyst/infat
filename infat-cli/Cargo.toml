@@ -13,7 +13,6 @@ path = "src/main.rs"
 [dependencies]
 infat-lib = { path = "../infat-lib" }
 clap = { workspace = true }
-tokio = { version = "1.0", features = ["rt-multi-thread", "macros"] }
 eyre = { workspace = true }
 color-eyre = { workspace = true }
 tracing = { workspace = true }
