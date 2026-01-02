@@ -6,7 +6,7 @@ use crate::{
 use tracing::{debug, info};
 
 /// Set the default application for a file extension
-pub  fn set_default_app_for_extension(extension: &str, app_name: &str) -> Result<()> {
+pub fn set_default_app_for_extension(extension: &str, app_name: &str) -> Result<()> {
     info!(
         "Setting default app for extension .{} to {}",
         extension, app_name
@@ -19,7 +19,12 @@ pub  fn set_default_app_for_extension(extension: &str, app_name: &str) -> Result
     }
 
     // Get the UTI for the extension
-    let uti = launch_services::get_uti_for_extension(extension)?;
+    let supertype: Result<SuperType> = extension.parse();
+
+    let uti = match supertype {
+        Ok(val) => val.uti_string().to_string(),
+        Err(_) => launch_services::get_uti_for_extension(extension)?,
+    };
     debug!("Extension .{} maps to UTI: {}", extension, uti);
 
     // Resolve app name to bundle ID
@@ -33,7 +38,7 @@ pub  fn set_default_app_for_extension(extension: &str, app_name: &str) -> Result
 }
 
 /// Set the default application for a URL scheme
-pub  fn set_default_app_for_url_scheme(scheme: &str, app_name: &str) -> Result<()> {
+pub fn set_default_app_for_url_scheme(scheme: &str, app_name: &str) -> Result<()> {
     info!(
         "Setting default app for URL scheme {} to {}",
         scheme, app_name
@@ -63,7 +68,7 @@ pub  fn set_default_app_for_url_scheme(scheme: &str, app_name: &str) -> Result<(
 }
 
 /// Set the default application for a supertype/UTI
-pub  fn set_default_app_for_type(type_name: &str, app_name: &str) -> Result<()> {
+pub fn set_default_app_for_type(type_name: &str, app_name: &str) -> Result<()> {
     info!("Setting default app for type {} to {}", type_name, app_name);
 
     // Handle special routing for web types
