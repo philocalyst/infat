@@ -70,6 +70,7 @@ pub enum SuperType {
 
     // Source Code
     Sourcecode,
+    TypeScript,
     CSource,
     CHeader,
     CppSource,
@@ -143,6 +144,7 @@ impl SuperType {
     pub fn uti_string(&self) -> &'static str {
         match self {
             Self::Text => "public.text",
+            Self::TypeScript => "com.microsoft.typescript",
             Self::PlainText => "public.plain-text",
             Self::Csv => "public.comma-separated-values-text",
             Self::Json => "public.json",
@@ -265,6 +267,7 @@ impl SuperType {
     pub fn all() -> Vec<SuperType> {
         vec![
             Self::Text,
+            Self::TypeScript,
             Self::PlainText,
             Self::Csv,
             Self::Json,
@@ -389,7 +392,7 @@ impl FromStr for SuperType {
             "xml" => Ok(Self::Xml),
             "yaml" => Ok(Self::Yaml),
             "html" => Ok(Self::Html),
-            "markdown" => Ok(Self::Markdown),
+            "markdown" | "md" => Ok(Self::Markdown),
             "rtf" => Ok(Self::Rtf),
 
             "image" => Ok(Self::Image),
@@ -421,7 +424,8 @@ impl FromStr for SuperType {
             "csv" | "comma-separated-text" => Ok(Self::Csv),
             "mpeg2-video" => Ok(Self::Mpeg2Video),
             "mpeg2-transport-stream" => Ok(Self::Mpeg2TransportStream),
-            "mpeg4-movie" => Ok(Self::Mp4Movie),
+            "typescript" | "ts" => Ok(Self::TypeScript),
+            "mpeg4-movie" | "mp4" => Ok(Self::Mp4Movie),
             "m3u" | "m3u-playlist" => Ok(Self::M3uPlaylist),
 
             "archive" => Ok(Self::Archive),
