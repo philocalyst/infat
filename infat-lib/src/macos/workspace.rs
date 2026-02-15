@@ -134,17 +134,18 @@ pub fn get_app_name_from_bundle_id(bundle_id: &str) -> Result<String> {
 pub fn find_applications() -> Result<Vec<PathBuf>> {
     debug!("Searching for applications in standard directories");
 
-    let search_paths = [
-        "/Applications",
-        "/System/Applications",
-        "/System/Library/CoreServices/Applications",
-        &format!("{}/Applications", std::env::var("HOME").unwrap_or_default()),
+    let mut search_paths = vec![
+        "/Applications".to_string(),
+        "/System/Applications".to_string(),
+        "/System/Library/CoreServices/Applications".to_string(),
+        format!("{}/Applications", std::env::var("HOME").unwrap_or_default().to_string()),
     ];
 
     let mut apps = Vec::new();
 
-    for search_path in &search_paths {
-        let path = Path::new(search_path);
+    while search_paths.len() > 0 {
+        let search_path = search_paths.pop().ok_or(InfatError::Generic { message: "Non-empty vector could not pop".to_string(), })?;
+        let path = Path::new(&search_path);
         if !path.exists() {
             debug!("Skipping non-existent path: {}", search_path);
             continue;
@@ -169,6 +170,8 @@ pub fn find_applications() -> Result<Vec<PathBuf>> {
                     if resolved_path.extension().is_some_and(|ext| ext == "app") {
                         apps.push(entry_path);
                         found_count += 1;
+                    } else if resolved_path.is_dir() {
+                        search_paths.push(resolved_path.to_str().expect("Invalid path UTF-8").to_string());
                     }
                 }
                 debug!("Found {} apps in {}", found_count, search_path);
