@@ -144,7 +144,7 @@ pub fn find_applications() -> Result<Vec<PathBuf>> {
     let mut apps = Vec::new();
 
     while search_paths.len() > 0 {
-	let path = search_paths.pop().unwrap();
+        let path = search_paths.pop().unwrap();
         if !path.exists() {
             debug!("Skipping non-existent path: {}", path.to_str().unwrap());
             continue;
