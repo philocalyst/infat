@@ -134,23 +134,23 @@ pub fn get_app_name_from_bundle_id(bundle_id: &str) -> Result<String> {
 pub fn find_applications() -> Result<Vec<PathBuf>> {
     debug!("Searching for applications in standard directories");
 
-    let search_paths = [
-        "/Applications",
-        "/System/Applications",
-        "/System/Library/CoreServices/Applications",
-        &format!("{}/Applications", std::env::var("HOME").unwrap_or_default()),
+    let mut search_paths = vec![
+        Path::new("/Applications").to_path_buf(),
+        Path::new("/System/Applications").to_path_buf(),
+        Path::new("/System/Library/CoreServices/Applications").to_path_buf(),
+        Path::new(&std::env::var("HOME").unwrap_or_default()).join("Applications")
     ];
 
     let mut apps = Vec::new();
 
-    for search_path in &search_paths {
-        let path = Path::new(search_path);
+    while search_paths.len() > 0 {
+        let path = search_paths.pop().unwrap();
         if !path.exists() {
-            debug!("Skipping non-existent path: {}", search_path);
+            debug!("Skipping non-existent path: {}", path.to_str().unwrap());
             continue;
         }
 
-        match std::fs::read_dir(path) {
+        match std::fs::read_dir(&path) {
             Ok(entries) => {
                 let mut found_count = 0;
                 for entry in entries.flatten() {
@@ -169,12 +169,14 @@ pub fn find_applications() -> Result<Vec<PathBuf>> {
                     if resolved_path.extension().is_some_and(|ext| ext == "app") {
                         apps.push(entry_path);
                         found_count += 1;
+                    } else if resolved_path.is_dir() {
+                        search_paths.push(resolved_path);
                     }
                 }
-                debug!("Found {} apps in {}", found_count, search_path);
+                debug!("Found {} apps in {}", found_count, path.to_str().unwrap());
             }
             Err(e) => {
-                debug!("Could not read directory {}: {}", search_path, e);
+                debug!("Could not read directory {}: {}", path.to_str().unwrap(), e);
             }
         }
     }
