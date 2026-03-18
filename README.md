@@ -180,20 +180,6 @@ just package && mv dist/infat* /usr/local/bin/infat # Wildcard because output na
 
 For the full history of changes, see [CHANGELOG.md](CHANGELOG.md).
 
-## Libraries Used
-
-- [clap](https://lib.rs/crates/clap)
-- [Toml](https://lib.rs/crates/toml)
-- [Serde](https://lib.rs/crates/serde)
-- [thiserror](https://lib.rs/crates/thiserror)
-- [eyre](https://lib.rs/crates/eyre)
-- [color-eyre](https://lib.rs/crates/color-eyre)
-- [tracing](https://lib.rs/crates/tracing)
-- [tracing-subscriber](https://lib.rs/crates/tracing-subscriber)
-- [core-foundation](https://lib.rs/crates/core-foundation)
-- [core-services](https://lib.rs/crates/core-services)
-
-
 ## Acknowledgements
 
 - Inspired by [duti](https://github.com/moretension/duti)  
