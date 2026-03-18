@@ -3,6 +3,10 @@
 [![Rust Version](https://badgen.net/static/Rust/2024/orange)](https://swift.org)
 [![Apple Platform](https://badgen.net/badge/icon/macOS%2013+?icon=apple&label)](https://developer.apple.com/macOS)
 
+> [!WARNING]
+> Infat is now managed in Tangled, rather than GitHub.
+> You can file issues, PR, and all the bells and whistles, [over there](https://tangled.org/did:plc:w45df32pddkw6yywbsrl5r2u/infat)
+
 Infat is an ultra-powerful, macOS-native CLI tool for declaratively managing both file-type and URL-scheme associations. Avoid the hassle of navigating sub-menus to setup your default browser or image viewer, and the pain of doing that *every time* you get a new machine. Setup the rules once, and bask in your own ingenuity forevermore. Take back control, and bind your openers to whatever. You. Want. Override everything! Who's going to stop you?
 
 ---
