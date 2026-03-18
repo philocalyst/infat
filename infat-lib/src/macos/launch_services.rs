@@ -169,7 +169,7 @@ pub fn get_uti_for_extension(extension: &str) -> Result<String> {
 
     let cf_tag_class = CFString::new(K_UT_TAG_CLASS_FILENAME_EXTENSION);
     let cf_extension = CFString::new(extension);
-    let cf_conforming_to = CFString::new("");
+    let cf_conforming_to = CFString::new("public.content");
 
     let cf_uti = unsafe {
         UTTypeCreatePreferredIdentifierForTag(
