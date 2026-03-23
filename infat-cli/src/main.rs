@@ -3,7 +3,11 @@ use color_eyre::{
     eyre::{Context, Result},
     owo_colors::OwoColorize,
 };
-use infat_lib::{GlobalOptions, app, association, config, macos::launch_services_db};
+use infat_lib::{
+    GlobalOptions, app, association,
+    config::{self, config_file},
+    macos::launch_services_db,
+};
 use nerdicons_rs::icons::md::{
     RSCHART_BAR, RSCHECK, RSCONTENT_SAVE_MOVE_OUTLINE, RSFILE_DOCUMENT, RSFILE_SEARCH, RSLINK,
     RSTAG,
@@ -69,7 +73,7 @@ fn handle_config_load(opts: &GlobalOptions) -> Result<()> {
             }
             path.clone()
         }
-        None => config::find_config_file()?.ok_or_else(|| {
+        None => config::config_file().ok_or_else(|| {
             color_eyre::eyre::eyre!(
                 "No configuration file found. Use {} or place config at default location",
                 "--config".bright_yellow()
@@ -411,13 +415,9 @@ fn handle_init_command(opts: &GlobalOptions, output: Option<PathBuf>) -> Result<
         Some(path) => path,
         None => match &opts.config_path {
             Some(path) => path.clone(),
-            None => {
-                let paths = config::get_config_paths();
-                paths?
-                    .first()
-                    .ok_or_else(|| color_eyre::eyre::eyre!("Could not determine config path"))?
-                    .clone()
-            }
+            None => config_file()
+                .ok_or_else(|| color_eyre::eyre::eyre!("Could not determine config path"))?
+                .clone(),
         },
     };
 

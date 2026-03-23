@@ -223,6 +223,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "dir_spec"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dbe111bdda79626e929d51c9b229c8127d024abc2a99efeb48f16a0a76f7d54d"
+
+[[package]]
 name = "dirs"
 version = "5.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -323,6 +329,7 @@ version = "0.1.0"
 dependencies = [
  "core-foundation",
  "core-foundation-sys",
+ "dir_spec",
  "dirs",
  "eyre",
  "libc",

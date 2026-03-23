@@ -93,40 +93,17 @@ impl Config {
     }
 }
 
-/// Get XDG-compliant configuration file paths in order of preference
-pub fn get_config_paths() -> Result<Vec<std::path::PathBuf>> {
-    let mut paths = Vec::new();
+pub fn config_file() -> Option<PathBuf> {
+    let path = dir_spec::config_home()
+        .unwrap()
+        .join("infat")
+        .join("config.toml");
 
-    // User-specified configuration directory
-    let xdg_config_dirs = std::env::var("XDG_CONFIG_HOME");
-
-    if let Ok(xdg_config) = xdg_config_dirs {
-        paths.push(
-            std::path::PathBuf::from(xdg_config)
-                .join("infat")
-                .join("config.toml"),
-        );
-    }
-
-    // Default configuration directory ($XDG_CONFIG_HOME or ~/Library/Application Support)
-    if let Some(config_dir) = dirs::config_dir() {
-        paths.push(config_dir.join("infat").join("config.toml"));
-    }
-
-    if paths.is_empty() {
-        return Err(InfatError::Generic { message: "Couldn't derive a configuration location, please file an issue -- until it's resolved, please set XDG_CONFIG_HOME".to_string() });
-    }
-
-    Ok(paths)
-}
-
-/// Find the first existing configuration file
-pub fn find_config_file() -> Result<Option<std::path::PathBuf>> {
-    Ok(get_config_paths()?.into_iter().find(|path| path.exists()))
+    path.exists().then_some(path)
 }
 
 /// Apply configuration settings
-pub  fn apply_config(config: &Config, robust: bool) -> Result<()> {
+pub fn apply_config(config: &Config, robust: bool) -> Result<()> {
     info!("Applying configuration settings");
 
     config.validate()?;
