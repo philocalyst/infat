@@ -1,18 +1,17 @@
-# Cross-compile to Apple targets from Linux
 [target.aarch64-apple-darwin]
 rustflags = ["-C", "link-arg=-undefined", "-C", "link-arg=dynamic_lookup"]
 
 [target.x86_64-apple-darwin]
 rustflags = ["-C", "link-arg=-undefined", "-C", "link-arg=dynamic_lookup"]
 
-# Apple target overrides (for the final binary link)
-[target.aarch64-apple-darwin.objc-sys]
+[target.aarch64-apple-darwin.objc]
 rustc-link-lib = []
 
-[target.x86_64-apple-darwin.objc-sys]
+[target.x86_64-apple-darwin.objc]
 rustc-link-lib = []
 
-[target.x86_64-unknown-linux-gnu.objc-sys]
+# Override for the host build script (always compiles as x86_64-unknown-linux-gnu):
+[target.x86_64-unknown-linux-gnu.objc]
 rustc-link-lib = []
 
 [target.x86_64-unknown-linux-musl]
