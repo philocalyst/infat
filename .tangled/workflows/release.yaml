@@ -9,6 +9,8 @@ dependencies:
     - just
     - rustup
     - gh
+    - zig
+    - cargo-zigbuild
     - nushell
     - b3sum
     - gnutar

@@ -41,7 +41,7 @@ build target="aarch64-apple-darwin" package=(main_package):
 [group('build')]
 build-release target=(system) package=(main_package):
     @echo "🚀 Building workspace (release) for {{ target }}…"
-    cargo build --workspace --release --bin '{{ main_package }}' --target '{{ target }}'
+    cargo zigbuild --workspace --release --bin '{{ main_package }}' --target '{{ target }}'
 
 # --- Packaging --- #
 [doc('Package release binary with completions for distribution')]
