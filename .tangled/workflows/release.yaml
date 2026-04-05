@@ -11,6 +11,8 @@ dependencies:
     - gh
     - zig
     - cargo-zigbuild
+    - gcc
+    - u-config
     - nushell
     - b3sum
     - gnutar
