@@ -406,6 +406,7 @@ checksum = "46a785d4eeff09c14c487497c162e92766fbb3e4059a71840cecc03d9a50b804"
 dependencies = [
  "objc-sys",
  "objc2-encode",
+ "objc2-proc-macros",
 ]
 
 [[package]]
@@ -425,6 +426,12 @@ dependencies = [
  "libc",
  "objc2",
 ]
+
+[[package]]
+name = "objc2-proc-macros"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "462945f0c945291d6d9fc35f2a10e0f1c88951c05d10d148fae64c54a42b63f0"
 
 [[package]]
 name = "object"

@@ -12,7 +12,7 @@ pub const K_LS_APPLICATION_NOT_FOUND_ERR: OSStatus = -10814;
 pub const K_LS_UNKNOWN_ERR: OSStatus = -10810;
 
 // Unsafe bindings
-#[link(name = "CoreServices", kind = "framework")]
+#[cfg_attr(target_os = "macos", link(name = "CoreServices", kind = "framework"))]
 extern "C" {
     pub fn LSSetDefaultHandlerForURLScheme(
         inURLScheme: CFStringRef,
