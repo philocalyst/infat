@@ -45,7 +45,7 @@ pub struct LaunchServicesDatabase {
 
 /// Read the Launch Services database from the user's preferences
 pub fn read_launch_services_database() -> Result<LaunchServicesDatabase> {
-    let home = dirs::home_dir().ok_or_else(|| InfatError::LaunchServicesError {
+    let home = dir_spec::home().ok_or_else(|| InfatError::LaunchServicesError {
         message: "Could not determine home directory".to_string(),
     })?;
 
