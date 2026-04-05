@@ -10,7 +10,6 @@ pub mod config;
 pub mod error;
 pub mod uti;
 
-#[cfg(target_os = "macos")]
 pub mod macos {
     pub mod ffi;
     pub mod launch_services;
