@@ -1,17 +1,13 @@
 //! NSWorkspace integration for app discovery and management
 
 use crate::error::{InfatError, Result};
-use objc::{class, msg_send, runtime::Object, sel, sel_impl};
-use objc_foundation::{INSString, NSString};
+use objc2::{class, msg_send, rc::autoreleasepool, runtime::AnyObject};
+use objc2_foundation::{self, NSString};
 use std::path::{Path, PathBuf};
 use tracing::debug;
 
-// Make a point of linking the AppKit framework
-#[link(name = "AppKit", kind = "framework")]
-extern "C" {}
-
 /// Get the shared NSWorkspace instance
-unsafe fn shared_workspace() -> *mut Object {
+unsafe fn shared_workspace() -> *mut AnyObject {
     let workspace_class = class!(NSWorkspace);
     msg_send![workspace_class, sharedWorkspace]
 }
@@ -23,8 +19,8 @@ pub fn get_app_paths_for_bundle_id(bundle_id: &str) -> Result<Vec<PathBuf>> {
     unsafe {
         let workspace = shared_workspace();
         let ns_bundle_id = NSString::from_str(bundle_id);
-        let cf_url: *mut Object =
-            msg_send![workspace, URLForApplicationWithBundleIdentifier: ns_bundle_id];
+        let cf_url: *mut AnyObject =
+            msg_send![workspace, URLForApplicationWithBundleIdentifier: &*ns_bundle_id];
 
         if cf_url.is_null() {
             debug!("No application found for bundle ID: {}", bundle_id);
@@ -32,8 +28,10 @@ pub fn get_app_paths_for_bundle_id(bundle_id: &str) -> Result<Vec<PathBuf>> {
         }
 
         let ns_path: *mut NSString = msg_send![cf_url, path];
-        let path_str = (*ns_path).as_str();
-        let path = PathBuf::from(path_str);
+        let path = autoreleasepool(|pool| {
+            let path_str = (*ns_path).as_str(pool);
+            PathBuf::from(path_str)
+        });
 
         debug!("Found app path for {}: {}", bundle_id, path.display());
         Ok(vec![path])
@@ -138,7 +136,7 @@ pub fn find_applications() -> Result<Vec<PathBuf>> {
         Path::new("/Applications").to_path_buf(),
         Path::new("/System/Applications").to_path_buf(),
         Path::new("/System/Library/CoreServices/Applications").to_path_buf(),
-        Path::new(&std::env::var("HOME").unwrap_or_default()).join("Applications")
+        Path::new(&std::env::var("HOME").unwrap_or_default()).join("Applications"),
     ];
 
     let mut apps = Vec::new();

@@ -24,5 +24,5 @@ core-foundation-sys = "0.8"
 libc = "0.2"
 
 # Objective-C bindings
-objc = "0.2"
-objc-foundation = "0.1"
+objc2 = "0.5"
+objc2-foundation = { version = "0.2", features = ["NSString"] }
