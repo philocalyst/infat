@@ -12,6 +12,9 @@ dependencies:
     - zig
     - cargo-zigbuild
     - gcc
+    - gnustep.base
+    - gnustep.make
+    - libobjc
     - u-config
     - nushell
     - b3sum
