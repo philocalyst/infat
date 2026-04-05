@@ -1,3 +1,5 @@
+engine: nixery
+
 when:
   - event: ["push"]
     branch: ["canonical"] 
