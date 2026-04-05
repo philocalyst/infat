@@ -1,0 +1,39 @@
+when:
+  - event: ["push"]
+    branch: ["canonical"] 
+
+dependencies:
+  nixpkgs:
+    - just
+    - rustup
+    - gh
+
+environment:
+  RUSTFLAGS: "--deny warnings"
+  BINARY_NAME: "infat"
+
+steps:
+  - name: "Setup Rust and target architectures"
+    command: |
+      rustup default stable
+      rustup target add x86_64-apple-darwin
+      rustup target add aarch64-apple-darwin
+
+  - name: "Build Packages"
+    command: |
+      just package aarch64-apple-darwin
+      just package x86_64-apple-darwin
+
+  - name: "Generate Checksums"
+    command: |
+      just checksum dist
+
+  - name: "Publish Release"
+    environment:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    command: |
+      TAG_NAME=$(echo $GIT_REF | cut -d'/' -f3)
+      
+      gh release create "$TAG_NAME" dist/* \
+        --title "Release $TAG_NAME" \
+        --notes "Automated release from Tangled Spindle"
