@@ -15,7 +15,6 @@ dependencies:
     - gnustep-base
     - gnustep-make
     - gnustep-libobjc
-    - libobjc
     - u-config
     - nushell
     - b3sum
