@@ -283,7 +283,7 @@ dependencies = [
 
 [[package]]
 name = "infat-cli"
-version = "3.0.3"
+version = "3.1.0"
 dependencies = [
  "clap",
  "clap_complete",
